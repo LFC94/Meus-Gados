@@ -4,9 +4,7 @@ import { IconSymbol } from "@/components/icon-symbol";
 import { PregnancyTimeline } from "@/components/pregnancy-timeline";
 import { ScreenContainer } from "@/components/screen-container";
 import { VaccineItem } from "@/components/vaccine-item";
-import { useColors } from "@/hooks/use-colors";
-import useNavigation from "@/hooks/use-navigation";
-import useScreenHeader from "@/hooks/use-screen-header";
+import { useColors, useNavigation, useScreenHeader } from "@/hooks";
 import { formatDate, formatWeight } from "@/lib/helpers";
 import { cattleStorage, diseaseStorage, pregnancyStorage, vaccinationRecordStorage } from "@/lib/storage";
 import { Cattle, Disease, Pregnancy, RootStackParamList, VaccinationRecordWithDetails } from "@/types";
@@ -29,7 +27,6 @@ export default function CattleDetailScreen() {
   const [diseases, setDiseases] = useState<Disease[]>([]);
   const [activeTab, setActiveTab] = useState<Tab>("info");
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
-  const [deleting, setDeleting] = useState(false);
 
   useScreenHeader("Detalhes do Animal", undefined, () => (
     <TouchableOpacity
@@ -72,7 +69,6 @@ export default function CattleDetailScreen() {
 
   const handleDelete = async () => {
     try {
-      setDeleting(true);
       await cattleStorage.delete(id);
       if (Platform.OS !== "web") {
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
@@ -80,8 +76,8 @@ export default function CattleDetailScreen() {
       Alert.alert("Sucesso", "Animal excluído com sucesso", [{ text: "OK", onPress: () => navigation.goBack() }]);
     } catch (error) {
       Alert.alert("Erro", "Não foi possível excluir o animal");
+      console.error("Não foi possível excluir o animal", error);
     } finally {
-      setDeleting(false);
       setShowDeleteDialog(false);
     }
   };
@@ -363,7 +359,7 @@ export default function CattleDetailScreen() {
                 <View className="items-center py-8">
                   <Text className="text-muted text-center mb-4">Nenhuma vacina registrada</Text>
                   <TouchableOpacity
-                    onPress={() => navigation.navigate("VaccineAdd" as never, { cattleId: id })}
+                    onPress={() => navigation.navigate("VaccineAdd" as never, { cattleId: id } as never)}
                     className="bg-primary rounded-full px-6 py-3"
                     style={{ opacity: 1 }}
                   >
@@ -376,12 +372,12 @@ export default function CattleDetailScreen() {
                     <VaccineItem
                       key={vaccine.id}
                       vaccine={vaccine}
-                      onEdit={() => navigation.navigate("VaccineAdd" as never)}
+                      onEdit={() => navigation.navigate("VaccineEdit" as never, { id: vaccine.id } as never)}
                       onDelete={() => handleDeleteVaccine(vaccine.id)}
                     />
                   ))}
                   <TouchableOpacity
-                    onPress={() => navigation.navigate("VaccineAdd" as never)}
+                    onPress={() => navigation.navigate("VaccineAdd" as never, { cattleId: id } as never)}
                     className="bg-primary rounded-full p-4 items-center mt-2"
                     style={{ opacity: 1 }}
                   >
@@ -412,6 +408,7 @@ export default function CattleDetailScreen() {
                       key={pregnancy.id}
                       pregnancy={pregnancy}
                       onEdit={() => navigation.navigate("PregnancyEdit" as never, { id: pregnancy.id } as never)}
+                      onDelete={() => handleDeletePregnancy(pregnancy.id)}
                       onCompleteBirth={() =>
                         navigation.navigate("PregnancyEdit" as never, { id: pregnancy.id } as never)
                       }

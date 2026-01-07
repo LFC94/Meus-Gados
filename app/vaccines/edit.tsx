@@ -2,7 +2,7 @@ import { CustomDatePicker } from "@/components/date-picker";
 import { ScreenContainer } from "@/components/screen-container";
 import { useNavigation } from "@/hooks";
 import { useColors } from "@/hooks/use-colors";
-import { vaccineStorage } from "@/lib/storage";
+import { vaccinationRecordStorage, vaccineCatalogStorage } from "@/lib/storage";
 import { RootStackParamList } from "@/types";
 import { RouteProp, useRoute } from "@react-navigation/native";
 import * as Haptics from "expo-haptics";
@@ -30,13 +30,17 @@ export default function EditVaccineScreen() {
   const loadVaccine = async () => {
     try {
       if (!id) return;
-      const vaccine = await vaccineStorage.getById(id);
-      if (vaccine) {
+      const vaccination = await vaccinationRecordStorage.getById(id);
+      if (vaccination) {
+        const vaccine = await vaccineCatalogStorage.getById(vaccination.vaccineId);
+        if (!vaccine) {
+          return;
+        }
         setFormData({
           name: vaccine.name,
-          appliedDate: new Date(vaccine.appliedDate),
-          nextDose: vaccine.nextDose ? new Date(vaccine.nextDose) : new Date(),
-          batch: vaccine.batch || "",
+          appliedDate: new Date(vaccination.dateApplied),
+          nextDose: vaccination.nextDoseDate ? new Date(vaccination.nextDoseDate) : new Date(),
+          batch: vaccination.batchUsed || "",
         });
       }
     } catch (error) {
@@ -60,11 +64,10 @@ export default function EditVaccineScreen() {
         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
       }
 
-      await vaccineStorage.update(id!, {
-        name: formData.name.trim(),
-        appliedDate: formData.appliedDate.toISOString(),
-        nextDose: formData.nextDose.toISOString(),
-        batch: formData.batch.trim(),
+      await vaccinationRecordStorage.update(id!, {
+        dateApplied: formData.appliedDate.toISOString(),
+        nextDoseDate: formData.nextDose.toISOString(),
+        batchUsed: formData.batch.trim(),
       });
 
       if (Platform.OS !== "web") {

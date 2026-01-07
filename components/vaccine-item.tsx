@@ -83,7 +83,6 @@ interface VaccineBadgeProps {
 }
 
 export function VaccineBadge({ vaccine }: VaccineBadgeProps) {
-  const colors = useColors();
   const today = new Date();
   const nextDoseDate = vaccine.nextDoseDate ? new Date(vaccine.nextDoseDate) : null;
   const daysUntilNextDose = nextDoseDate

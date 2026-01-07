@@ -1,7 +1,8 @@
 import { IconSymbol } from "@/components/icon-symbol";
+import { DISEASE_RESULT_LABELS } from "@/constants/const";
 import { useColors } from "@/hooks/use-colors";
 import { formatDate } from "@/lib/helpers";
-import { Disease, DISEASE_RESULT_LABELS, DiseaseResult } from "@/types";
+import { Disease, DiseaseResult } from "@/types";
 import React, { useState } from "react";
 import { Animated, Text, TouchableOpacity, View } from "react-native";
 
@@ -129,38 +130,6 @@ export function DiseaseRecord({ disease, onEdit, onDelete, expanded = false }: D
           )}
         </Animated.View>
       )}
-    </View>
-  );
-}
-
-interface DiseaseBadgeProps {
-  disease: Disease;
-}
-
-export function DiseaseBadge({ disease }: DiseaseBadgeProps) {
-  const colors = useColors();
-
-  const getResultColor = (result: DiseaseResult): string => {
-    switch (result) {
-      case "in_treatment":
-        return "#F59E0B";
-      case "cured":
-        return "#22C55E";
-      case "death":
-        return "#EF4444";
-      default:
-        return colors.muted;
-    }
-  };
-
-  if (disease.result !== "in_treatment") return null;
-
-  return (
-    <View className="px-2 py-1 rounded-full flex-row items-center gap-1" style={{ backgroundColor: "#F59E0B20" }}>
-      <View className="w-2 h-2 rounded-full" style={{ backgroundColor: "#F59E0B" }} />
-      <Text className="text-xs font-medium" style={{ color: "#F59E0B" }}>
-        Em Tratamento
-      </Text>
     </View>
   );
 }

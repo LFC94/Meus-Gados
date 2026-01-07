@@ -3,15 +3,23 @@ import { calculateDaysPregnant, formatDate } from "@/lib/helpers";
 import { Pregnancy } from "@/types";
 import React from "react";
 import { Text, TouchableOpacity, View } from "react-native";
+import { IconSymbol } from "./icon-symbol";
 
 interface PregnancyTimelineProps {
   pregnancy: Pregnancy;
   onEdit?: () => void;
+  onDelete?: () => void;
   onCompleteBirth?: () => void;
   onCreateCalf?: () => void;
 }
 
-export function PregnancyTimeline({ pregnancy, onEdit, onCompleteBirth, onCreateCalf }: PregnancyTimelineProps) {
+export function PregnancyTimeline({
+  pregnancy,
+  onEdit,
+  onDelete,
+  onCompleteBirth,
+  onCreateCalf,
+}: PregnancyTimelineProps) {
   const colors = useColors();
   const today = new Date();
   const coverageDate = new Date(pregnancy.coverageDate);
@@ -61,21 +69,16 @@ export function PregnancyTimeline({ pregnancy, onEdit, onCompleteBirth, onCreate
             </Text>
           </View>
         </View>
-        {(onEdit || (onCompleteBirth && pregnancy.result === "pending")) && (
+        {(onEdit || onDelete) && (
           <View className="flex-row gap-2">
-            {onCompleteBirth && pregnancy.result === "pending" && (
-              <TouchableOpacity
-                onPress={onCompleteBirth}
-                className="bg-primary rounded-lg px-3 py-1.5"
-                style={{ opacity: 1 }}
-                accessibilityLabel="Registrar Parto"
-              >
-                <Text className="text-white text-xs font-semibold">Parto</Text>
-              </TouchableOpacity>
-            )}
             {onEdit && (
               <TouchableOpacity onPress={onEdit} style={{ opacity: 1 }} accessibilityLabel="Editar">
-                <Text className="text-primary text-sm font-semibold">Editar</Text>
+                <IconSymbol name="pencil" size={18} color={colors.primary} />
+              </TouchableOpacity>
+            )}
+            {onDelete && (
+              <TouchableOpacity onPress={onDelete} style={{ opacity: 1 }} accessibilityLabel="Excluir">
+                <IconSymbol name="trash" size={18} color="#EF4444" />
               </TouchableOpacity>
             )}
           </View>

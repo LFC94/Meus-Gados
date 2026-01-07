@@ -39,6 +39,7 @@ import VaccineAddScreen from "./vaccines/add";
 import VaccineCatalogAddScreen from "./vaccines/catalog/add";
 import VaccineCatalogEditScreen from "./vaccines/catalog/edit";
 import VaccineCatalogIndexScreen from "./vaccines/catalog/index";
+import EditVaccineScreen from "./vaccines/edit";
 import VaccinePendingScreen from "./vaccines/pending";
 
 const DEFAULT_WEB_INSETS: EdgeInsets = { top: 0, right: 0, bottom: 0, left: 0 };
@@ -168,6 +169,13 @@ function MainStackNavigator() {
         component={VaccineAddScreen}
         options={{
           title: "Registrar Vacina",
+        }}
+      />
+      <Stack.Screen
+        name="VaccineEdit"
+        component={EditVaccineScreen}
+        options={{
+          title: "Editar Vacina",
         }}
       />
       <Stack.Screen
