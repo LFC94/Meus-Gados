@@ -105,15 +105,6 @@ export default function VaccineCatalogScreen() {
         contentContainerStyle={{ flexGrow: 1 }}
       >
         <View className="p-6 gap-4 flex-1" style={{ paddingBottom: insets.bottom }}>
-          {/* Info Card */}
-          <View className="bg-primary/10 rounded-xl p-4 border border-primary/30">
-            <Text className="text-primary font-semibold">💡 Dica</Text>
-            <Text className="text-sm text-muted mt-1">
-              Cadastre as vacunas que você utiliza regularmente. Ao vacinar um animal, você poderá selecionar
-              rápidamente do catálogo.
-            </Text>
-          </View>
-
           {/* Empty State */}
           {vaccines.length === 0 ? (
             <View className="flex-1 items-center justify-center py-12">
@@ -124,7 +115,7 @@ export default function VaccineCatalogScreen() {
                 className="mt-4 bg-primary rounded-full px-6 py-3"
                 style={{ opacity: 1 }}
               >
-                <Text className="text-white font-semibold">Cadastrar Primeira Vacina</Text>
+                <Text className="text-white font-semibold">+ Cadastrar Primeira Vacina</Text>
               </TouchableOpacity>
             </View>
           ) : (
