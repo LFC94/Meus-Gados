@@ -1,6 +1,6 @@
 import { CustomDatePicker } from "@/components/date-picker";
 import { ScreenContainer } from "@/components/screen-container";
-import { useNavigation } from "@/hooks";
+import { useNavigation, useScreenHeader } from "@/hooks";
 import { useColors } from "@/hooks/use-colors";
 import { cattleStorage, pregnancyStorage } from "@/lib/storage";
 import { Cattle, PregnancyResult, RootStackParamList } from "@/types";
@@ -8,11 +8,14 @@ import { RouteProp, useRoute } from "@react-navigation/native";
 import * as Haptics from "expo-haptics";
 import { useEffect, useState } from "react";
 import { ActivityIndicator, Alert, Platform, ScrollView, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function EditPregnancyScreen() {
   const navigation = useNavigation();
   const route = useRoute<RouteProp<RootStackParamList, "PregnancyEdit">>();
   const colors = useColors();
+  const insets = useSafeAreaInsets();
+
   const { id } = route.params;
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -27,6 +30,7 @@ export default function EditPregnancyScreen() {
     complications: "",
   });
 
+  useScreenHeader("Editar Gestação", `Animal: ${cattle?.name || `Animal ${cattle?.number}`}`);
   useEffect(() => {
     loadPregnancy();
   }, [id]);
@@ -184,185 +188,182 @@ export default function EditPregnancyScreen() {
 
   return (
     <ScreenContainer className="p-0">
-      <ScrollView contentContainerStyle={{ flexGrow: 1 }} className="p-4">
-        <View className="gap-6">
-          {/* Header */}
-          <View className="gap-2">
-            <Text className="text-3xl font-bold text-foreground">Editar Gestação</Text>
-            {cattle && <Text className="text-base text-muted">Animal: {cattle.name || `Animal ${cattle.number}`}</Text>}
-          </View>
-
-          {/* Current Status */}
-          {pregnancy && (
-            <View className="bg-surface rounded-xl p-4 border border-border">
-              <Text className="text-sm font-medium text-muted mb-2">Status Atual</Text>
-              <Text className="text-base font-semibold text-foreground">
-                {formData.result === "pending"
-                  ? "Aguardando Parto"
-                  : formData.result === "success"
-                    ? "Parto com Sucesso"
-                    : formData.result === "complications"
-                      ? "Parto com Complicações"
-                      : "Gestação Perdida"}
-              </Text>
-            </View>
-          )}
-
-          {/* Form Fields */}
-          <View className="gap-4">
-            {/* Data de Cobertura */}
-            <View className="gap-2">
-              <Text className="text-sm font-semibold text-foreground">Data de Cobertura/Inseminação *</Text>
-              <CustomDatePicker
-                value={formData.coverageDate}
-                onChange={(date) => setFormData({ ...formData, coverageDate: date })}
-                maximumDate={new Date()}
-                disabled={saving}
-              />
-            </View>
-
-            {/* Data Prevista de Parto */}
-            <View className="gap-2">
-              <Text className="text-sm font-semibold text-foreground">Data Prevista de Parto *</Text>
-              <CustomDatePicker
-                value={formData.expectedBirthDate}
-                onChange={(date) => setFormData({ ...formData, expectedBirthDate: date })}
-                minimumDate={formData.coverageDate}
-                disabled={saving}
-              />
-            </View>
-
-            {/* Resultado do Parto */}
-            <View className="gap-2">
-              <Text className="text-sm font-semibold text-foreground">Resultado do Parto</Text>
-              <View className="gap-2">
-                <TouchableOpacity
-                  onPress={() => handleResultChange("pending")}
-                  className={`p-3 rounded-lg border-2 ${
-                    formData.result === "pending" ? "border-primary bg-primary/10" : "border-border"
-                  }`}
-                  style={{ opacity: 1 }}
-                >
-                  <Text
-                    className={`font-semibold ${formData.result === "pending" ? "text-primary" : "text-foreground"}`}
-                  >
-                    Aguardando Parto
-                  </Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                  onPress={() => handleResultChange("success")}
-                  className={`p-3 rounded-lg border-2 ${
-                    formData.result === "success" ? "border-success bg-success/10" : "border-border"
-                  }`}
-                  style={{ opacity: 1 }}
-                >
-                  <Text
-                    className={`font-semibold ${formData.result === "success" ? "text-success" : "text-foreground"}`}
-                  >
-                    Sucesso - Parto Normal
-                  </Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                  onPress={() => handleResultChange("complications")}
-                  className={`p-3 rounded-lg border-2 ${
-                    formData.result === "complications" ? "border-warning bg-warning/10" : "border-border"
-                  }`}
-                  style={{ opacity: 1 }}
-                >
-                  <Text
-                    className={`font-semibold ${
-                      formData.result === "complications" ? "text-warning" : "text-foreground"
-                    }`}
-                  >
-                    Complicações no Parto
-                  </Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                  onPress={() => handleResultChange("failed")}
-                  className={`p-3 rounded-lg border-2 ${
-                    formData.result === "failed" ? "border-error bg-error/10" : "border-border"
-                  }`}
-                  style={{ opacity: 1 }}
-                >
-                  <Text className={`font-semibold ${formData.result === "failed" ? "text-error" : "text-foreground"}`}>
-                    Falha - Gestação Perdida
-                  </Text>
-                </TouchableOpacity>
+      <View className="flex-1 gap-4" style={{ paddingBottom: insets.bottom }}>
+        <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+          <View className="gap-6 p-4">
+            {/* Current Status */}
+            {pregnancy && (
+              <View className="bg-surface rounded-xl p-4 border border-border">
+                <Text className="text-sm font-medium text-muted mb-2">Status Atual</Text>
+                <Text className="text-base font-semibold text-foreground">
+                  {formData.result === "pending"
+                    ? "Aguardando Parto"
+                    : formData.result === "success"
+                      ? "Parto com Sucesso"
+                      : formData.result === "complications"
+                        ? "Parto com Complicações"
+                        : "Gestação Perdida"}
+                </Text>
               </View>
-            </View>
+            )}
 
-            {/* Data Real do Parto */}
-            {formData.result !== "pending" && (
+            {/* Form Fields */}
+            <View className="gap-4">
+              {/* Data de Cobertura */}
               <View className="gap-2">
-                <Text className="text-sm font-semibold text-foreground">Data do Parto</Text>
+                <Text className="text-sm font-semibold text-foreground">Data de Cobertura/Inseminação *</Text>
                 <CustomDatePicker
-                  value={formData.actualBirthDate || new Date()}
-                  onChange={(date) => setFormData({ ...formData, actualBirthDate: date })}
+                  value={formData.coverageDate}
+                  onChange={(date) => setFormData({ ...formData, coverageDate: date })}
                   maximumDate={new Date()}
                   disabled={saving}
                 />
               </View>
-            )}
 
-            {/* Complicações */}
-            {formData.result === "complications" && (
+              {/* Data Prevista de Parto */}
               <View className="gap-2">
-                <Text className="text-sm font-semibold text-foreground">Descrição das Complicações</Text>
-                <View className="bg-surface rounded-lg border border-border">
-                  <TextInput
-                    multiline
-                    numberOfLines={4}
-                    value={formData.complications}
-                    onChangeText={(text) => setFormData({ ...formData, complications: text })}
-                    placeholder="Descreva as complicações ocorridas durante o parto..."
-                    placeholderTextColor={colors.muted}
-                    className="p-3 text-base text-foreground"
-                    textAlignVertical="top"
-                  />
+                <Text className="text-sm font-semibold text-foreground">Data Prevista de Parto *</Text>
+                <CustomDatePicker
+                  value={formData.expectedBirthDate}
+                  onChange={(date) => setFormData({ ...formData, expectedBirthDate: date })}
+                  minimumDate={formData.coverageDate}
+                  disabled={saving}
+                />
+              </View>
+
+              {/* Resultado do Parto */}
+              <View className="gap-2">
+                <Text className="text-sm font-semibold text-foreground">Resultado do Parto</Text>
+                <View className="gap-2">
+                  <TouchableOpacity
+                    onPress={() => handleResultChange("pending")}
+                    className={`p-3 rounded-lg border-2 ${
+                      formData.result === "pending" ? "border-primary bg-primary/10" : "border-border"
+                    }`}
+                    style={{ opacity: 1 }}
+                  >
+                    <Text
+                      className={`font-semibold ${formData.result === "pending" ? "text-primary" : "text-foreground"}`}
+                    >
+                      Aguardando Parto
+                    </Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    onPress={() => handleResultChange("success")}
+                    className={`p-3 rounded-lg border-2 ${
+                      formData.result === "success" ? "border-success bg-success/10" : "border-border"
+                    }`}
+                    style={{ opacity: 1 }}
+                  >
+                    <Text
+                      className={`font-semibold ${formData.result === "success" ? "text-success" : "text-foreground"}`}
+                    >
+                      Sucesso - Parto Normal
+                    </Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    onPress={() => handleResultChange("complications")}
+                    className={`p-3 rounded-lg border-2 ${
+                      formData.result === "complications" ? "border-warning bg-warning/10" : "border-border"
+                    }`}
+                    style={{ opacity: 1 }}
+                  >
+                    <Text
+                      className={`font-semibold ${
+                        formData.result === "complications" ? "text-warning" : "text-foreground"
+                      }`}
+                    >
+                      Complicações no Parto
+                    </Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    onPress={() => handleResultChange("failed")}
+                    className={`p-3 rounded-lg border-2 ${
+                      formData.result === "failed" ? "border-error bg-error/10" : "border-border"
+                    }`}
+                    style={{ opacity: 1 }}
+                  >
+                    <Text
+                      className={`font-semibold ${formData.result === "failed" ? "text-error" : "text-foreground"}`}
+                    >
+                      Falha - Gestação Perdida
+                    </Text>
+                  </TouchableOpacity>
                 </View>
               </View>
+
+              {/* Data Real do Parto */}
+              {formData.result !== "pending" && (
+                <View className="gap-2">
+                  <Text className="text-sm font-semibold text-foreground">Data do Parto</Text>
+                  <CustomDatePicker
+                    value={formData.actualBirthDate || new Date()}
+                    onChange={(date) => setFormData({ ...formData, actualBirthDate: date })}
+                    maximumDate={new Date()}
+                    disabled={saving}
+                  />
+                </View>
+              )}
+
+              {/* Complicações */}
+              {formData.result === "complications" && (
+                <View className="gap-2">
+                  <Text className="text-sm font-semibold text-foreground">Descrição das Complicações</Text>
+                  <View className="bg-surface rounded-lg border border-border">
+                    <TextInput
+                      multiline
+                      numberOfLines={4}
+                      value={formData.complications}
+                      onChangeText={(text) => setFormData({ ...formData, complications: text })}
+                      placeholder="Descreva as complicações ocorridas durante o parto..."
+                      placeholderTextColor={colors.muted}
+                      className="p-3 text-base text-foreground"
+                      textAlignVertical="top"
+                    />
+                  </View>
+                </View>
+              )}
+            </View>
+
+            {/* Create Calf Button */}
+            {formData.result === "success" && !pregnancy?.calfId && (
+              <TouchableOpacity
+                onPress={handleCreateCalf}
+                disabled={creatingCalf}
+                className="bg-success rounded-lg p-4 items-center"
+                style={{ opacity: creatingCalf ? 0.6 : 1 }}
+              >
+                {creatingCalf ? (
+                  <ActivityIndicator color="white" />
+                ) : (
+                  <Text className="text-white font-semibold text-base">Cadastrar Bezerro Nascimento</Text>
+                )}
+              </TouchableOpacity>
             )}
           </View>
+        </ScrollView>
+        {/* Buttons */}
+        <View className="gap-3 mt-6">
+          <TouchableOpacity onPress={handleSave} disabled={saving} className="bg-primary rounded-lg p-4 items-center">
+            {saving ? (
+              <ActivityIndicator color="white" />
+            ) : (
+              <Text className="text-white font-semibold text-base">Salvar Alterações</Text>
+            )}
+          </TouchableOpacity>
 
-          {/* Create Calf Button */}
-          {formData.result === "success" && !pregnancy?.calfId && (
-            <TouchableOpacity
-              onPress={handleCreateCalf}
-              disabled={creatingCalf}
-              className="bg-success rounded-lg p-4 items-center"
-              style={{ opacity: creatingCalf ? 0.6 : 1 }}
-            >
-              {creatingCalf ? (
-                <ActivityIndicator color="white" />
-              ) : (
-                <Text className="text-white font-semibold text-base">Cadastrar Bezerro Nascimento</Text>
-              )}
-            </TouchableOpacity>
-          )}
-
-          {/* Buttons */}
-          <View className="gap-3 mt-6">
-            <TouchableOpacity onPress={handleSave} disabled={saving} className="bg-primary rounded-lg p-4 items-center">
-              {saving ? (
-                <ActivityIndicator color="white" />
-              ) : (
-                <Text className="text-white font-semibold text-base">Salvar Alterações</Text>
-              )}
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              onPress={() => navigation.goBack()}
-              disabled={saving}
-              className="border border-border rounded-lg p-4 items-center"
-            >
-              <Text className="text-foreground font-semibold text-base">Cancelar</Text>
-            </TouchableOpacity>
-          </View>
+          <TouchableOpacity
+            onPress={() => navigation.goBack()}
+            disabled={saving}
+            className="border border-border rounded-lg p-4 items-center"
+          >
+            <Text className="text-foreground font-semibold text-base">Cancelar</Text>
+          </TouchableOpacity>
         </View>
-      </ScrollView>
+      </View>
     </ScreenContainer>
   );
 }

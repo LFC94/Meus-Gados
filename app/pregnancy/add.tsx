@@ -1,27 +1,34 @@
 import { CustomDatePicker } from "@/components/date-picker";
 import { ScreenContainer } from "@/components/screen-container";
-import { useNavigation } from "@/hooks";
-import { useColors } from "@/hooks/use-colors";
+import { useColors, useNavigation, useScreenHeader } from "@/hooks";
 import { calculateExpectedBirthDateAsDate } from "@/lib/helpers";
 import { schedulePregnancyNotification } from "@/lib/notifications";
 import { cattleStorage, pregnancyStorage } from "@/lib/storage";
-import { Cattle } from "@/types";
+import { Cattle, RootStackParamList } from "@/types";
+import { RouteProp, useRoute } from "@react-navigation/native";
 import * as Haptics from "expo-haptics";
 import { useEffect, useState } from "react";
 import { ActivityIndicator, Alert, Platform, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function AddPregnancyScreen() {
   const navigation = useNavigation();
+  const route = useRoute<RouteProp<RootStackParamList, "PregnancyAdd">>();
+  const { cattleId } = route.params;
   const colors = useColors();
   const [loading, setLoading] = useState(false);
   const [loadingCattle, setLoadingCattle] = useState(true);
   const [cattle, setCattle] = useState<Cattle[]>([]);
   const [showCattlePicker, setShowCattlePicker] = useState(false);
   const [formData, setFormData] = useState({
-    cattleId: "",
+    cattleId: cattleId,
     coverageDate: new Date(),
     expectedBirthDate: new Date(),
   });
+
+  const insets = useSafeAreaInsets();
+
+  useScreenHeader("Registrar Gestação");
 
   useEffect(() => {
     loadCattle();
@@ -112,19 +119,7 @@ export default function AddPregnancyScreen() {
 
   return (
     <ScreenContainer className="p-6">
-      <View className="flex-1 gap-4">
-        {/* Header */}
-        <View className="flex-row items-center justify-between">
-          <Text className="text-2xl font-bold text-foreground">Registrar Gestação</Text>
-          <TouchableOpacity
-            onPress={() => navigation.goBack()}
-            className="w-10 h-10 items-center justify-center"
-            style={{ opacity: 1 }}
-          >
-            <Text className="text-primary font-semibold text-base">Voltar</Text>
-          </TouchableOpacity>
-        </View>
-
+      <View className="flex-1 gap-4" style={{ paddingBottom: insets.bottom }}>
         <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
           <View className="gap-4 pb-6">
             {/* Animal */}

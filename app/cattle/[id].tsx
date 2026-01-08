@@ -398,7 +398,7 @@ export default function CattleDetailScreen() {
                 <View className="items-center py-8">
                   <Text className="text-muted text-center mb-4">Nenhuma gestação registrada</Text>
                   <TouchableOpacity
-                    onPress={() => navigation.navigate("PregnancyAdd" as never)}
+                    onPress={() => navigation.navigate("PregnancyAdd" as never, { cattleId: id } as never)}
                     className="bg-primary rounded-full px-6 py-3"
                     style={{ opacity: 1 }}
                   >
@@ -424,7 +424,7 @@ export default function CattleDetailScreen() {
                     />
                   ))}
                   <TouchableOpacity
-                    onPress={() => navigation.navigate("PregnancyAdd" as never)}
+                    onPress={() => navigation.navigate("PregnancyAdd" as never, { cattleId: id } as never)}
                     className="bg-primary rounded-full p-4 items-center mt-2"
                     style={{ opacity: 1 }}
                   >
