@@ -1,12 +1,20 @@
+import { STORAGE_KEYS } from "@/constants/const";
+import { Cattle, Disease, Pregnancy, VaccinationRecord, VaccineModel } from "@/types";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { cattleStorage, vaccineStorage, pregnancyStorage, diseaseStorage } from "./storage";
-import { Cattle, Vaccine, Pregnancy, Disease } from "@/types";
+import {
+  cattleStorage,
+  diseaseStorage,
+  pregnancyStorage,
+  vaccinationRecordStorage,
+  vaccineCatalogStorage,
+} from "./storage";
 
 export interface BackupData {
   version: string;
   timestamp: string;
   cattle: Cattle[];
-  vaccines: Vaccine[];
+  vaccineCatalog: VaccineModel[];
+  vaccinationRecord: VaccinationRecord[];
   pregnancies: Pregnancy[];
   diseases: Disease[];
 }
@@ -16,9 +24,10 @@ const BACKUP_PREFIX = "@meus_gados_backup_";
 export const backupService = {
   async createBackup(): Promise<BackupData> {
     try {
-      const [cattle, vaccines, pregnancies, diseases] = await Promise.all([
+      const [cattle, vaccineCatalog, vaccinationRecord, pregnancies, diseases] = await Promise.all([
         cattleStorage.getAll(),
-        vaccineStorage.getAll(),
+        vaccineCatalogStorage.getAll(),
+        vaccinationRecordStorage.getAll(),
         pregnancyStorage.getAll(),
         diseaseStorage.getAll(),
       ]);
@@ -27,7 +36,8 @@ export const backupService = {
         version: "1.0",
         timestamp: new Date().toISOString(),
         cattle,
-        vaccines,
+        vaccineCatalog,
+        vaccinationRecord,
         pregnancies,
         diseases,
       };
@@ -59,7 +69,7 @@ export const backupService = {
     }
   },
 
-  async getBackupList(): Promise<Array<{ id: string; backup: BackupData }>> {
+  async getBackupList(): Promise<{ id: string; backup: BackupData }[]> {
     try {
       const keys = await AsyncStorage.getAllKeys();
       const backupKeys = keys.filter((key) => key.startsWith(BACKUP_PREFIX));
@@ -77,7 +87,7 @@ export const backupService = {
         })
       );
 
-      return backups.filter((b) => b !== null) as Array<{ id: string; backup: BackupData }>;
+      return backups.filter((b) => b !== null) as { id: string; backup: BackupData }[];
     } catch (error) {
       console.error("Error getting backup list:", error);
       throw error;
@@ -88,20 +98,22 @@ export const backupService = {
     try {
       // Clear existing data by removing all keys
       await Promise.all([
-        AsyncStorage.removeItem("@meus_gados_cattle"),
-        AsyncStorage.removeItem("@meus_gados_vaccines"),
-        AsyncStorage.removeItem("@meus_gados_pregnancies"),
-        AsyncStorage.removeItem("@meus_gados_diseases"),
+        AsyncStorage.removeItem(STORAGE_KEYS.CATTLE),
+        AsyncStorage.removeItem(STORAGE_KEYS.DISEASES),
+        AsyncStorage.removeItem(STORAGE_KEYS.PREGNANCIES),
+        AsyncStorage.removeItem(STORAGE_KEYS.VACCINATION_RECORDS),
+        AsyncStorage.removeItem(STORAGE_KEYS.VACCINE_CATALOG),
       ]);
 
       // Restore data
       const addPromises = [
         ...backup.cattle.map((c) => cattleStorage.add(c)),
-        ...backup.vaccines.map((v) => vaccineStorage.add(v)),
+        ...backup.vaccineCatalog.map((v) => vaccineCatalogStorage.add(v)),
+        ...backup.vaccinationRecord.map((v) => vaccinationRecordStorage.add(v)),
         ...backup.pregnancies.map((p) => pregnancyStorage.add(p)),
         ...backup.diseases.map((d) => diseaseStorage.add(d)),
       ];
-      
+
       await Promise.all(addPromises);
     } catch (error) {
       console.error("Error restoring backup:", error);
@@ -121,9 +133,15 @@ export const backupService = {
   async importBackupFromJSON(jsonString: string): Promise<BackupData> {
     try {
       const backup = JSON.parse(jsonString) as BackupData;
-      
+
       // Validate backup structure
-      if (!backup.cattle || !backup.vaccines || !backup.pregnancies || !backup.diseases) {
+      if (
+        !backup.cattle ||
+        !backup.vaccineCatalog ||
+        !backup.vaccinationRecord ||
+        !backup.pregnancies ||
+        !backup.diseases
+      ) {
         throw new Error("Invalid backup format");
       }
 

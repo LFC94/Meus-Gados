@@ -238,7 +238,7 @@ export default function SettingsScreen() {
                         })}
                       </Text>
                       <Text className="text-xs text-muted">
-                        {item.backup.cattle.length} animais • {item.backup.vaccines.length} vacinas
+                        {item.backup.cattle.length} animais • {item.backup.vaccineCatalog.length} vacinas
                       </Text>
                     </View>
 

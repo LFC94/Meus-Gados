@@ -219,7 +219,7 @@ Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para ma
 
 **Lucas Felipe Costa**
 
-- GitHub: [@seu-usuario](https://github.com/LFC94)
+- GitHub: [@LFC94](https://github.com/LFC94)
 
 ## 🙏 Agradecimentos
 
