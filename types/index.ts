@@ -15,6 +15,8 @@ export interface Cattle {
   updatedAt: string;
 }
 
+export type CattleResult = "in_treatment" | "healthy" | "death" | "overdue_pregnancy" | "pregnancy" | "pending_vaccine";
+
 /**
  * Catálogo de Vacinas (Cadastro de Imunizantes)
  * Representa o produto físico/medicamento disponível no mercado

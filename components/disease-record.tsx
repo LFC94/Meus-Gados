@@ -21,7 +21,7 @@ export function DiseaseRecord({ disease, onEdit, onDelete, expanded = false }: D
   const getResultColor = (result: DiseaseResult): string => {
     switch (result) {
       case "in_treatment":
-        return "#F59E0B";
+        return "#f5550b";
       case "cured":
         return "#22C55E";
       case "death":
@@ -34,7 +34,7 @@ export function DiseaseRecord({ disease, onEdit, onDelete, expanded = false }: D
   const getResultBgColor = (result: DiseaseResult): string => {
     switch (result) {
       case "in_treatment":
-        return "#F59E0B20";
+        return "#f5550b20";
       case "cured":
         return "#22C55E20";
       case "death":
@@ -74,7 +74,7 @@ export function DiseaseRecord({ disease, onEdit, onDelete, expanded = false }: D
             style={{ backgroundColor: getResultBgColor(disease.result) }}
           >
             <Text className="text-lg">
-              {disease.result === "in_treatment" ? "🏥" : disease.result === "cured" ? "✅" : "✝️"}
+              {disease.result === "in_treatment" ? "🏥" : disease.result === "cured" ? "💚" : "✝️"}
             </Text>
           </View>
           <View className="flex-1">

@@ -1,4 +1,4 @@
-import { DiseaseResult, PregnancyResult } from "@/types";
+import { CattleResult, DiseaseResult, PregnancyResult } from "@/types";
 
 export const COOKIE_NAME = "app_session_id";
 export const ONE_YEAR_MS = 1000 * 60 * 60 * 24 * 365;
@@ -70,4 +70,16 @@ export const DISEASE_RESULT_LABELS: Record<DiseaseResult, string> = {
   in_treatment: "Em Tratamento",
   cured: "Curado",
   death: "Óbito",
+};
+
+/**
+ * STATUS do GADO
+ */
+export const STATUS_CATTLE: Record<CattleResult, { color: string; text: string; icon: string }> = {
+  in_treatment: { color: "#f5550b", text: "Em Tratamento", icon: "🏥" },
+  healthy: { color: "#22C55E", text: "Saudável", icon: "💚" },
+  death: { color: "#FF0000", text: "Óbito", icon: "✝️" },
+  pregnancy: { color: "#c2f50bff", text: "Gestação", icon: "🐣" },
+  overdue_pregnancy: { color: "#EF4444", text: "Gestação Atrasada", icon: "" },
+  pending_vaccine: { color: "#F59E0B", text: "Vacina Pendente", icon: "💉" },
 };

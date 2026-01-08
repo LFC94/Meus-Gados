@@ -1,7 +1,8 @@
 import { IconSymbol } from "@/components/icon-symbol";
+import { STATUS_CATTLE } from "@/constants/const";
 import { useColors } from "@/hooks/use-colors";
 import { formatAge } from "@/lib/helpers";
-import { Cattle } from "@/types";
+import { Cattle, CattleResult } from "@/types";
 import { useRouter } from "expo-router";
 import React from "react";
 import { Text, TouchableOpacity, View } from "react-native";
@@ -9,15 +10,13 @@ import { Text, TouchableOpacity, View } from "react-native";
 interface CattleCardProps {
   cattle: Cattle;
   showStatus?: boolean;
-  statusColor?: string;
+  status: CattleResult;
   onPress?: () => void;
 }
 
-export function CattleCard({ cattle, showStatus = true, statusColor, onPress }: CattleCardProps) {
+export function CattleCard({ cattle, showStatus = true, status, onPress }: CattleCardProps) {
   const router = useRouter();
   const colors = useColors();
-
-  const defaultStatusColor = statusColor || "#22C55E";
 
   const handlePress = () => {
     if (onPress) {
@@ -32,11 +31,15 @@ export function CattleCard({ cattle, showStatus = true, statusColor, onPress }: 
       onPress={handlePress}
       className="bg-surface rounded-2xl p-4 border border-border flex-row items-center gap-4"
       style={{ opacity: 1 }}
-      accessibilityLabel={`Animal ${cattle.number}${cattle.name ? `, ${cattle.name}` : ""}`}
+      accessibilityLabel={`Animal ${cattle.number}${cattle.name ? `, ${cattle.name}` : ""}, ${STATUS_CATTLE[status].text}`}
       accessibilityRole="button"
     >
       {/* Status Bar */}
-      <View className="w-1 h-20 rounded-full" style={{ backgroundColor: defaultStatusColor }} accessible={false} />
+      <View
+        className="w-1 h-20 rounded-full"
+        style={{ backgroundColor: STATUS_CATTLE[status].color }}
+        accessible={false}
+      />
 
       {/* Content */}
       <View className="flex-1">
@@ -48,6 +51,13 @@ export function CattleCard({ cattle, showStatus = true, statusColor, onPress }: 
           {cattle.breed} • {formatAge(cattle.birthDate)} • {cattle.weight} kg
         </Text>
       </View>
+
+      {showStatus && (
+        <View className="flex items-center">
+          <Text className="text-lg">{STATUS_CATTLE[status].icon}</Text>
+          <Text style={{ color: STATUS_CATTLE[status].color }}>{STATUS_CATTLE[status].text}</Text>
+        </View>
+      )}
 
       {/* Arrow */}
       <IconSymbol name="chevron.right" size={20} color={colors.muted} />

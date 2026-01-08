@@ -4,10 +4,11 @@ import { IconSymbol } from "@/components/icon-symbol";
 import { PregnancyTimeline } from "@/components/pregnancy-timeline";
 import { ScreenContainer } from "@/components/screen-container";
 import { VaccineItem } from "@/components/vaccine-item";
+import { STATUS_CATTLE } from "@/constants/const";
 import { useColors, useNavigation, useScreenHeader } from "@/hooks";
 import { formatDate, formatWeight } from "@/lib/helpers";
 import { cattleStorage, diseaseStorage, pregnancyStorage, vaccinationRecordStorage } from "@/lib/storage";
-import { Cattle, Disease, Pregnancy, RootStackParamList, VaccinationRecordWithDetails } from "@/types";
+import { Cattle, CattleResult, Disease, Pregnancy, RootStackParamList, VaccinationRecordWithDetails } from "@/types";
 import { RouteProp, useFocusEffect, useRoute } from "@react-navigation/native";
 import * as Haptics from "expo-haptics";
 import React, { useState } from "react";
@@ -136,22 +137,25 @@ export default function CattleDetailScreen() {
     ]);
   };
 
-  const getStatusBadge = () => {
+  const getStatusBadge = (): CattleResult => {
+    // Check for disease in treatment
+    const inDeath = diseases.find((d) => d.result === "death");
+    if (inDeath) {
+      return "death";
+    }
+
     // Check for active pregnancy
     const activePregnancy = pregnancies.find((p) => p.result === "pending");
     if (activePregnancy) {
       const expectedBirthDate = new Date(activePregnancy.expectedBirthDate);
       const isOverdue = new Date() > expectedBirthDate;
-      return {
-        color: isOverdue ? "#EF4444" : "#22C55E",
-        text: isOverdue ? "Gestação Atrasada" : "Gestante",
-      };
+      return isOverdue ? "overdue_pregnancy" : "pregnancy";
     }
 
     // Check for disease in treatment
     const inTreatment = diseases.find((d) => d.result === "in_treatment");
     if (inTreatment) {
-      return { color: "#F59E0B", text: "Em Tratamento" };
+      return "in_treatment";
     }
 
     // Check for pending vaccines
@@ -163,10 +167,10 @@ export default function CattleDetailScreen() {
       return nextDoseDate <= thirtyDaysFromNow;
     });
     if (hasPendingVaccine) {
-      return { color: "#F59E0B", text: "Vacina Pendente" };
+      return "pending_vaccine";
     }
 
-    return { color: "#22C55E", text: "Saudável" };
+    return "healthy";
   };
 
   if (loading) {
@@ -192,7 +196,7 @@ export default function CattleDetailScreen() {
     );
   }
 
-  const statusBadge = getStatusBadge();
+  const statusBadge = STATUS_CATTLE[getStatusBadge()];
 
   return (
     <ScreenContainer className="p-0">
@@ -220,7 +224,7 @@ export default function CattleDetailScreen() {
           {/* Status Badge */}
           <View className="bg-surface rounded-2xl p-4 border border-border items-center">
             <View className="flex-row items-center gap-2">
-              <View className="w-3 h-3 rounded-full" style={{ backgroundColor: statusBadge.color }} />
+              <Text className="text-base">{statusBadge.icon}</Text>
               <Text className="text-base font-semibold" style={{ color: statusBadge.color }}>
                 {statusBadge.text}
               </Text>

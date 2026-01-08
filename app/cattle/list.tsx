@@ -4,7 +4,7 @@ import { useColors } from "@/hooks/use-colors";
 import useNavigation from "@/hooks/use-navigation";
 import useScreenHeader from "@/hooks/use-screen-header";
 import { cattleStorage, diseaseStorage, pregnancyStorage, vaccinationRecordStorage } from "@/lib/storage";
-import { Cattle, Disease, Pregnancy, VaccinationRecord } from "@/types";
+import { Cattle, CattleResult, Disease, Pregnancy, VaccinationRecord } from "@/types";
 import { useFocusEffect } from "@react-navigation/native";
 import React, { useEffect, useState } from "react";
 import { ActivityIndicator, RefreshControl, ScrollView, Text, TextInput, TouchableOpacity, View } from "react-native";
@@ -92,21 +92,27 @@ export default function CattleListScreen() {
     setFilteredCattle(filtered);
   };
 
-  const getStatusColor = (cattleItem: Cattle): string => {
-    // Check if pregnant (active pregnancy)
-    const activePregnancy = pregnancies.find((p) => p.cattleId === cattleItem.id && p.result === "pending");
-    if (activePregnancy) {
-      const expectedBirthDate = new Date(activePregnancy.expectedBirthDate);
-      if (new Date() > expectedBirthDate) {
-        return "#EF4444"; // Overdue pregnancy - red
-      }
-      return "#22C55E"; // Pregnant - green
+  const getStatus = (cattleItem: Cattle): CattleResult => {
+    // Check if in treatment for disease
+    const inDeath = diseases.find((d) => d.cattleId === cattleItem.id && d.result === "death");
+    if (inDeath) {
+      return "death"; // death - red
     }
 
     // Check if in treatment for disease
     const inTreatment = diseases.find((d) => d.cattleId === cattleItem.id && d.result === "in_treatment");
     if (inTreatment) {
-      return "#F59E0B"; // In treatment - yellow
+      return "in_treatment"; // In treatment - orange
+    }
+
+    // Check if pregnant (active pregnancy)
+    const activePregnancy = pregnancies.find((p) => p.cattleId === cattleItem.id && p.result === "pending");
+    if (activePregnancy) {
+      const expectedBirthDate = new Date(activePregnancy.expectedBirthDate);
+      if (new Date() > expectedBirthDate) {
+        return "overdue_pregnancy"; // Overdue pregnancy - red
+      }
+      return "pregnancy";
     }
 
     // Check for pending vaccines (within 30 days)
@@ -118,10 +124,10 @@ export default function CattleListScreen() {
       return nextDoseDate <= thirtyDaysFromNow;
     });
     if (pendingVaccine) {
-      return "#F59E0B"; // Pending vaccine - yellow
+      return "pending_vaccine"; // Pending vaccine - yellow
     }
 
-    return "#22C55E"; // Healthy - green
+    return "healthy"; // Healthy - green
   };
 
   if (loading) {
@@ -175,7 +181,7 @@ export default function CattleListScreen() {
                   <CattleCard
                     key={item.id}
                     cattle={item}
-                    statusColor={getStatusColor(item)}
+                    status={getStatus(item)}
                     onPress={() => navigation.navigate("CattleDetail", { id: item.id })}
                   />
                 ))}
