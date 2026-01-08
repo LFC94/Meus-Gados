@@ -145,7 +145,7 @@ export default function CattleListScreen() {
               </Text>
               {!searchQuery && (
                 <TouchableOpacity
-                  onPress={() => navigation.navigate("CattleEdit")}
+                  onPress={() => navigation.navigate("CattleCad")}
                   className="mt-4 bg-primary rounded-full px-6 py-3"
                   style={{ opacity: 1 }}
                 >
@@ -168,7 +168,7 @@ export default function CattleListScreen() {
 
               {/* Add Button */}
               <TouchableOpacity
-                onPress={() => navigation.navigate("CattleEdit")}
+                onPress={() => navigation.navigate("CattleCad")}
                 className="bg-primary rounded-full p-4 items-center mt-4"
                 style={{ opacity: 1 }}
               >

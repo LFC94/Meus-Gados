@@ -31,7 +31,7 @@ export default function CattleDetailScreen() {
 
   useScreenHeader("Detalhes do Animal", undefined, () => (
     <TouchableOpacity
-      onPress={() => navigation.navigate("CattleEdit", { id })}
+      onPress={() => navigation.navigate("CattleCad", { id })}
       className="w-10 h-10 items-center justify-center"
       style={{ opacity: 1 }}
     >
@@ -339,7 +339,7 @@ export default function CattleDetailScreen() {
                 )}
               </View>
               <TouchableOpacity
-                onPress={() => navigation.navigate("CattleEdit" as never, { id } as never)}
+                onPress={() => navigation.navigate("CattleCad" as never, { id } as never)}
                 className="bg-surface rounded-2xl p-4 border border-border flex-row items-center"
                 style={{ opacity: 1 }}
               >
@@ -363,7 +363,7 @@ export default function CattleDetailScreen() {
                 <View className="items-center py-8">
                   <Text className="text-muted text-center mb-4">Nenhuma vacina registrada</Text>
                   <TouchableOpacity
-                    onPress={() => navigation.navigate("VaccineAdd" as never, { cattleId: id } as never)}
+                    onPress={() => navigation.navigate("VaccineCad" as never, { cattleId: id } as never)}
                     className="bg-primary rounded-full px-6 py-3"
                     style={{ opacity: 1 }}
                   >
@@ -376,12 +376,12 @@ export default function CattleDetailScreen() {
                     <VaccineItem
                       key={vaccine.id}
                       vaccine={vaccine}
-                      onEdit={() => navigation.navigate("VaccineEdit" as never, { id: vaccine.id } as never)}
+                      onEdit={() => navigation.navigate("VaccineCad" as never, { id: vaccine.id } as never)}
                       onDelete={() => handleDeleteVaccine(vaccine.id)}
                     />
                   ))}
                   <TouchableOpacity
-                    onPress={() => navigation.navigate("VaccineAdd" as never, { cattleId: id } as never)}
+                    onPress={() => navigation.navigate("VaccineCad" as never, { cattleId: id } as never)}
                     className="bg-primary rounded-full p-4 items-center mt-2"
                     style={{ opacity: 1 }}
                   >

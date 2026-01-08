@@ -22,9 +22,9 @@ import { createStackNavigator } from "@react-navigation/stack";
 // Screens
 import { RootStackParamList } from "@/types";
 
-import { NotificationsSettingsScreen } from ".";
+import { NotificationsSettingsScreen, VaccineCadScreen } from ".";
 import CattleDetailScreen from "./cattle/[id]";
-import CattleEditScreen from "./cattle/edit";
+import CattleCadScreen from "./cattle/cad";
 import CattleListScreen from "./cattle/list";
 import DiseasesAddScreen from "./diseases/add";
 import DiseasesEditScreen from "./diseases/edit";
@@ -33,11 +33,9 @@ import ScheduledNotificationsScreen from "./notifications/scheduled";
 import PregnancyAddScreen from "./pregnancy/add";
 import PregnancyEditScreen from "./pregnancy/edit";
 import SettingsScreen from "./settings";
-import VaccineAddScreen from "./vaccines/add";
 import VaccineCatalogAddScreen from "./vaccines/catalog/add";
 import VaccineCatalogEditScreen from "./vaccines/catalog/edit";
 import VaccineCatalogScreen from "./vaccines/catalog/index";
-import EditVaccineScreen from "./vaccines/edit";
 import VaccinePendingScreen from "./vaccines/pending";
 
 const DEFAULT_WEB_INSETS: EdgeInsets = { top: 0, right: 0, bottom: 0, left: 0 };
@@ -149,26 +147,26 @@ function MainStackNavigator() {
         }}
       />
       <Stack.Screen
-        name="CattleEdit"
-        component={CattleEditScreen}
+        name="CattleCad"
+        component={CattleCadScreen}
         options={{
           title: "Editar Animal",
         }}
       />
       <Stack.Screen
-        name="VaccineAdd"
-        component={VaccineAddScreen}
+        name="VaccineCad"
+        component={VaccineCadScreen}
         options={{
           title: "Registrar Vacina",
         }}
       />
-      <Stack.Screen
+      {/* <Stack.Screen
         name="VaccineEdit"
         component={EditVaccineScreen}
         options={{
           title: "Editar Vacina",
         }}
-      />
+      /> */}
       <Stack.Screen
         name="VaccineCatalogEdit"
         component={VaccineCatalogEditScreen}

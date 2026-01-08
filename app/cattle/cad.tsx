@@ -1,9 +1,7 @@
 import { CustomDatePicker } from "@/components/date-picker";
 import { ScreenContainer } from "@/components/screen-container";
 import { CATTLE_BREEDS } from "@/constants/const";
-import { useColors } from "@/hooks/use-colors";
-import useNavigation from "@/hooks/use-navigation";
-import useScreenHeader from "@/hooks/use-screen-header";
+import { useColors, useNavigation, useScreenHeader } from "@/hooks";
 import { validateCattleNumber, validateWeight } from "@/lib/helpers";
 import { cattleStorage } from "@/lib/storage";
 import { RootStackParamList } from "@/types";
@@ -13,9 +11,9 @@ import { useEffect, useState } from "react";
 import { ActivityIndicator, Alert, Platform, ScrollView, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-export default function EditCattleScreen() {
+export default function CattleCadScreen() {
   const navigation = useNavigation();
-  const route = useRoute<RouteProp<RootStackParamList, "CattleEdit">>();
+  const route = useRoute<RouteProp<RootStackParamList, "CattleCad">>();
   const colors = useColors();
   const id = route.params?.id;
   const [loading, setLoading] = useState(true);

@@ -12,11 +12,11 @@ import { useEffect, useState } from "react";
 import { ActivityIndicator, Alert, Platform, ScrollView, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-export default function AddVaccineScreen() {
+export default function VaccineCadScreen() {
   const navigation = useNavigation();
-  const route = useRoute<RouteProp<RootStackParamList, "VaccineAdd">>();
+  const route = useRoute<RouteProp<RootStackParamList, "VaccineCad">>();
   const colors = useColors();
-  const { cattleId } = route.params;
+  const { id, cattleId } = route.params;
   const [loading, setLoading] = useState(false);
   const [loadingCattle, setLoadingCattle] = useState(true);
   const [loadingCatalog, setLoadingCatalog] = useState(true);
@@ -34,12 +34,16 @@ export default function AddVaccineScreen() {
   });
   const insets = useSafeAreaInsets();
 
-  useScreenHeader("Registrar Vacina");
+  useScreenHeader(id ? "Editar Vacina" : "Registrar Vacina");
 
   useEffect(() => {
     loadCattle();
     loadVaccineCatalog();
   }, []);
+
+  useEffect(() => {
+    loadVaccine();
+  }, [id]);
 
   const loadCattle = async () => {
     try {
@@ -50,6 +54,34 @@ export default function AddVaccineScreen() {
       console.error("Erro ao carregar animais:", error);
     } finally {
       setLoadingCattle(false);
+    }
+  };
+
+  const loadVaccine = async () => {
+    try {
+      if (!id) return;
+
+      const vaccination = await vaccinationRecordStorage.getById(id);
+
+      if (vaccination) {
+        const vaccine = await vaccineCatalogStorage.getById(vaccination.vaccineId);
+        if (!vaccine) {
+          return;
+        }
+        setFormData({
+          cattleId: vaccination.cattleId,
+          vaccineId: vaccination.vaccineId,
+          appliedDate: new Date(vaccination.dateApplied),
+          nextDose: new Date(vaccination.nextDoseDate || ""),
+          batchUsed: vaccination.batchUsed || "",
+          notes: vaccination.notes || "",
+        });
+      }
+    } catch (error) {
+      console.error("Error loading vaccine:", error);
+      Alert.alert("Erro", "Não foi possível carregar os dados da vacina");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -94,32 +126,36 @@ export default function AddVaccineScreen() {
       }
 
       const selectedVaccine = vaccineCatalog.find((v) => v.id === formData.vaccineId);
-
-      const record = await vaccinationRecordStorage.add({
+      const data = {
         cattleId: formData.cattleId,
         vaccineId: formData.vaccineId,
         dateApplied: formData.appliedDate.toISOString(),
         nextDoseDate: formData.nextDose ? formData.nextDose.toISOString() : undefined,
         batchUsed: formData.batchUsed.trim() || selectedVaccine?.batchNumber,
         notes: formData.notes.trim() || undefined,
-      });
+      };
+      if (id) {
+        await vaccinationRecordStorage.update(id!, data);
+      } else {
+        const record = await vaccinationRecordStorage.add(data);
 
-      if (record.nextDoseDate) {
-        const selectedCattle = cattle.find((c) => c.id === formData.cattleId);
-        if (selectedCattle && selectedVaccine) {
-          await scheduleVaccineNotification({
-            id: record.id,
-            cattleId: record.cattleId,
-            vaccineId: record.vaccineId,
-            dateApplied: record.dateApplied,
-            nextDoseDate: record.nextDoseDate,
-            batchUsed: record.batchUsed,
-            notes: record.notes,
-            vaccineName: selectedVaccine.name,
-            cattleName: selectedCattle.name || `Animal ${selectedCattle.number}`,
-            createdAt: "",
-            updatedAt: "",
-          });
+        if (record.nextDoseDate) {
+          const selectedCattle = cattle.find((c) => c.id === formData.cattleId);
+          if (selectedCattle && selectedVaccine) {
+            await scheduleVaccineNotification({
+              id: record.id,
+              cattleId: record.cattleId,
+              vaccineId: record.vaccineId,
+              dateApplied: record.dateApplied,
+              nextDoseDate: record.nextDoseDate,
+              batchUsed: record.batchUsed,
+              notes: record.notes,
+              vaccineName: selectedVaccine.name,
+              cattleName: selectedCattle.name || `Animal ${selectedCattle.number}`,
+              createdAt: "",
+              updatedAt: "",
+            });
+          }
         }
       }
 
@@ -160,6 +196,7 @@ export default function AddVaccineScreen() {
                 onPress={() => setShowCattlePicker(!showCattlePicker)}
                 className="bg-surface rounded-xl px-4 py-3 border border-border"
                 style={{ opacity: 1 }}
+                disabled={!!id || !!cattleId}
               >
                 <Text className="text-base" style={{ color: formData.cattleId ? colors.foreground : colors.muted }}>
                   {getSelectedCattleName()}
