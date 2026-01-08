@@ -1,6 +1,5 @@
 import { ScreenContainer } from "@/components/screen-container";
-import { useNavigation } from "@/hooks";
-import { useColors } from "@/hooks/use-colors";
+import { useColors, useNavigation, useScreenHeader } from "@/hooks";
 import { formatDate } from "@/lib/helpers";
 import {
   cancelNotification,
@@ -11,12 +10,27 @@ import {
 import { useFocusEffect } from "@react-navigation/native";
 import { useCallback, useState } from "react";
 import { ActivityIndicator, Alert, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function ScheduledNotificationsScreen() {
   const navigation = useNavigation();
   const colors = useColors();
   const [loading, setLoading] = useState(true);
   const [notifications, setNotifications] = useState<ScheduledNotification[]>([]);
+  const insets = useSafeAreaInsets();
+  useScreenHeader(
+    "Notificações Agendadas",
+    `${notifications.length} ${notifications.length === 1 ? "alerta" : "alertas"} ativo${notifications.length !== 1 ? "s" : ""}`,
+    () => (
+      <TouchableOpacity
+        onPress={() => navigation.navigate("NotificationsSettings" as never)}
+        className="bg-transparent rounded-full p-4 items-center"
+        style={{ opacity: 1 }}
+      >
+        <Text className="text-foreground font-semibold text-base">⚙️</Text>
+      </TouchableOpacity>
+    )
+  );
 
   useFocusEffect(
     useCallback(() => {
@@ -70,25 +84,7 @@ export default function ScheduledNotificationsScreen() {
 
   return (
     <ScreenContainer className="p-6">
-      <View className="flex-1 gap-4">
-        {/* Header */}
-        <View className="flex-row items-center justify-between">
-          <View className="flex-1">
-            <Text className="text-2xl font-bold text-foreground">Notificações Agendadas</Text>
-            <Text className="text-sm text-muted mt-1">
-              {notifications.length} {notifications.length === 1 ? "alerta" : "alertas"} ativo
-              {notifications.length !== 1 ? "s" : ""}
-            </Text>
-          </View>
-          <TouchableOpacity
-            onPress={() => navigation.goBack()}
-            className="w-10 h-10 items-center justify-center"
-            style={{ opacity: 1 }}
-          >
-            <Text className="text-primary font-semibold text-base">Voltar</Text>
-          </TouchableOpacity>
-        </View>
-
+      <View className="flex-1 gap-4" style={{ paddingBottom: insets.bottom }}>
         <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
           {notifications.length === 0 ? (
             <View className="flex-1 items-center justify-center py-12">
@@ -156,17 +152,6 @@ export default function ScheduledNotificationsScreen() {
             </View>
           )}
         </ScrollView>
-
-        {/* Settings Button */}
-        {notifications.length > 0 && (
-          <TouchableOpacity
-            onPress={() => navigation.navigate("NotificationsSettings" as never)}
-            className="bg-surface rounded-full p-4 items-center border border-border"
-            style={{ opacity: 1 }}
-          >
-            <Text className="text-foreground font-semibold text-base">⚙️ Configurar Notificações</Text>
-          </TouchableOpacity>
-        )}
       </View>
     </ScreenContainer>
   );

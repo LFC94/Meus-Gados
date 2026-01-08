@@ -1,7 +1,7 @@
-import { View, Text, TouchableOpacity, Platform, Modal } from "react-native";
+import { useColors } from "@/hooks/use-colors";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import React, { useState } from "react";
-import { useColors } from "@/hooks/use-colors";
+import { Modal, Platform, Text, TouchableOpacity, View } from "react-native";
 
 interface DatePickerProps {
   label?: string;
@@ -60,36 +60,22 @@ export function CustomDatePicker({
 
   return (
     <View className="gap-2">
-      {label && (
-        <Text className="text-sm font-semibold text-foreground">{label}</Text>
-      )}
-
+      {label && <Text className="text-sm font-semibold text-foreground">{label}</Text>}
       <TouchableOpacity
         onPress={() => !disabled && setShowPicker(true)}
         disabled={disabled}
         className="bg-surface rounded-xl px-4 py-3 border border-border"
         style={{ opacity: disabled ? 0.5 : 1 }}
       >
-        <Text
-          className="text-base"
-          style={{ color: value ? colors.foreground : colors.muted }}
-        >
+        <Text className="text-base" style={{ color: value ? colors.foreground : colors.muted }}>
           {formatDate(value)}
         </Text>
       </TouchableOpacity>
-
       {showPicker && Platform.OS === "web" && (
-        <Modal
-          visible={showPicker}
-          transparent
-          animationType="fade"
-          onRequestClose={handleCancel}
-        >
+        <Modal visible={showPicker} transparent animationType="fade" onRequestClose={handleCancel}>
           <View className="flex-1 bg-black/50 items-center justify-center p-4">
             <View className="bg-background rounded-2xl p-6 w-full max-w-sm gap-4">
-              <Text className="text-lg font-semibold text-foreground">
-                {label || "Selecionar Data"}
-              </Text>
+              <Text className="text-lg font-semibold text-foreground">{label || "Selecionar Data"}</Text>
 
               <View className="bg-surface rounded-xl p-4 border border-border">
                 <DateTimePicker
@@ -134,7 +120,6 @@ export function CustomDatePicker({
           maximumDate={maximumDate}
         />
       )}
-
       {Platform.OS === "ios" && showPicker && (
         <View className="flex-row gap-3 mt-4">
           <TouchableOpacity

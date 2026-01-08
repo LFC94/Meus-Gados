@@ -2,19 +2,21 @@ import { ScreenContainer } from "@/components/screen-container";
 import { useNavigation } from "@/hooks";
 import { useColors } from "@/hooks/use-colors";
 import { daysUntil, formatDate, getVaccineStatus, getVaccineStatusColor } from "@/lib/helpers";
-import { vaccineStorage } from "@/lib/storage";
-import { Cattle, Vaccine } from "@/types";
+import { vaccinationRecordStorage } from "@/lib/storage";
+
+import { Cattle, VaccinationRecordWithDetails } from "@/types";
 import { useFocusEffect } from "@react-navigation/native";
 import React, { useState } from "react";
 import { ActivityIndicator, RefreshControl, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function PendingVaccinesScreen() {
   const navigation = useNavigation();
   const colors = useColors();
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
-  const [pendingVaccines, setPendingVaccines] = useState<(Vaccine & { cattle: Cattle })[]>([]);
-
+  const [pendingVaccines, setPendingVaccines] = useState<(VaccinationRecordWithDetails & { cattle: Cattle })[]>([]);
+  const insets = useSafeAreaInsets();
   useFocusEffect(
     React.useCallback(() => {
       loadPendingVaccines();
@@ -24,7 +26,7 @@ export default function PendingVaccinesScreen() {
   const loadPendingVaccines = async () => {
     try {
       setLoading(true);
-      const data = await vaccineStorage.getPending();
+      const data = await vaccinationRecordStorage.getPending();
       setPendingVaccines(data);
     } catch (error) {
       console.error("Error loading pending vaccines:", error);
@@ -36,7 +38,7 @@ export default function PendingVaccinesScreen() {
   const handleRefresh = async () => {
     try {
       setRefreshing(true);
-      const data = await vaccineStorage.getPending();
+      const data = await vaccinationRecordStorage.getPending();
       setPendingVaccines(data);
     } catch (error) {
       console.error("Error refreshing pending vaccines:", error);
@@ -58,25 +60,9 @@ export default function PendingVaccinesScreen() {
       <ScrollView
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} tintColor={colors.primary} />}
         contentContainerStyle={{ flexGrow: 1 }}
+        style={{ paddingBottom: insets.bottom }}
       >
         <View className="p-6 gap-4 flex-1">
-          {/* Header */}
-          <View className="flex-row items-center justify-between">
-            <View className="flex-1">
-              <Text className="text-2xl font-bold text-foreground">Vacinas Pendentes</Text>
-              <Text className="text-sm text-muted mt-1">
-                {pendingVaccines.length} {pendingVaccines.length === 1 ? "vacina" : "vacinas"} próximas ou atrasadas
-              </Text>
-            </View>
-            <TouchableOpacity
-              onPress={() => navigation.goBack()}
-              className="w-10 h-10 items-center justify-center"
-              style={{ opacity: 1 }}
-            >
-              <Text className="text-primary font-semibold text-base">Voltar</Text>
-            </TouchableOpacity>
-          </View>
-
           {/* List */}
           {pendingVaccines.length === 0 ? (
             <View className="flex-1 items-center justify-center py-12">
@@ -85,9 +71,9 @@ export default function PendingVaccinesScreen() {
           ) : (
             <View className="gap-3 pb-6">
               {pendingVaccines.map((item) => {
-                const status = getVaccineStatus(item.nextDose);
+                const status = getVaccineStatus(item.nextDoseDate);
                 const statusColor = getVaccineStatusColor(status);
-                const days = item.nextDose ? daysUntil(item.nextDose) : 0;
+                const days = item.nextDoseDate ? daysUntil(item.nextDoseDate) : 0;
                 const isOverdue = days < 0;
 
                 return (
@@ -103,9 +89,9 @@ export default function PendingVaccinesScreen() {
                           {item.cattle.name || `Animal ${item.cattle.number}`}
                         </Text>
                         <Text className="text-sm text-muted mt-1">Nº {item.cattle.number}</Text>
-                        <Text className="text-sm text-foreground font-medium mt-2">{item.name}</Text>
-                        {item.nextDose && (
-                          <Text className="text-sm text-muted mt-1">Próxima dose: {formatDate(item.nextDose)}</Text>
+                        <Text className="text-sm text-foreground font-medium mt-2">{item.vaccineName}</Text>
+                        {item.nextDoseDate && (
+                          <Text className="text-sm text-muted mt-1">Próxima dose: {formatDate(item.nextDoseDate)}</Text>
                         )}
                       </View>
                       <View className="px-3 py-1 rounded-full" style={{ backgroundColor: statusColor + "20" }}>

@@ -1,5 +1,5 @@
 import { ScreenContainer } from "@/components/screen-container";
-import { useNavigation } from "@/hooks";
+import { useNavigation, useScreenHeader } from "@/hooks";
 import { useColors } from "@/hooks/use-colors";
 import {
   getNotificationSettings,
@@ -20,6 +20,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function NotificationSettingsScreen() {
   const navigation = useNavigation();
@@ -28,6 +29,9 @@ export default function NotificationSettingsScreen() {
   const [saving, setSaving] = useState(false);
   const [permissionGranted, setPermissionGranted] = useState(false);
   const [settings, setSettings] = useState<NotificationSettings | null>(null);
+
+  const insets = useSafeAreaInsets();
+  useScreenHeader("Configurações de Notificações");
 
   useEffect(() => {
     loadSettings();
@@ -92,20 +96,8 @@ export default function NotificationSettingsScreen() {
   }
 
   return (
-    <ScreenContainer className="p-6">
+    <ScreenContainer className="p-6" style={{ paddingBottom: insets.bottom }}>
       <View className="flex-1 gap-4">
-        {/* Header */}
-        <View className="flex-row items-center justify-between">
-          <Text className="text-2xl font-bold text-foreground">Configurações de Notificações</Text>
-          <TouchableOpacity
-            onPress={() => navigation.goBack()}
-            className="w-10 h-10 items-center justify-center"
-            style={{ opacity: 1 }}
-          >
-            <Text className="text-primary font-semibold text-base">Voltar</Text>
-          </TouchableOpacity>
-        </View>
-
         {!permissionGranted && (
           <View className="bg-warning/20 rounded-xl p-4 border border-warning">
             <Text className="text-sm text-warning font-medium">
