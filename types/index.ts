@@ -100,9 +100,8 @@ export type RootStackParamList = {
   Drawer: undefined;
   Settings: undefined;
   CattleList: undefined;
-  CattleAdd: undefined;
   CattleDetail: { id: string };
-  CattleEdit: { id: string };
+  CattleEdit: { id?: string };
   VaccinePending: undefined;
   VaccineAdd: { cattleId: string };
   VaccineEdit: { id: string };

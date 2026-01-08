@@ -17,7 +17,6 @@ import { useColors, useScreenOptions } from "@/hooks/";
 
 import { initManusRuntime, subscribeSafeAreaInsets } from "@/lib/_core/manus-runtime";
 import { createDrawerNavigator } from "@react-navigation/drawer";
-import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 
 // Screens
@@ -25,7 +24,6 @@ import { RootStackParamList } from "@/types";
 
 import { NotificationsSettingsScreen } from ".";
 import CattleDetailScreen from "./cattle/[id]";
-import CattleAddScreen from "./cattle/add";
 import CattleEditScreen from "./cattle/edit";
 import CattleListScreen from "./cattle/list";
 import DiseasesAddScreen from "./diseases/add";
@@ -139,7 +137,7 @@ function DrawerNavigator() {
 function MainStackNavigator() {
   const screenOptions = useScreenOptions();
   return (
-    <Stack.Navigator screenOptions={screenOptions}>
+    <Stack.Navigator screenOptions={screenOptions} initialRouteName="Drawer">
       {/* Telas do Drawer integradas no Stack */}
       <Stack.Screen name="Drawer" component={DrawerNavigator} />
 
@@ -155,13 +153,6 @@ function MainStackNavigator() {
         component={CattleEditScreen}
         options={{
           title: "Editar Animal",
-        }}
-      />
-      <Stack.Screen
-        name="CattleAdd"
-        component={CattleAddScreen}
-        options={{
-          title: "Cadastrar Animal",
         }}
       />
       <Stack.Screen
@@ -274,9 +265,7 @@ export default function RootLayout() {
       <ThemeProvider>
         <SafeAreaProvider initialMetrics={providerInitialMetrics}>
           <SafeAreaFrameContext.Provider value={frame}>
-            <SafeAreaInsetsContext.Provider value={insets}>
-              <NavigationContainer>{content}</NavigationContainer>
-            </SafeAreaInsetsContext.Provider>
+            <SafeAreaInsetsContext.Provider value={insets}>{content}</SafeAreaInsetsContext.Provider>
           </SafeAreaFrameContext.Provider>
         </SafeAreaProvider>
       </ThemeProvider>

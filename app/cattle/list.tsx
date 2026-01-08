@@ -54,27 +54,6 @@ export default function CattleListScreen() {
     }
   };
 
-  const handleRefresh = async () => {
-    try {
-      setRefreshing(true);
-      const [cattleData, pregnanciesData, diseasesData, vaccinesData] = await Promise.all([
-        cattleStorage.getAll(),
-        pregnancyStorage.getAll(),
-        diseaseStorage.getAll(),
-        vaccinationRecordStorage.getAll(),
-      ]);
-      const sorted = [...cattleData].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-      setCattle(sorted);
-      setPregnancies(pregnanciesData);
-      setDiseases(diseasesData);
-      setVaccines(vaccinesData);
-    } catch (error) {
-      console.error("Error refreshing cattle:", error);
-    } finally {
-      setRefreshing(false);
-    }
-  };
-
   const filterCattle = () => {
     if (!searchQuery.trim()) {
       setFilteredCattle(cattle);
@@ -141,7 +120,7 @@ export default function CattleListScreen() {
   return (
     <ScreenContainer className="p-0">
       <ScrollView
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} tintColor={colors.primary} />}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={loadData} tintColor={colors.primary} />}
         contentContainerStyle={{ flexGrow: 1 }}
         className="pt-4"
         style={{ paddingBottom: insets.bottom }}
@@ -166,7 +145,7 @@ export default function CattleListScreen() {
               </Text>
               {!searchQuery && (
                 <TouchableOpacity
-                  onPress={() => navigation.navigate("CattleAdd")}
+                  onPress={() => navigation.navigate("CattleEdit")}
                   className="mt-4 bg-primary rounded-full px-6 py-3"
                   style={{ opacity: 1 }}
                 >
@@ -189,7 +168,7 @@ export default function CattleListScreen() {
 
               {/* Add Button */}
               <TouchableOpacity
-                onPress={() => navigation.navigate("CattleAdd")}
+                onPress={() => navigation.navigate("CattleEdit")}
                 className="bg-primary rounded-full p-4 items-center mt-4"
                 style={{ opacity: 1 }}
               >

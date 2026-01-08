@@ -17,7 +17,7 @@ export default function EditCattleScreen() {
   const navigation = useNavigation();
   const route = useRoute<RouteProp<RootStackParamList, "CattleEdit">>();
   const colors = useColors();
-  const { id } = route.params;
+  const id = route.params?.id;
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [formData, setFormData] = useState({
@@ -30,7 +30,7 @@ export default function EditCattleScreen() {
   const [showBreedPicker, setShowBreedPicker] = useState(false);
   const insets = useSafeAreaInsets();
 
-  useScreenHeader("Editar Animal", "Atualize os dados do animal");
+  useScreenHeader(id ? "Editar Animal" : "Cadastrar Animal", id ? "Atualize os dados do animal" : undefined);
 
   useEffect(() => {
     loadCattle();
@@ -38,7 +38,10 @@ export default function EditCattleScreen() {
 
   const loadCattle = async () => {
     try {
-      if (!id) return;
+      if (!id) {
+        setLoading(false);
+        return;
+      }
       const cattle = await cattleStorage.getById(id);
       if (cattle) {
         setFormData({
@@ -76,20 +79,25 @@ export default function EditCattleScreen() {
       if (Platform.OS !== "web") {
         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
       }
-
-      await cattleStorage.update(id!, {
+      const data = {
         number: formData.number.trim(),
         name: formData.name.trim(),
         breed: formData.breed,
         birthDate: formData.birthDate.toISOString(),
         weight: parseFloat(formData.weight),
-      });
+      };
+
+      if (id) {
+        await cattleStorage.update(id!, data);
+      } else {
+        await cattleStorage.add(data);
+      }
 
       if (Platform.OS !== "web") {
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       }
 
-      Alert.alert("Sucesso", "Animal atualizado com sucesso!", [
+      Alert.alert("Sucesso", id ? "Animal atualizado com sucesso!" : "Animal cadastrado com sucesso!", [
         {
           text: "OK",
           onPress: () => navigation.goBack(),
@@ -205,7 +213,7 @@ export default function EditCattleScreen() {
               {saving ? (
                 <ActivityIndicator color="white" />
               ) : (
-                <Text className="text-white font-semibold text-base">Salvar Alterações</Text>
+                <Text className="text-white font-semibold text-base">Salvar</Text>
               )}
             </TouchableOpacity>
 

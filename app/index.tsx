@@ -1,8 +1,6 @@
 export { default as CattleDetailScreen } from "./cattle/[id]";
-export { default as CattleAddScreen } from "./cattle/add";
 export { default as CattleEditScreen } from "./cattle/edit";
 export { default as CattleListScreen } from "./cattle/list";
-export { default as ThemeLabScreen } from "./dev/theme-lab";
 export { default as DiseasesAddScreen } from "./diseases/add";
 export { default as DiseasesEditScreen } from "./diseases/edit";
 export { default as HomeScreen } from "./home";
