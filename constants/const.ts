@@ -78,8 +78,8 @@ export const DISEASE_RESULT_LABELS: Record<DiseaseResult, string> = {
 export const STATUS_CATTLE: Record<CattleResult, { color: string; text: string; icon: string }> = {
   in_treatment: { color: "#f5550b", text: "Em Tratamento", icon: "🏥" },
   healthy: { color: "#22C55E", text: "Saudável", icon: "💚" },
-  death: { color: "#FF0000", text: "Óbito", icon: "✝️" },
-  pregnancy: { color: "#c2f50bff", text: "Gestação", icon: "🐣" },
-  overdue_pregnancy: { color: "#EF4444", text: "Gestação Atrasada", icon: "" },
+  death: { color: "#9c0101ff", text: "Óbito", icon: "🪦" },
+  pregnancy: { color: "#c2f50bff", text: "Gestação", icon: "🤰" },
+  overdue_pregnancy: { color: "#EF4444", text: "Gestação Atrasada", icon: "🤰" },
   pending_vaccine: { color: "#F59E0B", text: "Vacina Pendente", icon: "💉" },
 };

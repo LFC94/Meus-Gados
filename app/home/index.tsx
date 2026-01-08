@@ -34,6 +34,7 @@ export default function HomeScreen() {
       loadData();
     }, [])
   );
+
   const loadData = async () => {
     try {
       setLoading(true);
@@ -59,6 +60,11 @@ export default function HomeScreen() {
       const thirtyDaysFromNow = new Date(today.getTime() + 30 * 24 * 60 * 60 * 1000);
 
       for (const animal of cattle) {
+        const inDeath = diseases.find((d) => d.cattleId === animal.id && d.result === "death");
+        if (inDeath) {
+          continue;
+        }
+
         // Check pregnancy status
         const activePregnancy = pregnancies.find((p) => p.cattleId === animal.id && p.result === "pending");
         if (activePregnancy) {
@@ -113,80 +119,6 @@ export default function HomeScreen() {
     }
   };
 
-  const handleRefresh = async () => {
-    try {
-      setRefreshing(true);
-      const [cattle, vaccinesData, pregnanciesData, diseasesData] = await Promise.all([
-        cattleStorage.getAll(),
-        vaccinationRecordStorage.getAll(),
-        pregnancyStorage.getAll(),
-        diseaseStorage.getAll(),
-      ]);
-
-      setVaccines(vaccinesData);
-      setPregnancies(pregnanciesData);
-      setDiseases(diseasesData);
-
-      // Calculate stats (same logic as loadData)
-      let healthy = 0;
-      let pregnant = 0;
-      let pendingVaccines = 0;
-      let inTreatment = 0;
-      let overduePregnancies = 0;
-
-      const today = new Date();
-      const thirtyDaysFromNow = new Date(today.getTime() + 30 * 24 * 60 * 60 * 1000);
-
-      for (const animal of cattle) {
-        const activePregnancy = pregnancies.find((p) => p.cattleId === animal.id && p.result === "pending");
-        if (activePregnancy) {
-          const expectedBirthDate = new Date(activePregnancy.expectedBirthDate);
-          if (today > expectedBirthDate) {
-            overduePregnancies++;
-          } else {
-            pregnant++;
-          }
-          continue;
-        }
-
-        const inTreat = diseases.find((d) => d.cattleId === animal.id && d.result === "in_treatment");
-        if (inTreat) {
-          inTreatment++;
-          continue;
-        }
-
-        const animalVaccines = vaccinesData.filter((v) => v.cattleId === animal.id);
-        const hasPendingVaccine = animalVaccines.some((v) => {
-          if (!v.nextDoseDate) return false;
-          const nextDoseDate = new Date(v.nextDoseDate);
-          return nextDoseDate <= thirtyDaysFromNow;
-        });
-        if (hasPendingVaccine) {
-          pendingVaccines++;
-          continue;
-        }
-
-        healthy++;
-      }
-
-      setStats({
-        totalCattle: cattle.length,
-        healthy,
-        pregnant,
-        pendingVaccines,
-        inTreatment,
-        overduePregnancies,
-      });
-
-      const sorted = [...cattle].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-      setRecentCattle(sorted.slice(0, 3));
-    } catch (error) {
-      console.error("Error refreshing data:", error);
-    } finally {
-      setRefreshing(false);
-    }
-  };
-
   if (loading) {
     return (
       <ScreenContainer className="items-center justify-center">
@@ -198,7 +130,7 @@ export default function HomeScreen() {
   return (
     <ScreenContainer className="p-0">
       <ScrollView
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} tintColor={colors.primary} />}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={loadData} tintColor={colors.primary} />}
         contentContainerStyle={{ flexGrow: 1 }}
         style={{ paddingBottom: insets.bottom }}
       >
@@ -268,29 +200,8 @@ export default function HomeScreen() {
             )}
           </View>
 
-          {/* Recent Animals */}
-          {recentCattle.length > 0 && (
-            <View className="gap-3">
-              <View className="flex-row items-center justify-between">
-                <Text className="text-lg font-semibold text-foreground">Animais Recentes</Text>
-                <TouchableOpacity onPress={() => navigation.navigate("CattleList")} style={{ opacity: 1 }}>
-                  <Text className="text-primary text-sm font-semibold">Ver todos</Text>
-                </TouchableOpacity>
-              </View>
-              <View className="gap-2">
-                {recentCattle.map((item) => (
-                  <CattleCardCompact
-                    key={item.id}
-                    cattle={item}
-                    onPress={() => navigation.navigate("CattleDetail", { id: item.id })}
-                  />
-                ))}
-              </View>
-            </View>
-          )}
-
           {/* Quick Actions */}
-          <View className="gap-3 mt-4">
+          <View className="gap-3">
             <TouchableOpacity
               onPress={() => navigation.navigate("CattleList")}
               className="bg-surface rounded-2xl p-4 border border-border flex-row items-center justify-between"
@@ -332,15 +243,28 @@ export default function HomeScreen() {
               </View>
               <IconSymbol name="chevron.right" size={20} color={colors.muted} />
             </TouchableOpacity>
-
-            <TouchableOpacity
-              onPress={() => navigation.navigate("CattleAdd")}
-              className="bg-primary rounded-2xl p-4 items-center mt-2"
-              style={{ opacity: 1 }}
-            >
-              <Text className="text-white font-semibold text-base">+ Cadastrar Novo Animal</Text>
-            </TouchableOpacity>
           </View>
+
+          {/* Recent Animals */}
+          {recentCattle.length > 0 && (
+            <View className="gap-3">
+              <View className="flex-row items-center justify-between">
+                <Text className="text-lg font-semibold text-foreground">Animais Recentes</Text>
+                <TouchableOpacity onPress={() => navigation.navigate("CattleList")} style={{ opacity: 1 }}>
+                  <Text className="text-primary text-sm font-semibold">Ver todos</Text>
+                </TouchableOpacity>
+              </View>
+              <View className="gap-2">
+                {recentCattle.map((item) => (
+                  <CattleCardCompact
+                    key={item.id}
+                    cattle={item}
+                    onPress={() => navigation.navigate("CattleDetail", { id: item.id })}
+                  />
+                ))}
+              </View>
+            </View>
+          )}
         </View>
       </ScrollView>
     </ScreenContainer>

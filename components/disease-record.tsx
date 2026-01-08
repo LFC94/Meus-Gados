@@ -74,7 +74,7 @@ export function DiseaseRecord({ disease, onEdit, onDelete, expanded = false }: D
             style={{ backgroundColor: getResultBgColor(disease.result) }}
           >
             <Text className="text-lg">
-              {disease.result === "in_treatment" ? "🏥" : disease.result === "cured" ? "💚" : "✝️"}
+              {disease.result === "in_treatment" ? "🏥" : disease.result === "cured" ? "💚" : "🪦"}
             </Text>
           </View>
           <View className="flex-1">

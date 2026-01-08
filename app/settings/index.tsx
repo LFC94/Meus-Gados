@@ -1,32 +1,24 @@
-import {
-  ScrollView,
-  Text,
-  View,
-  TouchableOpacity,
-  ActivityIndicator,
-  Alert,
-  Switch,
-  Platform,
-} from "react-native";
 import { ScreenContainer } from "@/components/screen-container";
-import React, { useEffect, useState } from "react";
-import { useFocusEffect } from "@react-navigation/native";
-import { useColors } from "@/hooks/use-colors";
-import { preferencesStorage, type Unit, type Language, type Theme } from "@/lib/preferences";
+import { useColors, useNavigation } from "@/hooks";
+
 import { backupService, type BackupData } from "@/lib/backup";
-import * as Haptics from "expo-haptics";
+import { preferencesStorage, type Theme } from "@/lib/preferences";
+import { useFocusEffect } from "@react-navigation/native";
 import * as FileSystem from "expo-file-system/legacy";
+import * as Haptics from "expo-haptics";
 import * as Sharing from "expo-sharing";
+import React, { useState } from "react";
+import { ActivityIndicator, Alert, Platform, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function SettingsScreen() {
   const colors = useColors();
+  const navigation = useNavigation();
   const [loading, setLoading] = useState(true);
-  const [unit, setUnit] = useState<Unit>("kg");
-  const [language, setLanguage] = useState<Language>("pt");
   const [theme, setTheme] = useState<Theme>("system");
-  const [backups, setBackups] = useState<Array<{ id: string; backup: BackupData }>>([]);
-  const [showBackupOptions, setShowBackupOptions] = useState(false);
+  const [backups, setBackups] = useState<{ id: string; backup: BackupData }[]>([]);
 
+  const insets = useSafeAreaInsets();
   useFocusEffect(
     React.useCallback(() => {
       loadSettings();
@@ -37,44 +29,17 @@ export default function SettingsScreen() {
     try {
       setLoading(true);
       const prefs = await preferencesStorage.getPreferences();
-      setUnit(prefs.unit);
-      setLanguage(prefs.language);
+
       setTheme(prefs.theme);
 
       const backupList = await backupService.getBackupList();
-      setBackups(backupList.sort((a, b) => 
-        new Date(b.backup.timestamp).getTime() - new Date(a.backup.timestamp).getTime()
-      ));
+      setBackups(
+        backupList.sort((a, b) => new Date(b.backup.timestamp).getTime() - new Date(a.backup.timestamp).getTime())
+      );
     } catch (error) {
       console.error("Error loading settings:", error);
     } finally {
       setLoading(false);
-    }
-  };
-
-  const handleUnitChange = async (newUnit: Unit) => {
-    try {
-      setUnit(newUnit);
-      await preferencesStorage.updateUnit(newUnit);
-      if (Platform.OS !== "web") {
-        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-      }
-    } catch (error) {
-      Alert.alert("Erro", "Não foi possível atualizar a unidade de medida");
-      setUnit(unit);
-    }
-  };
-
-  const handleLanguageChange = async (newLanguage: Language) => {
-    try {
-      setLanguage(newLanguage);
-      await preferencesStorage.updateLanguage(newLanguage);
-      if (Platform.OS !== "web") {
-        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-      }
-    } catch (error) {
-      Alert.alert("Erro", "Não foi possível atualizar o idioma");
-      setLanguage(language);
     }
   };
 
@@ -99,7 +64,7 @@ export default function SettingsScreen() {
 
       const backup = await backupService.createBackup();
       await backupService.saveBackup(backup);
-      
+
       if (Platform.OS !== "web") {
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       }
@@ -116,7 +81,7 @@ export default function SettingsScreen() {
     try {
       const backup = await backupService.createBackup();
       const jsonString = await backupService.exportBackupAsJSON(backup);
-      
+
       const fileName = `meus-gados-backup-${new Date().toISOString().split("T")[0]}.json`;
       const fileUri = `${FileSystem.documentDirectory}${fileName}`;
 
@@ -164,27 +129,23 @@ export default function SettingsScreen() {
   };
 
   const handleDeleteBackup = (backupId: string) => {
-    Alert.alert(
-      "Deletar Backup",
-      "Deseja deletar este backup? Esta ação não pode ser desfeita.",
-      [
-        { text: "Cancelar", onPress: () => {} },
-        {
-          text: "Deletar",
-          onPress: async () => {
-            try {
-              await backupService.deleteBackup(backupId);
-              loadSettings();
-              Alert.alert("Sucesso", "Backup deletado com sucesso!");
-            } catch (error) {
-              console.error("Error deleting backup:", error);
-              Alert.alert("Erro", "Não foi possível deletar o backup");
-            }
-          },
-          style: "destructive",
+    Alert.alert("Deletar Backup", "Deseja deletar este backup? Esta ação não pode ser desfeita.", [
+      { text: "Cancelar", onPress: () => {} },
+      {
+        text: "Deletar",
+        onPress: async () => {
+          try {
+            await backupService.deleteBackup(backupId);
+            loadSettings();
+            Alert.alert("Sucesso", "Backup deletado com sucesso!");
+          } catch (error) {
+            console.error("Error deleting backup:", error);
+            Alert.alert("Erro", "Não foi possível deletar o backup");
+          }
         },
-      ]
-    );
+        style: "destructive",
+      },
+    ]);
   };
 
   if (loading) {
@@ -197,94 +158,8 @@ export default function SettingsScreen() {
 
   return (
     <ScreenContainer className="p-0">
-      <ScrollView contentContainerStyle={{ flexGrow: 1 }} className="p-4">
+      <ScrollView contentContainerStyle={{ flexGrow: 1 }} className="p-4" style={{ paddingBottom: insets.bottom }}>
         <View className="gap-6">
-          {/* Header */}
-          <View className="gap-2">
-            <Text className="text-3xl font-bold text-foreground">Configurações</Text>
-            <Text className="text-base text-muted">Personalize seu app</Text>
-          </View>
-
-          {/* Unidade de Medida */}
-          <View className="gap-3">
-            <Text className="text-lg font-semibold text-foreground">Unidade de Medida</Text>
-            <View className="bg-surface rounded-lg p-4 gap-3">
-              <TouchableOpacity
-                onPress={() => handleUnitChange("kg")}
-                className={`p-3 rounded-lg border-2 ${
-                  unit === "kg"
-                    ? "border-primary bg-primary/10"
-                    : "border-border bg-transparent"
-                }`}
-              >
-                <Text
-                  className={`font-semibold ${
-                    unit === "kg" ? "text-primary" : "text-foreground"
-                  }`}
-                >
-                  Quilogramas (kg)
-                </Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                onPress={() => handleUnitChange("arrobas")}
-                className={`p-3 rounded-lg border-2 ${
-                  unit === "arrobas"
-                    ? "border-primary bg-primary/10"
-                    : "border-border bg-transparent"
-                }`}
-              >
-                <Text
-                  className={`font-semibold ${
-                    unit === "arrobas" ? "text-primary" : "text-foreground"
-                  }`}
-                >
-                  Arrobas (@)
-                </Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-
-          {/* Idioma */}
-          <View className="gap-3">
-            <Text className="text-lg font-semibold text-foreground">Idioma</Text>
-            <View className="bg-surface rounded-lg p-4 gap-3">
-              <TouchableOpacity
-                onPress={() => handleLanguageChange("pt")}
-                className={`p-3 rounded-lg border-2 ${
-                  language === "pt"
-                    ? "border-primary bg-primary/10"
-                    : "border-border bg-transparent"
-                }`}
-              >
-                <Text
-                  className={`font-semibold ${
-                    language === "pt" ? "text-primary" : "text-foreground"
-                  }`}
-                >
-                  Português (PT)
-                </Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                onPress={() => handleLanguageChange("en")}
-                className={`p-3 rounded-lg border-2 ${
-                  language === "en"
-                    ? "border-primary bg-primary/10"
-                    : "border-border bg-transparent"
-                }`}
-              >
-                <Text
-                  className={`font-semibold ${
-                    language === "en" ? "text-primary" : "text-foreground"
-                  }`}
-                >
-                  English (EN)
-                </Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-
           {/* Tema */}
           <View className="gap-3">
             <Text className="text-lg font-semibold text-foreground">Tema</Text>
@@ -292,16 +167,10 @@ export default function SettingsScreen() {
               <TouchableOpacity
                 onPress={() => handleThemeChange("light")}
                 className={`p-3 rounded-lg border-2 ${
-                  theme === "light"
-                    ? "border-primary bg-primary/10"
-                    : "border-border bg-transparent"
+                  theme === "light" ? "border-primary bg-primary/10" : "border-border bg-transparent"
                 }`}
               >
-                <Text
-                  className={`font-semibold ${
-                    theme === "light" ? "text-primary" : "text-foreground"
-                  }`}
-                >
+                <Text className={`font-semibold ${theme === "light" ? "text-primary" : "text-foreground"}`}>
                   Claro (Light)
                 </Text>
               </TouchableOpacity>
@@ -309,16 +178,10 @@ export default function SettingsScreen() {
               <TouchableOpacity
                 onPress={() => handleThemeChange("dark")}
                 className={`p-3 rounded-lg border-2 ${
-                  theme === "dark"
-                    ? "border-primary bg-primary/10"
-                    : "border-border bg-transparent"
+                  theme === "dark" ? "border-primary bg-primary/10" : "border-border bg-transparent"
                 }`}
               >
-                <Text
-                  className={`font-semibold ${
-                    theme === "dark" ? "text-primary" : "text-foreground"
-                  }`}
-                >
+                <Text className={`font-semibold ${theme === "dark" ? "text-primary" : "text-foreground"}`}>
                   Escuro (Dark)
                 </Text>
               </TouchableOpacity>
@@ -326,16 +189,10 @@ export default function SettingsScreen() {
               <TouchableOpacity
                 onPress={() => handleThemeChange("system")}
                 className={`p-3 rounded-lg border-2 ${
-                  theme === "system"
-                    ? "border-primary bg-primary/10"
-                    : "border-border bg-transparent"
+                  theme === "system" ? "border-primary bg-primary/10" : "border-border bg-transparent"
                 }`}
               >
-                <Text
-                  className={`font-semibold ${
-                    theme === "system" ? "text-primary" : "text-foreground"
-                  }`}
-                >
+                <Text className={`font-semibold ${theme === "system" ? "text-primary" : "text-foreground"}`}>
                   Do Sistema
                 </Text>
               </TouchableOpacity>
@@ -346,10 +203,7 @@ export default function SettingsScreen() {
           <View className="gap-3">
             <Text className="text-lg font-semibold text-foreground">Backup de Dados</Text>
             <View className="bg-surface rounded-lg p-4 gap-3">
-              <TouchableOpacity
-                onPress={handleCreateBackup}
-                className="bg-primary rounded-lg p-4 items-center"
-              >
+              <TouchableOpacity onPress={handleCreateBackup} className="bg-primary rounded-lg p-4 items-center">
                 <Text className="text-white font-semibold">Criar Backup</Text>
               </TouchableOpacity>
 
@@ -372,10 +226,7 @@ export default function SettingsScreen() {
 
               <View className="gap-2">
                 {backups.map((item) => (
-                  <View
-                    key={item.id}
-                    className="bg-surface rounded-lg p-4 border border-border"
-                  >
+                  <View key={item.id} className="bg-surface rounded-lg p-4 border border-border">
                     <View className="gap-2 mb-3">
                       <Text className="text-sm font-semibold text-foreground">
                         {new Date(item.backup.timestamp).toLocaleDateString("pt-BR", {
@@ -412,14 +263,18 @@ export default function SettingsScreen() {
             </View>
           )}
 
+          <TouchableOpacity
+            onPress={() => navigation.navigate("NotificationsSettings" as never)}
+            className="bg-surface rounded-full p-4 items-center border border-border"
+            style={{ opacity: 1 }}
+          >
+            <Text className="text-foreground font-semibold text-base">⚙️ Configurar Notificações</Text>
+          </TouchableOpacity>
+
           {/* Informações do App */}
           <View className="gap-3 border-t border-border pt-4">
             <Text className="text-lg font-semibold text-foreground">Sobre</Text>
             <View className="bg-surface rounded-lg p-4 gap-2">
-              <View className="flex-row justify-between">
-                <Text className="text-muted">Versão</Text>
-                <Text className="font-semibold text-foreground">1.0.0</Text>
-              </View>
               <View className="flex-row justify-between">
                 <Text className="text-muted">App</Text>
                 <Text className="font-semibold text-foreground">Meus Gados</Text>
