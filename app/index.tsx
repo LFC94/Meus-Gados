@@ -11,5 +11,5 @@ export { default as PregnancyEditScreen } from "./pregnancy/edit";
 export { default as SettingsScreen } from "./settings";
 export { default as VaccineAddScreen } from "./vaccines/add";
 export { default as VaccineCatalogEditScreen } from "./vaccines/catalog/edit";
-export { default as VaccineCatalogIndexScreen } from "./vaccines/catalog/index";
+export { default as VaccineCatalogScreen } from "./vaccines/catalog/index";
 export { default as VaccinePendingScreen } from "./vaccines/pending";

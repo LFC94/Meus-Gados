@@ -243,10 +243,7 @@ export default function AddVaccineScreen() {
                       <View className="px-4 py-4 items-center">
                         <Text className="text-muted text-center">
                           Nenhuma vacina no catálogo.{"\n"}
-                          <Text
-                            className="text-primary"
-                            onPress={() => navigation.navigate("VaccineCatalogIndex" as never)}
-                          >
+                          <Text className="text-primary" onPress={() => navigation.navigate("VaccineCatalog" as never)}>
                             Adicionar vacina ao catálogo
                           </Text>
                         </Text>

@@ -105,7 +105,7 @@ export type RootStackParamList = {
   VaccinePending: undefined;
   VaccineAdd: { cattleId: string };
   VaccineEdit: { id: string };
-  VaccineCatalogIndex: undefined;
+  VaccineCatalog: undefined;
   VaccineCatalogAdd: undefined;
   VaccineCatalogEdit: { id: string };
   PregnancyAdd: { cattleId: string };

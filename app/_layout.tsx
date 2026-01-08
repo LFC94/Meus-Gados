@@ -36,7 +36,7 @@ import SettingsScreen from "./settings";
 import VaccineAddScreen from "./vaccines/add";
 import VaccineCatalogAddScreen from "./vaccines/catalog/add";
 import VaccineCatalogEditScreen from "./vaccines/catalog/edit";
-import VaccineCatalogIndexScreen from "./vaccines/catalog/index";
+import VaccineCatalogScreen from "./vaccines/catalog/index";
 import EditVaccineScreen from "./vaccines/edit";
 import VaccinePendingScreen from "./vaccines/pending";
 
@@ -94,8 +94,8 @@ function DrawerNavigator() {
         }}
       />
       <Drawer.Screen
-        name="VaccineCatalogIndex"
-        component={VaccineCatalogIndexScreen}
+        name="VaccineCatalog"
+        component={VaccineCatalogScreen}
         options={{
           drawerLabel: "Catálogo de Vacinas",
           title: "Catálogo de Vacinas",
@@ -195,6 +195,13 @@ function MainStackNavigator() {
         component={PregnancyEditScreen}
         options={{
           title: "Editar Gestação",
+        }}
+      />
+      <Stack.Screen
+        name="VaccineCatalog"
+        component={VaccineCatalogScreen}
+        options={{
+          title: "Catálogo de Vacinas",
         }}
       />
       <Stack.Screen
