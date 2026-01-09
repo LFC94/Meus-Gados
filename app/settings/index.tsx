@@ -4,6 +4,7 @@ import { useColors, useNavigation } from "@/hooks";
 import { backupService, type BackupData } from "@/lib/backup";
 import { useThemeContext } from "@/lib/theme-provider";
 import { useFocusEffect } from "@react-navigation/native";
+import Constants from "expo-constants";
 import * as FileSystem from "expo-file-system/legacy";
 import * as Haptics from "expo-haptics";
 import * as Sharing from "expo-sharing";
@@ -153,131 +154,136 @@ export default function SettingsScreen() {
 
   return (
     <ScreenContainer className="p-0">
-      <ScrollView contentContainerStyle={{ flexGrow: 1 }} className="p-4" style={{ paddingBottom: insets.bottom }}>
-        <View className="gap-6">
-          {/* Tema */}
-          <View className="gap-3">
-            <Text className="text-lg font-semibold text-foreground">Tema</Text>
-            <View className="bg-surface rounded-lg p-4 gap-3">
-              <TouchableOpacity
-                onPress={() => handleThemeChange("light")}
-                className={`p-3 rounded-lg border-2 ${
-                  theme === "light" ? "border-primary bg-primary/10" : "border-border bg-transparent"
-                }`}
-              >
-                <Text className={`font-semibold ${theme === "light" ? "text-primary" : "text-foreground"}`}>
-                  Claro (Light)
-                </Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                onPress={() => handleThemeChange("dark")}
-                className={`p-3 rounded-lg border-2 ${
-                  theme === "dark" ? "border-primary bg-primary/10" : "border-border bg-transparent"
-                }`}
-              >
-                <Text className={`font-semibold ${theme === "dark" ? "text-primary" : "text-foreground"}`}>
-                  Escuro (Dark)
-                </Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                onPress={() => handleThemeChange("system")}
-                className={`p-3 rounded-lg border-2 ${
-                  theme === "system" ? "border-primary bg-primary/10" : "border-border bg-transparent"
-                }`}
-              >
-                <Text className={`font-semibold ${theme === "system" ? "text-primary" : "text-foreground"}`}>
-                  Do Sistema
-                </Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-
-          {/* Backup e Restauração */}
-          <View className="gap-3">
-            <Text className="text-lg font-semibold text-foreground">Backup de Dados</Text>
-            <View className="bg-surface rounded-lg p-4 gap-3">
-              <TouchableOpacity onPress={handleCreateBackup} className="bg-primary rounded-lg p-4 items-center">
-                <Text className="text-white font-semibold">Criar Backup</Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                onPress={handleExportBackup}
-                className="border border-primary rounded-lg p-4 items-center"
-              >
-                <Text className="text-primary font-semibold">Exportar Backup (JSON)</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-
-          {/* Lista de Backups */}
-          {backups.length > 0 && (
+      <View className="flex-1 gap-4" style={{ paddingBottom: insets.bottom }}>
+        <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+          <View className="gap-6 p-4 pb-6">
+            {/* Tema */}
             <View className="gap-3">
-              <View className="flex-row items-center justify-between">
-                <Text className="text-lg font-semibold text-foreground">Backups Salvos</Text>
-                <Text className="text-sm text-muted">{backups.length}</Text>
-              </View>
+              <Text className="text-lg font-semibold text-foreground">Tema</Text>
+              <View className="bg-surface rounded-lg p-4 gap-3">
+                <TouchableOpacity
+                  onPress={() => handleThemeChange("light")}
+                  className={`p-3 rounded-lg border-2 ${
+                    theme === "light" ? "border-primary bg-primary/10" : "border-border bg-transparent"
+                  }`}
+                >
+                  <Text className={`font-semibold ${theme === "light" ? "text-primary" : "text-foreground"}`}>
+                    Claro (Light)
+                  </Text>
+                </TouchableOpacity>
 
-              <View className="gap-2">
-                {backups.map((item) => (
-                  <View key={item.id} className="bg-surface rounded-lg p-4 border border-border">
-                    <View className="gap-2 mb-3">
-                      <Text className="text-sm font-semibold text-foreground">
-                        {new Date(item.backup.timestamp).toLocaleDateString("pt-BR", {
-                          year: "numeric",
-                          month: "long",
-                          day: "numeric",
-                          hour: "2-digit",
-                          minute: "2-digit",
-                        })}
-                      </Text>
-                      <Text className="text-xs text-muted">
-                        {item.backup.cattle.length} animais • {item.backup.vaccineCatalog.length} vacinas
-                      </Text>
-                    </View>
+                <TouchableOpacity
+                  onPress={() => handleThemeChange("dark")}
+                  className={`p-3 rounded-lg border-2 ${
+                    theme === "dark" ? "border-primary bg-primary/10" : "border-border bg-transparent"
+                  }`}
+                >
+                  <Text className={`font-semibold ${theme === "dark" ? "text-primary" : "text-foreground"}`}>
+                    Escuro (Dark)
+                  </Text>
+                </TouchableOpacity>
 
-                    <View className="flex-row gap-2">
-                      <TouchableOpacity
-                        onPress={() => handleRestoreBackup(item.backup)}
-                        className="flex-1 bg-primary/20 rounded-lg p-2 items-center"
-                      >
-                        <Text className="text-primary font-semibold text-sm">Restaurar</Text>
-                      </TouchableOpacity>
-
-                      <TouchableOpacity
-                        onPress={() => handleDeleteBackup(item.id)}
-                        className="flex-1 bg-error/20 rounded-lg p-2 items-center"
-                      >
-                        <Text className="text-error font-semibold text-sm">Deletar</Text>
-                      </TouchableOpacity>
-                    </View>
-                  </View>
-                ))}
+                <TouchableOpacity
+                  onPress={() => handleThemeChange("system")}
+                  className={`p-3 rounded-lg border-2 ${
+                    theme === "system" ? "border-primary bg-primary/10" : "border-border bg-transparent"
+                  }`}
+                >
+                  <Text className={`font-semibold ${theme === "system" ? "text-primary" : "text-foreground"}`}>
+                    Do Sistema
+                  </Text>
+                </TouchableOpacity>
               </View>
             </View>
-          )}
 
-          <TouchableOpacity
-            onPress={() => navigation.navigate("NotificationsSettings" as never)}
-            className="bg-surface rounded-full p-4 items-center border border-border"
-            style={{ opacity: 1 }}
-          >
-            <Text className="text-foreground font-semibold text-base">⚙️ Configurar Notificações</Text>
-          </TouchableOpacity>
+            {/* Backup e Restauração */}
+            <View className="gap-3">
+              <Text className="text-lg font-semibold text-foreground">Backup de Dados</Text>
+              <View className="bg-surface rounded-lg p-4 gap-3">
+                <TouchableOpacity onPress={handleCreateBackup} className="bg-primary rounded-lg p-4 items-center">
+                  <Text className="text-white font-semibold">Criar Backup</Text>
+                </TouchableOpacity>
 
-          {/* Informações do App */}
-          <View className="gap-3 border-t border-border pt-4">
-            <Text className="text-lg font-semibold text-foreground">Sobre</Text>
-            <View className="bg-surface rounded-lg p-4 gap-2">
-              <View className="flex-row justify-between">
-                <Text className="text-muted">App</Text>
-                <Text className="font-semibold text-foreground">Meus Gados</Text>
+                <TouchableOpacity
+                  onPress={handleExportBackup}
+                  className="border border-primary rounded-lg p-4 items-center"
+                >
+                  <Text className="text-primary font-semibold">Exportar Backup (JSON)</Text>
+                </TouchableOpacity>
               </View>
+            </View>
+
+            {/* Lista de Backups */}
+            {backups.length > 0 && (
+              <View className="gap-3">
+                <View className="flex-row items-center justify-between">
+                  <Text className="text-lg font-semibold text-foreground">Backups Salvos</Text>
+                  <Text className="text-sm text-muted">{backups.length}</Text>
+                </View>
+
+                <View className="gap-2">
+                  {backups.map((item) => (
+                    <View key={item.id} className="bg-surface rounded-lg p-4 border border-border">
+                      <View className="gap-2 mb-3">
+                        <Text className="text-sm font-semibold text-foreground">
+                          {new Date(item.backup.timestamp).toLocaleDateString("pt-BR", {
+                            year: "numeric",
+                            month: "long",
+                            day: "numeric",
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })}
+                        </Text>
+                        <Text className="text-xs text-muted">
+                          {item.backup.cattle.length} animais • {item.backup.vaccineCatalog.length} vacinas
+                        </Text>
+                      </View>
+
+                      <View className="flex-row gap-2">
+                        <TouchableOpacity
+                          onPress={() => handleRestoreBackup(item.backup)}
+                          className="flex-1 bg-primary/20 rounded-lg p-2 items-center"
+                        >
+                          <Text className="text-primary font-semibold text-sm">Restaurar</Text>
+                        </TouchableOpacity>
+
+                        <TouchableOpacity
+                          onPress={() => handleDeleteBackup(item.id)}
+                          className="flex-1 bg-error/20 rounded-lg p-2 items-center"
+                        >
+                          <Text className="text-error font-semibold text-sm">Deletar</Text>
+                        </TouchableOpacity>
+                      </View>
+                    </View>
+                  ))}
+                </View>
+              </View>
+            )}
+
+            <TouchableOpacity
+              onPress={() => navigation.navigate("NotificationsSettings" as never)}
+              className="bg-surface rounded-full p-4 items-center border border-border"
+              style={{ opacity: 1 }}
+            >
+              <Text className="text-foreground font-semibold text-base">⚙️ Configurar Notificações</Text>
+            </TouchableOpacity>
+          </View>
+        </ScrollView>
+        {/* Informações do App */}
+        <View className="gap-3 border-t border-border p-4">
+          <Text className="text-lg font-semibold text-foreground">Sobre</Text>
+          <View className="bg-surface rounded-lg p-4 gap-2">
+            <View className="flex-row justify-between">
+              <Text className="text-muted">App</Text>
+              <Text className="font-semibold text-foreground">Meus Gados</Text>
+            </View>
+            <View className="flex-row justify-between">
+              <Text className="text-muted">Versão</Text>
+              <Text className="font-semibold text-foreground">{Constants.expoConfig?.version ?? "1.0.0"}</Text>
             </View>
           </View>
         </View>
-      </ScrollView>
+      </View>
     </ScreenContainer>
   );
 }
