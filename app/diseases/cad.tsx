@@ -1,3 +1,4 @@
+import { FormInput, FormSelect } from "@/components";
 import { CustomDatePicker } from "@/components/date-picker";
 import { ScreenContainer } from "@/components/screen-container";
 import { DISEASE_RESULT_LABELS } from "@/constants/const";
@@ -7,7 +8,7 @@ import { Cattle, DiseaseResult, RootStackParamList } from "@/types";
 import { RouteProp, useRoute } from "@react-navigation/native";
 import * as Haptics from "expo-haptics";
 import { useEffect, useState } from "react";
-import { ActivityIndicator, Alert, Platform, ScrollView, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, Alert, Platform, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const DISEASE_RESULTS: DiseaseResult[] = Object.keys(DISEASE_RESULT_LABELS) as DiseaseResult[];
@@ -60,11 +61,6 @@ export default function DiseaseCadScreen() {
     } finally {
       setLoadingCattle(false);
     }
-  };
-
-  const getSelectedCattleName = () => {
-    const selected = cattle.find((c) => c.id === formData.cattleId);
-    return selected ? selected.name || `Animal ${selected.number}` : "Selecionar animal";
   };
 
   const loadDisease = async () => {
@@ -166,29 +162,24 @@ export default function DiseaseCadScreen() {
         <View className="gap-6" style={{ paddingBottom: insets.bottom }}>
           {/* Form Fields */}
           <View className="gap-4">
-            {/* Animal */}
-            <View>
-              <Text className="text-sm font-medium text-foreground mb-2">Animal *</Text>
-              <TextInput
-                placeholder="Ex: Mastite"
-                value={getSelectedCattleName()}
-                className="border border-border rounded-lg p-3 text-foreground bg-surface"
-                placeholderTextColor={colors.muted}
-                editable={false}
-              />
-            </View>
+            <FormSelect
+              label="Animal"
+              value={formData.cattleId || ""}
+              onValueChange={(value) => setFormData({ ...formData, cattleId: value })}
+              options={cattle.map((c) => ({ label: c.name || `Animal ${c.number}`, value: c.id }))}
+              placeholder="Selecionar animal"
+              required
+              disabled={!!id || !!cattleId}
+            />
+
             {/* Tipo de Doença */}
-            <View className="gap-2">
-              <Text className="text-sm font-semibold text-foreground">Tipo de Doença *</Text>
-              <TextInput
-                placeholder="Ex: Mastite"
-                value={formData.type}
-                onChangeText={(text) => setFormData({ ...formData, type: text })}
-                className="border border-border rounded-lg p-3 text-foreground bg-surface"
-                placeholderTextColor={colors.muted}
-                editable={!saving}
-              />
-            </View>
+            <FormInput
+              label="Tipo de Doença"
+              value={formData.type}
+              onChangeText={(text) => setFormData({ ...formData, type: text })}
+              placeholder="Ex: Mastite"
+              disabled={saving}
+            />
 
             {/* Data de Diagnóstico */}
             <View className="gap-2">
@@ -202,71 +193,38 @@ export default function DiseaseCadScreen() {
             </View>
 
             {/* Sintomas */}
-            <View className="gap-2">
-              <Text className="text-sm font-semibold text-foreground">Sintomas (Opcional)</Text>
-              <TextInput
-                placeholder="Descreva os sintomas observados"
-                value={formData.symptoms}
-                onChangeText={(text) => setFormData({ ...formData, symptoms: text })}
-                className="border border-border rounded-lg p-3 text-foreground bg-surface"
-                placeholderTextColor={colors.muted}
-                multiline
-                numberOfLines={3}
-                editable={!saving}
-              />
-            </View>
+            <FormInput
+              label="Sintomas (Opcional)"
+              value={formData.symptoms}
+              onChangeText={(text) => setFormData({ ...formData, symptoms: text })}
+              placeholder="Descreva os sintomas observados"
+              multiline
+              numberOfLines={3}
+              disabled={saving}
+            />
 
             {/* Tratamento */}
-            <View className="gap-2">
-              <Text className="text-sm font-semibold text-foreground">Tratamento (Opcional)</Text>
-              <TextInput
-                placeholder="Descreva o tratamento realizado"
-                value={formData.treatment}
-                onChangeText={(text) => setFormData({ ...formData, treatment: text })}
-                className="border border-border rounded-lg p-3 text-foreground bg-surface"
-                placeholderTextColor={colors.muted}
-                multiline
-                numberOfLines={3}
-                editable={!saving}
-              />
-            </View>
-
+            <FormInput
+              label="Tratamento (Opcional)"
+              value={formData.treatment}
+              onChangeText={(text) => setFormData({ ...formData, treatment: text })}
+              placeholder="Descreva o tratamento realizado"
+              multiline
+              numberOfLines={3}
+              disabled={saving}
+            />
             {/* Resultado */}
-            <View className="gap-2">
-              <Text className="text-sm font-semibold text-foreground">Resultado *</Text>
-              <TouchableOpacity
-                onPress={() => setShowResultPicker(!showResultPicker)}
-                disabled={saving}
-                className="border border-border rounded-lg p-3 bg-surface"
-                style={showResultPicker ? { borderBottomLeftRadius: 0, borderBottomRightRadius: 0 } : {}}
-              >
-                <Text className="text-foreground">
-                  {DISEASE_RESULT_LABELS[formData.result].icon} {DISEASE_RESULT_LABELS[formData.result].text}
-                </Text>
-              </TouchableOpacity>
-              {showResultPicker && (
-                <View
-                  className="border border-border rounded-lg  p-2 gap-2"
-                  style={{ marginTop: -7, borderTopLeftRadius: 0, borderTopRightRadius: 0 }}
-                >
-                  {DISEASE_RESULTS.map((result) => (
-                    <TouchableOpacity
-                      key={result}
-                      onPress={() => {
-                        setFormData({ ...formData, result });
-                        setShowResultPicker(false);
-                      }}
-                      className="p-3 border-b border-border"
-                    >
-                      <Text className={formData.result === result ? "font-bold text-primary" : "text-foreground"}>
-                        {DISEASE_RESULT_LABELS[result as DiseaseResult].icon}{" "}
-                        {DISEASE_RESULT_LABELS[result as DiseaseResult].text}
-                      </Text>
-                    </TouchableOpacity>
-                  ))}
-                </View>
-              )}
-            </View>
+            <FormSelect
+              label="Resultado"
+              value={formData.result || ""}
+              onValueChange={(value) => setFormData({ ...formData, result: value as DiseaseResult })}
+              options={DISEASE_RESULTS.map((c) => ({
+                label: `${DISEASE_RESULT_LABELS[c].icon} ${DISEASE_RESULT_LABELS[c].text}`,
+                value: c,
+              }))}
+              placeholder="Selecionar animal"
+              required
+            />
           </View>
 
           {/* Buttons */}

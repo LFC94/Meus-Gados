@@ -1,3 +1,4 @@
+import { FormInput, FormSelect } from "@/components";
 import { CustomDatePicker } from "@/components/date-picker";
 import { ScreenContainer } from "@/components/screen-container";
 import { CATTLE_BREEDS } from "@/constants/const";
@@ -8,7 +9,7 @@ import { RootStackParamList } from "@/types";
 import { RouteProp, useRoute } from "@react-navigation/native";
 import * as Haptics from "expo-haptics";
 import { useEffect, useState } from "react";
-import { ActivityIndicator, Alert, Platform, ScrollView, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, Alert, Platform, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function CattleCadScreen() {
@@ -25,7 +26,6 @@ export default function CattleCadScreen() {
     birthDate: new Date(),
     weight: "",
   });
-  const [showBreedPicker, setShowBreedPicker] = useState(false);
   const insets = useSafeAreaInsets();
 
   useScreenHeader(id ? "Editar Animal" : "Cadastrar Animal", id ? "Atualize os dados do animal" : undefined);
@@ -124,60 +124,33 @@ export default function CattleCadScreen() {
           {/* Form Fields */}
           <View className="gap-4">
             {/* Número */}
-            <View className="gap-2">
-              <Text className="text-sm font-semibold text-foreground">Número do Animal *</Text>
-              <TextInput
-                placeholder="Ex: 001"
-                value={formData.number}
-                onChangeText={(text) => setFormData({ ...formData, number: text })}
-                className="border border-border rounded-lg p-3 text-foreground bg-surface"
-                placeholderTextColor={colors.muted}
-                editable={!saving}
-              />
-            </View>
+            <FormInput
+              label="Número do Animal"
+              value={formData.number}
+              onChangeText={(text) => setFormData({ ...formData, number: text })}
+              placeholder="Ex: 001"
+              required
+              disabled={saving}
+            />
 
             {/* Nome */}
-            <View className="gap-2">
-              <Text className="text-sm font-semibold text-foreground">Nome (Opcional)</Text>
-              <TextInput
-                placeholder="Ex: Margarida"
-                value={formData.name}
-                onChangeText={(text) => setFormData({ ...formData, name: text })}
-                className="border border-border rounded-lg p-3 text-foreground bg-surface"
-                placeholderTextColor={colors.muted}
-                editable={!saving}
-              />
-            </View>
+            <FormInput
+              label="Nome (Opcional)"
+              value={formData.name}
+              onChangeText={(text) => setFormData({ ...formData, name: text })}
+              placeholder="Ex: Margarida"
+              disabled={saving}
+            />
 
             {/* Raça */}
-            <View className="gap-2">
-              <Text className="text-sm font-semibold text-foreground">Raça *</Text>
-              <TouchableOpacity
-                onPress={() => setShowBreedPicker(!showBreedPicker)}
-                disabled={saving}
-                className="border border-border rounded-lg p-3 bg-surface"
-              >
-                <Text className="text-foreground">{formData.breed}</Text>
-              </TouchableOpacity>
-              {showBreedPicker && (
-                <View className="border border-border rounded-lg bg-surface p-2 gap-2">
-                  {CATTLE_BREEDS.map((breed) => (
-                    <TouchableOpacity
-                      key={breed}
-                      onPress={() => {
-                        setFormData({ ...formData, breed });
-                        setShowBreedPicker(false);
-                      }}
-                      className="p-3 border-b border-border"
-                    >
-                      <Text className={formData.breed === breed ? "font-bold text-primary" : "text-foreground"}>
-                        {breed}
-                      </Text>
-                    </TouchableOpacity>
-                  ))}
-                </View>
-              )}
-            </View>
+            <FormSelect
+              label="Raça"
+              value={formData.breed}
+              onValueChange={(value) => setFormData({ ...formData, breed: value })}
+              options={CATTLE_BREEDS.map((breed) => ({ label: breed, value: breed }))}
+              required
+              disabled={saving}
+            />
 
             {/* Data de Nascimento */}
             <View className="gap-2">
@@ -191,18 +164,15 @@ export default function CattleCadScreen() {
             </View>
 
             {/* Peso */}
-            <View className="gap-2">
-              <Text className="text-sm font-semibold text-foreground">Peso (kg) *</Text>
-              <TextInput
-                placeholder="Ex: 450"
-                value={formData.weight}
-                onChangeText={(text) => setFormData({ ...formData, weight: text })}
-                className="border border-border rounded-lg p-3 text-foreground bg-surface"
-                placeholderTextColor={colors.muted}
-                keyboardType="decimal-pad"
-                editable={!saving}
-              />
-            </View>
+            <FormInput
+              label="Peso (kg)"
+              value={formData.weight}
+              onChangeText={(text) => setFormData({ ...formData, weight: text })}
+              placeholder="Ex: 450"
+              keyboardType="decimal-pad"
+              required
+              disabled={saving}
+            />
           </View>
 
           {/* Buttons */}

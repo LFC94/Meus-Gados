@@ -1,3 +1,4 @@
+import { FormSelect } from "@/components";
 import { CustomDatePicker } from "@/components/date-picker";
 import { ScreenContainer } from "@/components/screen-container";
 import { useColors, useNavigation, useScreenHeader } from "@/hooks";
@@ -19,7 +20,6 @@ export default function AddPregnancyScreen() {
   const [loading, setLoading] = useState(false);
   const [loadingCattle, setLoadingCattle] = useState(true);
   const [cattle, setCattle] = useState<Cattle[]>([]);
-  const [showCattlePicker, setShowCattlePicker] = useState(false);
   const [formData, setFormData] = useState({
     cattleId: cattleId,
     coverageDate: new Date(),
@@ -54,11 +54,6 @@ export default function AddPregnancyScreen() {
     } finally {
       setLoadingCattle(false);
     }
-  };
-
-  const getSelectedCattleName = () => {
-    const selected = cattle.find((c) => c.id === formData.cattleId);
-    return selected ? selected.name || `Animal ${selected.number}` : "Selecionar animal";
   };
 
   const handleSave = async () => {
@@ -123,47 +118,14 @@ export default function AddPregnancyScreen() {
         <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
           <View className="gap-4 pb-6">
             {/* Animal */}
-            <View>
-              <Text className="text-sm font-medium text-foreground mb-2">Animal (Vaca) *</Text>
-              <TouchableOpacity
-                onPress={() => setShowCattlePicker(!showCattlePicker)}
-                className="bg-surface rounded-xl px-4 py-3 border border-border"
-                style={{ opacity: 1 }}
-              >
-                <Text className="text-base" style={{ color: formData.cattleId ? colors.foreground : colors.muted }}>
-                  {getSelectedCattleName()}
-                </Text>
-              </TouchableOpacity>
-
-              {showCattlePicker && (
-                <View className="mt-2 bg-surface rounded-xl border border-border overflow-hidden">
-                  <ScrollView style={{ maxHeight: 200 }}>
-                    {cattle.map((item) => (
-                      <TouchableOpacity
-                        key={item.id}
-                        onPress={() => {
-                          setFormData({ ...formData, cattleId: item.id });
-                          setShowCattlePicker(false);
-                        }}
-                        className="px-4 py-3 border-b border-border"
-                        style={{ opacity: 1 }}
-                      >
-                        <Text
-                          className="text-base"
-                          style={{
-                            color: formData.cattleId === item.id ? colors.primary : colors.foreground,
-                            fontWeight: formData.cattleId === item.id ? "600" : "400",
-                          }}
-                        >
-                          {item.name || `Animal ${item.number}`}
-                        </Text>
-                        <Text className="text-xs text-muted mt-1">Nº {item.number}</Text>
-                      </TouchableOpacity>
-                    ))}
-                  </ScrollView>
-                </View>
-              )}
-            </View>
+            <FormSelect
+              label="Animal (Vaca)"
+              value={formData.cattleId || ""}
+              onValueChange={(value) => setFormData({ ...formData, cattleId: value })}
+              options={cattle.map((c) => ({ label: c.name || `Animal ${c.number}`, value: c.id }))}
+              placeholder="Selecionar animal"
+              required
+            />
             {/* Data de Cobertura/Inseminação */}
             <CustomDatePicker
               label="Data de Cobertura/Inseminação *"

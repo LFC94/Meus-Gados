@@ -1,3 +1,4 @@
+import { FormInput } from "@/components";
 import { CustomDatePicker } from "@/components/date-picker";
 import { ScreenContainer } from "@/components/screen-container";
 import { COMMON_VACCINES } from "@/constants/const";
@@ -7,7 +8,7 @@ import { RootStackParamList } from "@/types";
 import { RouteProp, useRoute } from "@react-navigation/native";
 import * as Haptics from "expo-haptics";
 import React, { useEffect, useState } from "react";
-import { ActivityIndicator, Alert, Platform, ScrollView, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, Alert, Platform, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function VaccineCatalogCadScreen() {
@@ -159,48 +160,31 @@ export default function VaccineCatalogCadScreen() {
           {/* Form Fields */}
           <View className="gap-4">
             {/* Nome */}
-            <View className="gap-2">
-              <Text className="text-sm font-semibold text-foreground">
-                Nome da Vacina <Text className="text-error">*</Text>
-              </Text>
-              <View className="bg-surface rounded-xl border border-border">
-                <TextInput
-                  value={formData.name}
-                  onChangeText={(text) => setFormData({ ...formData, name: text })}
-                  placeholder="Ex: Febre Aftosa"
-                  placeholderTextColor={colors.muted}
-                  className="p-3 text-base text-foreground"
-                />
-              </View>
-            </View>
+            <FormInput
+              label="Nome da Vacina"
+              value={formData.name}
+              onChangeText={(text) => setFormData({ ...formData, name: text })}
+              placeholder="Ex: Febre Aftosa"
+              required
+            />
 
             {/* Fabricante */}
-            <View className="gap-2">
-              <Text className="text-sm font-semibold text-foreground">Fabricante</Text>
-              <View className="bg-surface rounded-xl border border-border">
-                <TextInput
-                  value={formData.manufacturer}
-                  onChangeText={(text) => setFormData({ ...formData, manufacturer: text })}
-                  placeholder="Ex: Ourofino, MSD, Boehringer"
-                  placeholderTextColor={colors.muted}
-                  className="p-3 text-base text-foreground"
-                />
-              </View>
-            </View>
+            <FormInput
+              label="Fabricante"
+              value={formData.manufacturer}
+              onChangeText={(text) => setFormData({ ...formData, manufacturer: text })}
+              placeholder="Ex: Ourofino, MSD, Boehringer"
+            />
 
             {/* Lote e Validade */}
             <View className="flex-row gap-3">
-              <View className="flex-1 gap-2">
-                <Text className="text-sm font-semibold text-foreground">Lote Padrão</Text>
-                <View className="bg-surface rounded-xl border border-border">
-                  <TextInput
-                    value={formData.batchNumber}
-                    onChangeText={(text) => setFormData({ ...formData, batchNumber: text })}
-                    placeholder="Ex: LOTE-2024-001"
-                    placeholderTextColor={colors.muted}
-                    className="p-3 text-base text-foreground"
-                  />
-                </View>
+              <View className="flex-1">
+                <FormInput
+                  label="Lote Padrão"
+                  value={formData.batchNumber}
+                  onChangeText={(text) => setFormData({ ...formData, batchNumber: text })}
+                  placeholder="Ex: LOTE-2024-001"
+                />
               </View>
 
               <View className="flex-1 gap-2">
@@ -215,39 +199,26 @@ export default function VaccineCatalogCadScreen() {
             </View>
 
             {/* Intervalo entre Doses */}
-            <View className="gap-2">
-              <Text className="text-sm font-semibold text-foreground">Intervalo entre Doses (dias)</Text>
-              <View className="bg-surface rounded-xl border border-border">
-                <TextInput
-                  value={formData.daysBetweenDoses.toString()}
-                  onChangeText={(text) => {
-                    const num = parseInt(text) || 0;
-                    setFormData({ ...formData, daysBetweenDoses: num });
-                  }}
-                  placeholder="0 para dose única"
-                  placeholderTextColor={colors.muted}
-                  keyboardType="numeric"
-                  className="p-3 text-base text-foreground"
-                />
-              </View>
-            </View>
+            <FormInput
+              label="Intervalo entre Doses (dias)"
+              value={formData.daysBetweenDoses.toString()}
+              onChangeText={(text) => {
+                const num = parseInt(text) || 0;
+                setFormData({ ...formData, daysBetweenDoses: num });
+              }}
+              placeholder="0 para dose única"
+              keyboardType="numeric"
+            />
 
             {/* Descrição */}
-            <View className="gap-2">
-              <Text className="text-sm font-semibold text-foreground">Descrição / Tratamento</Text>
-              <View className="bg-surface rounded-xl border border-border">
-                <TextInput
-                  value={formData.description}
-                  onChangeText={(text) => setFormData({ ...formData, description: text })}
-                  placeholder="Ex: Imunização contra febre aftosa"
-                  placeholderTextColor={colors.muted}
-                  multiline
-                  numberOfLines={3}
-                  textAlignVertical="top"
-                  className="p-3 text-base text-foreground"
-                />
-              </View>
-            </View>
+            <FormInput
+              label="Descrição / Tratamento"
+              value={formData.description}
+              onChangeText={(text) => setFormData({ ...formData, description: text })}
+              placeholder="Ex: Imunização contra febre aftosa"
+              multiline
+              numberOfLines={3}
+            />
           </View>
 
           {/* Buttons */}

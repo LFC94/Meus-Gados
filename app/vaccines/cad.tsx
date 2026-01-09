@@ -1,3 +1,4 @@
+import { FormInput, FormSelect } from "@/components";
 import { CustomDatePicker } from "@/components/date-picker";
 import { ScreenContainer } from "@/components/screen-container";
 import { useNavigation } from "@/hooks";
@@ -9,7 +10,7 @@ import { Cattle, RootStackParamList, VaccineModel } from "@/types";
 import { RouteProp, useRoute } from "@react-navigation/native";
 import * as Haptics from "expo-haptics";
 import { useEffect, useState } from "react";
-import { ActivityIndicator, Alert, Platform, ScrollView, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, Alert, Platform, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function VaccineCadScreen() {
@@ -22,8 +23,7 @@ export default function VaccineCadScreen() {
   const [loadingCatalog, setLoadingCatalog] = useState(true);
   const [cattle, setCattle] = useState<Cattle[]>([]);
   const [vaccineCatalog, setVaccineCatalog] = useState<VaccineModel[]>([]);
-  const [showCattlePicker, setShowCattlePicker] = useState(false);
-  const [showVaccinePicker, setShowVaccinePicker] = useState(false);
+
   const [formData, setFormData] = useState({
     cattleId: cattleId,
     vaccineId: vaccineId || "",
@@ -95,16 +95,6 @@ export default function VaccineCadScreen() {
     } finally {
       setLoadingCatalog(false);
     }
-  };
-
-  const getSelectedCattleName = () => {
-    const selected = cattle.find((c) => c.id === formData.cattleId);
-    return selected ? selected.name || `Animal ${selected.number}` : "Selecionar animal";
-  };
-
-  const getSelectedVaccineName = () => {
-    const selected = vaccineCatalog.find((v) => v.id === formData.vaccineId);
-    return selected ? selected.name : "Selecionar vacina";
   };
 
   const handleSave = async () => {
@@ -194,106 +184,45 @@ export default function VaccineCadScreen() {
       <View className="flex-1 gap-4" style={{ paddingBottom: insets.bottom }}>
         <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
           <View className="gap-4 pb-6">
-            <View>
-              <Text className="text-sm font-medium text-foreground mb-2">Animal *</Text>
-              <TouchableOpacity
-                onPress={() => setShowCattlePicker(!showCattlePicker)}
-                className="bg-surface rounded-xl px-4 py-3 border border-border"
-                style={{ opacity: 1 }}
-                disabled={!!id || !!cattleId}
-              >
-                <Text className="text-base" style={{ color: formData.cattleId ? colors.foreground : colors.muted }}>
-                  {getSelectedCattleName()}
+            <FormSelect
+              label="Animal"
+              value={formData.cattleId || ""}
+              onValueChange={(value) => setFormData({ ...formData, cattleId: value })}
+              options={cattle.map((c) => ({ label: c.name || `Animal ${c.number}`, value: c.id }))}
+              placeholder="Selecionar animal"
+              required
+              disabled={!!id || !!cattleId}
+            />
+
+            <FormSelect
+              label="Vacina"
+              value={formData.vaccineId}
+              onValueChange={(value) => {
+                const selected = vaccineCatalog.find((v) => v.id === value);
+                setFormData({
+                  ...formData,
+                  vaccineId: value,
+                  batchUsed: selected?.batchNumber || "",
+                });
+              }}
+              options={vaccineCatalog.map((v) => ({
+                label: `${v.name}${v.manufacturer ? ` - ${v.manufacturer}` : ""}`,
+                value: v.id,
+              }))}
+              placeholder="Selecionar vacina"
+              required
+            />
+
+            {vaccineCatalog.length === 0 && (
+              <View className="px-4 py-2">
+                <Text className="text-muted text-center text-sm">
+                  Nenhuma vacina no catálogo.{" "}
+                  <Text className="text-primary" onPress={() => navigation.navigate("VaccineCatalog" as never)}>
+                    Adicionar
+                  </Text>
                 </Text>
-              </TouchableOpacity>
-
-              {showCattlePicker && (
-                <View className="mt-2 bg-surface rounded-xl border border-border overflow-hidden">
-                  <ScrollView style={{ maxHeight: 200 }}>
-                    {cattle.map((item) => (
-                      <TouchableOpacity
-                        key={item.id}
-                        onPress={() => {
-                          setFormData({ ...formData, cattleId: item.id });
-                          setShowCattlePicker(false);
-                        }}
-                        className="px-4 py-3 border-b border-border"
-                        style={{ opacity: 1 }}
-                      >
-                        <Text
-                          className="text-base"
-                          style={{
-                            color: formData.cattleId === item.id ? colors.primary : colors.foreground,
-                            fontWeight: formData.cattleId === item.id ? "600" : "400",
-                          }}
-                        >
-                          {item.name || `Animal ${item.number}`}
-                        </Text>
-                        <Text className="text-xs text-muted mt-1">Nº {item.number}</Text>
-                      </TouchableOpacity>
-                    ))}
-                  </ScrollView>
-                </View>
-              )}
-            </View>
-
-            <View>
-              <Text className="text-sm font-medium text-foreground mb-2">Vacina *</Text>
-              <TouchableOpacity
-                onPress={() => setShowVaccinePicker(!showVaccinePicker)}
-                className="bg-surface rounded-xl px-4 py-3 border border-border"
-                style={{ opacity: 1 }}
-              >
-                <Text className="text-base" style={{ color: formData.vaccineId ? colors.foreground : colors.muted }}>
-                  {getSelectedVaccineName()}
-                </Text>
-              </TouchableOpacity>
-
-              {showVaccinePicker && (
-                <View className="mt-2 bg-surface rounded-xl border border-border overflow-hidden">
-                  <ScrollView style={{ maxHeight: 200 }}>
-                    {vaccineCatalog.map((item) => (
-                      <TouchableOpacity
-                        key={item.id}
-                        onPress={() => {
-                          setFormData({
-                            ...formData,
-                            vaccineId: item.id,
-                            batchUsed: item.batchNumber || "",
-                          });
-                          setShowVaccinePicker(false);
-                        }}
-                        className="px-4 py-3 border-b border-border"
-                        style={{ opacity: 1 }}
-                      >
-                        <Text
-                          className="text-base"
-                          style={{
-                            color: formData.vaccineId === item.id ? colors.primary : colors.foreground,
-                            fontWeight: formData.vaccineId === item.id ? "600" : "400",
-                          }}
-                        >
-                          {item.name}
-                        </Text>
-                        <Text className="text-xs text-muted mt-1">
-                          {item.manufacturer} • Lote: {item.batchNumber}
-                        </Text>
-                      </TouchableOpacity>
-                    ))}
-                    {vaccineCatalog.length === 0 && (
-                      <View className="px-4 py-4 items-center">
-                        <Text className="text-muted text-center">
-                          Nenhuma vacina no catálogo.{"\n"}
-                          <Text className="text-primary" onPress={() => navigation.navigate("VaccineCatalog" as never)}>
-                            Adicionar vacina ao catálogo
-                          </Text>
-                        </Text>
-                      </View>
-                    )}
-                  </ScrollView>
-                </View>
-              )}
-            </View>
+              </View>
+            )}
 
             <CustomDatePicker
               label="Data Aplicada *"
@@ -312,29 +241,27 @@ export default function VaccineCadScreen() {
             />
 
             <View>
-              <Text className="text-sm font-medium text-foreground mb-2">Lote</Text>
-              <View className="bg-surface rounded-xl px-4 py-3 border border-border">
-                <Text className="text-base text-foreground">{formData.batchUsed || "Lote do catálogo"}</Text>
-              </View>
+              <FormInput
+                label="Lote"
+                value={formData.batchUsed}
+                onChangeText={(text) => setFormData({ ...formData, batchUsed: text })}
+                placeholder="Ex: LOTE-123"
+              />
               {formData.batchUsed && formData.vaccineId && (
-                <Text className="text-xs text-muted mt-1">Lote preenchido automaticamente do catálogo</Text>
+                <Text className="text-xs text-muted mt-1 px-1">
+                  Lote preenchido automaticamente do catálogo (pode ser alterado)
+                </Text>
               )}
             </View>
 
-            <View>
-              <Text className="text-sm font-medium text-foreground mb-2">Observações</Text>
-              <View className="bg-surface rounded-xl px-4 py-3 border border-border">
-                <TextInput
-                  placeholder="Ex: animal apresentou leve reação"
-                  placeholderTextColor={colors.muted}
-                  value={formData.notes}
-                  onChangeText={(text) => setFormData({ ...formData, notes: text })}
-                  className="text-base text-foreground"
-                  style={{ padding: 0, minHeight: 80, textAlignVertical: "top" }}
-                  multiline
-                />
-              </View>
-            </View>
+            <FormInput
+              label="Observações"
+              value={formData.notes}
+              onChangeText={(text) => setFormData({ ...formData, notes: text })}
+              placeholder="Ex: animal apresentou leve reação"
+              multiline
+              numberOfLines={4}
+            />
           </View>
         </ScrollView>
 

@@ -3,12 +3,15 @@ import { useColors } from "@/hooks/use-colors";
 import React, { useState } from "react";
 import { Text, TextInput, TouchableOpacity, View } from "react-native";
 
+// Import ScrollView for FormSelect
+import { ScrollView } from "react-native";
+
 interface FormInputProps {
   label: string;
   value: string;
   onChangeText: (text: string) => void;
   placeholder?: string;
-  keyboardType?: "default" | "numeric" | "email-address" | "phone-pad";
+  keyboardType?: "default" | "numeric" | "email-address" | "phone-pad" | "decimal-pad";
   maxLength?: number;
   multiline?: boolean;
   numberOfLines?: number;
@@ -77,7 +80,7 @@ export function FormInput({
 interface FormSelectProps {
   label: string;
   value: string;
-  options: Array<{ label: string; value: string }>;
+  options: { label: string; value: string }[];
   onValueChange: (value: string) => void;
   placeholder?: string;
   error?: string;
@@ -154,6 +157,3 @@ export function FormSelect({
     </View>
   );
 }
-
-// Import ScrollView for FormSelect
-import { ScrollView } from "react-native";

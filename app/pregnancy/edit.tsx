@@ -1,3 +1,4 @@
+import { FormInput } from "@/components";
 import { CustomDatePicker } from "@/components/date-picker";
 import { ScreenContainer } from "@/components/screen-container";
 import { useNavigation, useScreenHeader } from "@/hooks";
@@ -7,7 +8,7 @@ import { Cattle, PregnancyResult, RootStackParamList } from "@/types";
 import { RouteProp, useRoute } from "@react-navigation/native";
 import * as Haptics from "expo-haptics";
 import { useEffect, useState } from "react";
-import { ActivityIndicator, Alert, Platform, ScrollView, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, Alert, Platform, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function EditPregnancyScreen() {
@@ -310,21 +311,14 @@ export default function EditPregnancyScreen() {
 
               {/* Complicações */}
               {formData.result === "complications" && (
-                <View className="gap-2">
-                  <Text className="text-sm font-semibold text-foreground">Descrição das Complicações</Text>
-                  <View className="bg-surface rounded-lg border border-border">
-                    <TextInput
-                      multiline
-                      numberOfLines={4}
-                      value={formData.complications}
-                      onChangeText={(text) => setFormData({ ...formData, complications: text })}
-                      placeholder="Descreva as complicações ocorridas durante o parto..."
-                      placeholderTextColor={colors.muted}
-                      className="p-3 text-base text-foreground"
-                      textAlignVertical="top"
-                    />
-                  </View>
-                </View>
+                <FormInput
+                  label="Descrição das Complicações"
+                  value={formData.complications}
+                  onChangeText={(text) => setFormData({ ...formData, complications: text })}
+                  placeholder="Descreva as complicações ocorridas durante o parto..."
+                  multiline
+                  numberOfLines={4}
+                />
               )}
             </View>
 

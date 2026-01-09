@@ -1,3 +1,4 @@
+import { FormInput, FormSelect } from "@/components";
 import { CustomDatePicker } from "@/components/date-picker";
 import { ScreenContainer } from "@/components/screen-container";
 import { useNavigation } from "@/hooks";
@@ -8,7 +9,7 @@ import { Cattle, RootStackParamList } from "@/types";
 import { RouteProp, useRoute } from "@react-navigation/native";
 import * as Haptics from "expo-haptics";
 import { useEffect, useState } from "react";
-import { ActivityIndicator, Alert, Platform, ScrollView, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, Alert, Platform, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function MilkProductionCadScreen() {
@@ -19,7 +20,6 @@ export default function MilkProductionCadScreen() {
   const [loading, setLoading] = useState(false);
   const [loadingCattle, setLoadingCattle] = useState(true);
   const [cattle, setCattle] = useState<Cattle[]>([]);
-  const [showCattlePicker, setShowCattlePicker] = useState(false);
 
   const [formData, setFormData] = useState({
     cattleId: cattleId || "",
@@ -75,11 +75,6 @@ export default function MilkProductionCadScreen() {
     } finally {
       setLoading(false);
     }
-  };
-
-  const getSelectedCattleName = () => {
-    const selected = cattle.find((c) => c.id === formData.cattleId);
-    return selected ? selected.name || `Animal ${selected.number}` : "Selecionar animal";
   };
 
   const handleSave = async () => {
@@ -144,48 +139,15 @@ export default function MilkProductionCadScreen() {
       <View className="flex-1 gap-4" style={{ paddingBottom: insets.bottom }}>
         <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
           <View className="gap-6 pb-6">
-            <View>
-              <Text className="text-sm font-medium text-foreground mb-2">Animal *</Text>
-              <TouchableOpacity
-                onPress={() => setShowCattlePicker(!showCattlePicker)}
-                className="bg-surface rounded-xl px-4 py-3 border border-border"
-                style={{ opacity: 1 }}
-                disabled={!!id || !!cattleId}
-              >
-                <Text className="text-base" style={{ color: formData.cattleId ? colors.foreground : colors.muted }}>
-                  {getSelectedCattleName()}
-                </Text>
-              </TouchableOpacity>
-
-              {showCattlePicker && (
-                <View className="mt-2 bg-surface rounded-xl border border-border overflow-hidden">
-                  <ScrollView style={{ maxHeight: 200 }}>
-                    {cattle.map((item) => (
-                      <TouchableOpacity
-                        key={item.id}
-                        onPress={() => {
-                          setFormData({ ...formData, cattleId: item.id });
-                          setShowCattlePicker(false);
-                        }}
-                        className="px-4 py-3 border-b border-border"
-                        style={{ opacity: 1 }}
-                      >
-                        <Text
-                          className="text-base"
-                          style={{
-                            color: formData.cattleId === item.id ? colors.primary : colors.foreground,
-                            fontWeight: formData.cattleId === item.id ? "600" : "400",
-                          }}
-                        >
-                          {item.name || `Animal ${item.number}`}
-                        </Text>
-                        <Text className="text-xs text-muted mt-1">Nº {item.number}</Text>
-                      </TouchableOpacity>
-                    ))}
-                  </ScrollView>
-                </View>
-              )}
-            </View>
+            <FormSelect
+              label="Animal"
+              value={formData.cattleId}
+              onValueChange={(value) => setFormData({ ...formData, cattleId: value })}
+              options={cattle.map((c) => ({ label: c.name || `Animal ${c.number}`, value: c.id }))}
+              placeholder="Selecionar animal"
+              required
+              disabled={!!id || !!cattleId || loading}
+            />
 
             <CustomDatePicker
               label="Data da Ordenha *"
@@ -195,61 +157,35 @@ export default function MilkProductionCadScreen() {
               placeholder="Selecionar data"
             />
 
-            <View>
-              <Text className="text-sm font-medium text-foreground mb-2">Período *</Text>
-              <View className="flex-row gap-2">
-                {[
-                  { label: "Manhã", value: "morning" },
-                  { label: "Tarde", value: "afternoon" },
-                  { label: "Dia Todo", value: "full_day" },
-                ].map((option) => (
-                  <TouchableOpacity
-                    key={option.value}
-                    onPress={() => setFormData({ ...formData, period: option.value as any })}
-                    className={`flex-1 p-3 rounded-lg border items-center ${
-                      formData.period === option.value ? "bg-primary/10 border-primary" : "bg-surface border-border"
-                    }`}
-                  >
-                    <Text
-                      className={`font-semibold ${
-                        formData.period === option.value ? "text-primary" : "text-foreground"
-                      }`}
-                    >
-                      {option.label}
-                    </Text>
-                  </TouchableOpacity>
-                ))}
-              </View>
-            </View>
+            <FormSelect
+              label="Período"
+              value={formData.period}
+              onValueChange={(value) => setFormData({ ...formData, period: value as any })}
+              options={[
+                { label: "Manhã", value: "morning" },
+                { label: "Tarde", value: "afternoon" },
+                { label: "Dia Todo", value: "full_day" },
+              ]}
+              required
+            />
 
-            <View>
-              <Text className="text-sm font-medium text-foreground mb-2">Quantidade (Litros) *</Text>
-              <View className="bg-surface rounded-xl px-4 py-3 border border-border">
-                <TextInput
-                  placeholder="0.00"
-                  placeholderTextColor={colors.muted}
-                  value={formData.quantity}
-                  onChangeText={(text) => setFormData({ ...formData, quantity: text })}
-                  keyboardType="numeric"
-                  className="text-base text-foreground"
-                />
-              </View>
-            </View>
+            <FormInput
+              label="Quantidade (Litros)"
+              value={formData.quantity}
+              onChangeText={(text) => setFormData({ ...formData, quantity: text })}
+              placeholder="0.00"
+              keyboardType="numeric"
+              required
+            />
 
-            <View>
-              <Text className="text-sm font-medium text-foreground mb-2">Observações</Text>
-              <View className="bg-surface rounded-xl px-4 py-3 border border-border">
-                <TextInput
-                  placeholder="Observações sobre a ordenha..."
-                  placeholderTextColor={colors.muted}
-                  value={formData.notes}
-                  onChangeText={(text) => setFormData({ ...formData, notes: text })}
-                  className="text-base text-foreground"
-                  style={{ padding: 0, minHeight: 80, textAlignVertical: "top" }}
-                  multiline
-                />
-              </View>
-            </View>
+            <FormInput
+              label="Observações"
+              value={formData.notes}
+              onChangeText={(text) => setFormData({ ...formData, notes: text })}
+              placeholder="Observações sobre a ordenha..."
+              multiline
+              numberOfLines={4}
+            />
           </View>
         </ScrollView>
 
