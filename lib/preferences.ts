@@ -1,5 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
+import { STORAGE_KEYS } from "@/constants/const";
+
 export type Unit = "kg" | "arrobas";
 export type Language = "pt" | "en";
 export type Theme = "dark" | "light" | "system";
@@ -10,7 +12,7 @@ export interface AppPreferences {
   theme: Theme;
 }
 
-const PREFERENCES_KEY = "@meus_gados_preferences";
+const PREFERENCES_KEY = STORAGE_KEYS.PREFERENCES;
 
 const DEFAULT_PREFERENCES: AppPreferences = {
   unit: "kg",

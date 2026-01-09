@@ -32,6 +32,7 @@ export const STORAGE_KEYS = {
   PREGNANCIES: "@meus_gados:pregnancies",
   DISEASES: "@meus_gados:diseases",
   MILK_PRODUCTION: "@meus_gados:milk_production",
+  PREFERENCES: "@meus_gados_preferences",
 } as const;
 
 /**

@@ -1,9 +1,11 @@
 import { STORAGE_KEYS } from "@/constants/const";
-import { Cattle, Disease, Pregnancy, VaccinationRecord, VaccineModel } from "@/types";
+import { Cattle, Disease, MilkProductionRecord, Pregnancy, VaccinationRecord, VaccineModel } from "@/types";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { AppPreferences, preferencesStorage } from "./preferences";
 import {
   cattleStorage,
   diseaseStorage,
+  milkProductionStorage,
   pregnancyStorage,
   vaccinationRecordStorage,
   vaccineCatalogStorage,
@@ -14,9 +16,11 @@ export interface BackupData {
   timestamp: string;
   cattle: Cattle[];
   vaccineCatalog: VaccineModel[];
-  vaccinationRecord: VaccinationRecord[];
+  vaccinationRecords: VaccinationRecord[];
   pregnancies: Pregnancy[];
   diseases: Disease[];
+  milkProduction: MilkProductionRecord[];
+  preferences: AppPreferences;
 }
 
 const BACKUP_PREFIX = "@meus_gados_backup_";
@@ -24,22 +28,27 @@ const BACKUP_PREFIX = "@meus_gados_backup_";
 export const backupService = {
   async createBackup(): Promise<BackupData> {
     try {
-      const [cattle, vaccineCatalog, vaccinationRecord, pregnancies, diseases] = await Promise.all([
-        cattleStorage.getAll(),
-        vaccineCatalogStorage.getAll(),
-        vaccinationRecordStorage.getAll(),
-        pregnancyStorage.getAll(),
-        diseaseStorage.getAll(),
-      ]);
+      const [cattle, vaccineCatalog, vaccinationRecords, pregnancies, diseases, milkProduction, preferences] =
+        await Promise.all([
+          cattleStorage.getAll(),
+          vaccineCatalogStorage.getAll(),
+          vaccinationRecordStorage.getAll(),
+          pregnancyStorage.getAll(),
+          diseaseStorage.getAll(),
+          milkProductionStorage.getAll(),
+          preferencesStorage.getPreferences(),
+        ]);
 
       const backup: BackupData = {
         version: "1.0",
         timestamp: new Date().toISOString(),
         cattle,
         vaccineCatalog,
-        vaccinationRecord,
+        vaccinationRecords,
         pregnancies,
         diseases,
+        milkProduction,
+        preferences,
       };
 
       return backup;
@@ -103,16 +112,23 @@ export const backupService = {
         AsyncStorage.removeItem(STORAGE_KEYS.PREGNANCIES),
         AsyncStorage.removeItem(STORAGE_KEYS.VACCINATION_RECORDS),
         AsyncStorage.removeItem(STORAGE_KEYS.VACCINE_CATALOG),
+        AsyncStorage.removeItem(STORAGE_KEYS.MILK_PRODUCTION),
+        preferencesStorage.reset(),
       ]);
 
       // Restore data
       const addPromises = [
         ...backup.cattle.map((c) => cattleStorage.add(c)),
         ...backup.vaccineCatalog.map((v) => vaccineCatalogStorage.add(v)),
-        ...backup.vaccinationRecord.map((v) => vaccinationRecordStorage.add(v)),
+        ...(backup.vaccinationRecords || []).map((v) => vaccinationRecordStorage.add(v)),
         ...backup.pregnancies.map((p) => pregnancyStorage.add(p)),
         ...backup.diseases.map((d) => diseaseStorage.add(d)),
+        ...backup.milkProduction.map((m) => milkProductionStorage.add(m)),
       ];
+
+      if (backup.preferences) {
+        await preferencesStorage.updatePreferences(backup.preferences);
+      }
 
       await Promise.all(addPromises);
     } catch (error) {
@@ -138,9 +154,10 @@ export const backupService = {
       if (
         !backup.cattle ||
         !backup.vaccineCatalog ||
-        !backup.vaccinationRecord ||
+        !backup.vaccinationRecords ||
         !backup.pregnancies ||
-        !backup.diseases
+        !backup.diseases ||
+        !backup.milkProduction
       ) {
         throw new Error("Invalid backup format");
       }

@@ -14,6 +14,7 @@ import {
   VaccineWithRecords,
 } from "@/types";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { preferencesStorage } from "./preferences";
 
 /**
  * Funções genéricas de armazenamento
@@ -400,6 +401,7 @@ export const clearAllData = async (): Promise<void> => {
       STORAGE_KEYS.PREGNANCIES,
       STORAGE_KEYS.DISEASES,
       STORAGE_KEYS.MILK_PRODUCTION,
+      STORAGE_KEYS.PREFERENCES,
     ]);
   } catch (error) {
     console.error("Error clearing all data:", error);
@@ -411,14 +413,16 @@ export const clearAllData = async (): Promise<void> => {
  * Função para exportar todos os dados
  */
 export const exportAllData = async (): Promise<string> => {
-  const [cattle, vaccineCatalog, vaccinationRecords, pregnancies, diseases, milkProduction] = await Promise.all([
-    cattleStorage.getAll(),
-    vaccineCatalogStorage.getAllIncludingInactive(),
-    vaccinationRecordStorage.getAll(),
-    pregnancyStorage.getAll(),
-    diseaseStorage.getAll(),
-    milkProductionStorage.getAll(),
-  ]);
+  const [cattle, vaccineCatalog, vaccinationRecords, pregnancies, diseases, milkProduction, preferences] =
+    await Promise.all([
+      cattleStorage.getAll(),
+      vaccineCatalogStorage.getAllIncludingInactive(),
+      vaccinationRecordStorage.getAll(),
+      pregnancyStorage.getAll(),
+      diseaseStorage.getAll(),
+      milkProductionStorage.getAll(),
+      preferencesStorage.getPreferences(),
+    ]);
 
   return JSON.stringify(
     {
@@ -428,6 +432,7 @@ export const exportAllData = async (): Promise<string> => {
       pregnancies,
       diseases,
       milkProduction,
+      preferences,
       exportedAt: new Date().toISOString(),
     },
     null,
@@ -449,6 +454,7 @@ export const importAllData = async (jsonData: string): Promise<void> => {
       setItems(STORAGE_KEYS.PREGNANCIES, data.pregnancies || []),
       setItems(STORAGE_KEYS.DISEASES, data.diseases || []),
       setItems(STORAGE_KEYS.MILK_PRODUCTION, data.milkProduction || []),
+      setItems(STORAGE_KEYS.PREFERENCES, data.preferences || []),
     ]);
   } catch (error) {
     console.error("Error importing data:", error);
