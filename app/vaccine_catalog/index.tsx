@@ -111,7 +111,7 @@ export default function VaccineCatalogScreen() {
               <Text className="text-4xl mb-4">💉</Text>
               <Text className="text-muted text-center text-base">Nenhuma vaccine cadastrada no catálogo</Text>
               <TouchableOpacity
-                onPress={() => navigation.navigate("VaccineCatalogAdd")}
+                onPress={() => navigation.navigate("VaccineCatalogCad")}
                 className="mt-4 bg-primary rounded-full px-6 py-3"
                 style={{ opacity: 1 }}
               >
@@ -123,7 +123,7 @@ export default function VaccineCatalogScreen() {
               {vaccines.map((vaccine) => (
                 <TouchableOpacity
                   key={vaccine.id}
-                  onPress={() => navigation.navigate("VaccineCatalogEdit", { id: vaccine.id })}
+                  onPress={() => navigation.navigate("VaccineCatalogCad", { id: vaccine.id })}
                   className="bg-surface rounded-2xl p-4 border border-border"
                   style={{ opacity: 1 }}
                 >
@@ -168,7 +168,7 @@ export default function VaccineCatalogScreen() {
 
                     <View className="flex-row gap-2">
                       <TouchableOpacity
-                        onPress={() => navigation.navigate("VaccineCatalogEdit", { id: vaccine.id })}
+                        onPress={() => navigation.navigate("VaccineCatalogCad", { id: vaccine.id })}
                         className="w-8 h-8 items-center justify-center"
                         style={{ opacity: 1 }}
                       >
@@ -191,7 +191,7 @@ export default function VaccineCatalogScreen() {
           {/* Add Button */}
           {vaccines.length > 0 && (
             <TouchableOpacity
-              onPress={() => navigation.navigate("VaccineCatalogAdd")}
+              onPress={() => navigation.navigate("VaccineCatalogCad")}
               className="bg-primary rounded-full p-4 items-center mt-2"
               style={{ opacity: 1 }}
             >

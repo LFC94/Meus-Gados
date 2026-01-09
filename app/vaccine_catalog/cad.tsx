@@ -1,21 +1,30 @@
 import { CustomDatePicker } from "@/components/date-picker";
 import { ScreenContainer } from "@/components/screen-container";
-import { useNavigation } from "@/hooks";
-import { useColors } from "@/hooks/use-colors";
+import { COMMON_VACCINES } from "@/constants/const";
+import { useColors, useNavigation, useScreenHeader } from "@/hooks";
 import { vaccineCatalogStorage } from "@/lib/storage";
 import { RootStackParamList } from "@/types";
 import { RouteProp, useRoute } from "@react-navigation/native";
 import * as Haptics from "expo-haptics";
 import React, { useEffect, useState } from "react";
 import { ActivityIndicator, Alert, Platform, ScrollView, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-export default function EditVaccineScreen() {
+export default function VaccineCatalogCadScreen() {
   const navigation = useNavigation();
-  const route = useRoute<RouteProp<RootStackParamList, "VaccineCatalogEdit">>();
+  const route = useRoute<RouteProp<RootStackParamList, "VaccineCatalogCad">>();
   const colors = useColors();
-  const { id } = route.params;
+  const id = route.params?.id;
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+
+  const insets = useSafeAreaInsets();
+
+  useScreenHeader(
+    id ? "Editar Vacina" : "Nova Vacina",
+    id ? "Atualize as informações da vaccine no catálogo" : "Cadastre uma vaccine no catálogo para uso futuro"
+  );
+
   const [formData, setFormData] = useState({
     name: "",
     manufacturer: "",
@@ -66,7 +75,7 @@ export default function EditVaccineScreen() {
         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
       }
 
-      await vaccineCatalogStorage.update(id!, {
+      const data = {
         name: formData.name.trim(),
         manufacturer: formData.manufacturer.trim() || undefined,
         batchNumber: formData.batchNumber.trim() || undefined,
@@ -74,19 +83,35 @@ export default function EditVaccineScreen() {
         description: formData.description.trim() || undefined,
         daysBetweenDoses: formData.daysBetweenDoses || undefined,
         isActive: formData.isActive,
-      });
+      };
+      if (id) {
+        await vaccineCatalogStorage.update(id!, data);
+      } else {
+        await vaccineCatalogStorage.add(data);
+      }
 
       if (Platform.OS !== "web") {
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       }
 
-      Alert.alert("Sucesso", "Vaccine atualizada com sucesso!", [{ text: "OK", onPress: () => navigation.goBack() }]);
+      Alert.alert("Sucesso", id ? "Vaccine atualizada com sucesso!" : "Vaccine cadastrada com sucesso!", [
+        { text: "OK", onPress: () => navigation.goBack() },
+      ]);
     } catch (error) {
       console.error("Error updating vaccine:", error);
       Alert.alert("Erro", "Não foi possível atualizar a vaccine");
     } finally {
       setSaving(false);
     }
+  };
+
+  const handleUseTemplate = (template: (typeof COMMON_VACCINES)[0]) => {
+    setFormData({
+      ...formData,
+      name: template.name,
+      description: template.description,
+      daysBetweenDoses: template.daysBetweenDoses,
+    });
   };
 
   if (loading) {
@@ -99,13 +124,28 @@ export default function EditVaccineScreen() {
 
   return (
     <ScreenContainer className="p-0">
-      <ScrollView contentContainerStyle={{ flexGrow: 1 }} className="p-4">
+      <ScrollView contentContainerStyle={{ flexGrow: 1 }} className="p-4" style={{ paddingBottom: insets.bottom }}>
         <View className="gap-6">
-          {/* Header */}
-          <View className="gap-2">
-            <Text className="text-3xl font-bold text-foreground">Editar Vacina</Text>
-            <Text className="text-base text-muted">Atualize as informações da vaccine no catálogo</Text>
-          </View>
+          {/* Templates Rápidos */}
+          {formData.name === "" && (
+            <View className="gap-2">
+              <Text className="text-sm font-semibold text-foreground">Usar Modelo Rápido</Text>
+              <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                <View className="flex-row gap-2">
+                  {COMMON_VACCINES.map((template, index) => (
+                    <TouchableOpacity
+                      key={index}
+                      onPress={() => handleUseTemplate(template)}
+                      className="bg-surface border border-border rounded-lg px-3 py-2"
+                      style={{ opacity: 1 }}
+                    >
+                      <Text className="text-sm text-foreground">{template.name}</Text>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+              </ScrollView>
+            </View>
+          )}
 
           {/* Status Badge */}
           {!formData.isActive && (
@@ -216,7 +256,7 @@ export default function EditVaccineScreen() {
               {saving ? (
                 <ActivityIndicator color="white" />
               ) : (
-                <Text className="text-white font-semibold text-base">Salvar Alterações</Text>
+                <Text className="text-white font-semibold text-base">Salvar</Text>
               )}
             </TouchableOpacity>
 

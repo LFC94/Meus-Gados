@@ -9,7 +9,7 @@ export { default as NotificationsSettingsScreen } from "./notifications/settings
 export { default as PregnancyAddScreen } from "./pregnancy/add";
 export { default as PregnancyEditScreen } from "./pregnancy/edit";
 export { default as SettingsScreen } from "./settings";
+export { default as VaccineCatalogCadScreen } from "./vaccine_catalog/cad";
+export { default as VaccineCatalogScreen } from "./vaccine_catalog/index";
 export { default as VaccineCadScreen } from "./vaccines/cad";
-export { default as VaccineCatalogEditScreen } from "./vaccines/catalog/edit";
-export { default as VaccineCatalogScreen } from "./vaccines/catalog/index";
 export { default as VaccinePendingScreen } from "./vaccines/pending";

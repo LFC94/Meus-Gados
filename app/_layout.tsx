@@ -33,9 +33,8 @@ import ScheduledNotificationsScreen from "./notifications/scheduled";
 import PregnancyAddScreen from "./pregnancy/add";
 import PregnancyEditScreen from "./pregnancy/edit";
 import SettingsScreen from "./settings";
-import VaccineCatalogAddScreen from "./vaccines/catalog/add";
-import VaccineCatalogEditScreen from "./vaccines/catalog/edit";
-import VaccineCatalogScreen from "./vaccines/catalog/index";
+import VaccineCatalogCadScreen from "./vaccine_catalog/cad";
+import VaccineCatalogScreen from "./vaccine_catalog/index";
 import VaccinePendingScreen from "./vaccines/pending";
 
 const DEFAULT_WEB_INSETS: EdgeInsets = { top: 0, right: 0, bottom: 0, left: 0 };
@@ -51,6 +50,7 @@ function DrawerNavigator() {
 
   return (
     <Drawer.Navigator
+      initialRouteName="Home"
       screenOptions={{
         drawerActiveTintColor: colors.primary,
         drawerInactiveTintColor: colors.muted,
@@ -160,25 +160,11 @@ function MainStackNavigator() {
           title: "Registrar Vacina",
         }}
       />
-      {/* <Stack.Screen
-        name="VaccineEdit"
-        component={EditVaccineScreen}
+      <Stack.Screen
+        name="VaccineCatalogCad"
+        component={VaccineCatalogCadScreen}
         options={{
           title: "Editar Vacina",
-        }}
-      /> */}
-      <Stack.Screen
-        name="VaccineCatalogEdit"
-        component={VaccineCatalogEditScreen}
-        options={{
-          title: "Editar Vacina",
-        }}
-      />
-      <Stack.Screen
-        name="VaccineCatalogAdd"
-        component={VaccineCatalogAddScreen}
-        options={{
-          title: "Cadastrar Vacina",
         }}
       />
       <Stack.Screen
