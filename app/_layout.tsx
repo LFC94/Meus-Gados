@@ -77,9 +77,9 @@ function DrawerNavigator() {
         name="Home"
         component={HomeScreen}
         options={{
-          drawerLabel: "Home",
+          drawerLabel: "Meus Gados",
           title: "Meus Gados",
-          drawerIcon: ({ color }) => <Text className="text-lg">🐮</Text>,
+          drawerIcon: () => <Text className="text-lg">🐮</Text>,
         }}
       />
       <Drawer.Screen
@@ -88,7 +88,7 @@ function DrawerNavigator() {
         options={{
           drawerLabel: "Animais",
           title: "Animais",
-          drawerIcon: ({ color }) => <Text className="text-lg">🐄</Text>,
+          drawerIcon: () => <Text className="text-lg">🐄</Text>,
         }}
       />
       <Drawer.Screen
@@ -97,7 +97,7 @@ function DrawerNavigator() {
         options={{
           drawerLabel: "Catálogo de Vacinas",
           title: "Catálogo de Vacinas",
-          drawerIcon: ({ color }) => <Text className="text-lg">💉</Text>,
+          drawerIcon: () => <Text className="text-lg">💉</Text>,
         }}
       />
       <Drawer.Screen
@@ -106,7 +106,7 @@ function DrawerNavigator() {
         options={{
           drawerLabel: "Vacinas Pendentes",
           title: "Vacinas Pendentes",
-          drawerIcon: ({ color }) => <Text className="text-lg">🐄</Text>,
+          drawerIcon: () => <Text className="text-lg">🚨</Text>,
         }}
       />
       <Drawer.Screen
@@ -115,7 +115,7 @@ function DrawerNavigator() {
         options={{
           drawerLabel: "Notificações",
           title: "Notificações",
-          drawerIcon: ({ color }) => <Text className="text-lg">🔔</Text>,
+          drawerIcon: () => <Text className="text-lg">🔔</Text>,
         }}
       />
       <Drawer.Screen
@@ -124,7 +124,7 @@ function DrawerNavigator() {
         options={{
           drawerLabel: "Configurações",
           title: "Configurações",
-          drawerIcon: ({ color }) => <Text className="text-lg">⚙️</Text>,
+          drawerIcon: () => <Text className="text-lg">⚙️</Text>,
         }}
       />
     </Drawer.Navigator>
