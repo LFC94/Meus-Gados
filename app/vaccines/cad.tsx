@@ -16,7 +16,7 @@ export default function VaccineCadScreen() {
   const navigation = useNavigation();
   const route = useRoute<RouteProp<RootStackParamList, "VaccineCad">>();
   const colors = useColors();
-  const { id, cattleId } = route.params;
+  const { id, cattleId, previousRecordId, vaccineId } = route.params;
   const [loading, setLoading] = useState(false);
   const [loadingCattle, setLoadingCattle] = useState(true);
   const [loadingCatalog, setLoadingCatalog] = useState(true);
@@ -26,7 +26,7 @@ export default function VaccineCadScreen() {
   const [showVaccinePicker, setShowVaccinePicker] = useState(false);
   const [formData, setFormData] = useState({
     cattleId: cattleId,
-    vaccineId: "",
+    vaccineId: vaccineId || "",
     appliedDate: new Date(),
     nextDose: new Date(),
     batchUsed: "",
@@ -138,6 +138,10 @@ export default function VaccineCadScreen() {
         await vaccinationRecordStorage.update(id!, data);
       } else {
         const record = await vaccinationRecordStorage.add(data);
+
+        if (previousRecordId) {
+          await vaccinationRecordStorage.markNextDoseAsApplied(previousRecordId);
+        }
 
         if (record.nextDoseDate) {
           const selectedCattle = cattle.find((c) => c.id === formData.cattleId);

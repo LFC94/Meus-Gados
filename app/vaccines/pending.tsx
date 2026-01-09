@@ -100,6 +100,26 @@ export default function PendingVaccinesScreen() {
                         </Text>
                       </View>
                     </View>
+                    <View className="flex-row items-center justify-between mt-3 pt-3 border-t border-border">
+                      <TouchableOpacity
+                        onPress={() =>
+                          navigation.navigate("VaccineCad", {
+                            cattleId: item.cattleId,
+                            vaccineId: item.vaccineId,
+                            previousRecordId: item.id,
+                          })
+                        }
+                        className="flex-1 bg-primary/10 rounded-lg p-2 items-center mr-2"
+                      >
+                        <Text className="text-primary font-semibold text-sm">Aplicar Dose</Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                        onPress={() => navigation.navigate("CattleDetail", { id: item.cattleId })}
+                        className="flex-1 bg-surface border border-border rounded-lg p-2 items-center"
+                      >
+                        <Text className="text-foreground text-sm">Ver Animal</Text>
+                      </TouchableOpacity>
+                    </View>
                   </TouchableOpacity>
                 );
               })}

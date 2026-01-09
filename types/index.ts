@@ -44,6 +44,7 @@ export interface VaccinationRecord {
   vaccineId: string; // ID da vaccine do catálogo
   dateApplied: string; // Data da aplicação (ISO)
   nextDoseDate?: string; // Data da próxima dose (ISO)
+  isNextDoseApplied?: boolean; // Se a próxima dose já foi aplicada
   batchUsed?: string; // Lote usado nesta aplicação específica
   notes?: string; // Observações (reações, etc)
   createdAt: string;
@@ -103,7 +104,7 @@ export type RootStackParamList = {
   CattleDetail: { id: string };
   CattleCad: { id?: string };
   VaccinePending: undefined;
-  VaccineCad: { id?: string; cattleId?: string };
+  VaccineCad: { id?: string; cattleId?: string; previousRecordId?: string; vaccineId?: string };
   VaccineCatalog: undefined;
   VaccineCatalogCad: { id: string };
   PregnancyAdd: { cattleId: string };

@@ -227,6 +227,7 @@ export const vaccinationRecordStorage = {
 
     const pendingRecords = allRecords.filter((record) => {
       if (!record.nextDoseDate) return false;
+      if (record.isNextDoseApplied) return false;
       const nextDoseDate = new Date(record.nextDoseDate);
       return nextDoseDate <= thirtyDaysFromNow;
     });
@@ -262,6 +263,10 @@ export const vaccinationRecordStorage = {
   getByVaccineId: async (vaccineId: string): Promise<VaccinationRecord[]> => {
     const allRecords = await getItems<VaccinationRecord>(STORAGE_KEYS.VACCINATION_RECORDS);
     return allRecords.filter((r) => r.vaccineId === vaccineId);
+  },
+
+  markNextDoseAsApplied: async (id: string): Promise<void> => {
+    await updateItem<VaccinationRecord>(STORAGE_KEYS.VACCINATION_RECORDS, id, { isNextDoseApplied: true });
   },
 };
 
