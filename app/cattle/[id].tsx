@@ -441,7 +441,7 @@ export default function CattleDetailScreen() {
                 <View className="items-center py-8">
                   <Text className="text-muted text-center mb-4">Nenhuma doença registrada</Text>
                   <TouchableOpacity
-                    onPress={() => navigation.navigate("DiseasesAdd")}
+                    onPress={() => navigation.navigate("DiseasesCad" as never, { cattleId: id } as never)}
                     className="bg-primary rounded-full px-6 py-3"
                     style={{ opacity: 1 }}
                   >
@@ -454,12 +454,12 @@ export default function CattleDetailScreen() {
                     <DiseaseRecord
                       key={disease.id}
                       disease={disease}
-                      onEdit={() => navigation.navigate("DiseasesEdit", { id: disease.id } as never)}
+                      onEdit={() => navigation.navigate("DiseasesCad" as never, { id: disease.id } as never)}
                       onDelete={() => handleDeleteDisease(disease.id)}
                     />
                   ))}
                   <TouchableOpacity
-                    onPress={() => navigation.navigate("DiseasesAdd" as never)}
+                    onPress={() => navigation.navigate("DiseasesCad" as never, { cattleId: id } as never)}
                     className="bg-primary rounded-full p-4 items-center mt-2"
                     style={{ opacity: 1 }}
                   >

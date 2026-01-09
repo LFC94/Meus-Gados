@@ -1,8 +1,7 @@
 export { default as CattleDetailScreen } from "./cattle/[id]";
 export { default as CattleCadScreen } from "./cattle/cad";
 export { default as CattleListScreen } from "./cattle/list";
-export { default as DiseasesAddScreen } from "./diseases/add";
-export { default as DiseasesEditScreen } from "./diseases/edit";
+export { default as DiseasesCadScreen } from "./diseases/cad";
 export { default as HomeScreen } from "./home";
 export { default as ScheduledNotificationsScreen } from "./notifications/scheduled";
 export { default as NotificationsSettingsScreen } from "./notifications/settings";

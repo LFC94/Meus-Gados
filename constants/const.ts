@@ -66,10 +66,10 @@ export const PREGNANCY_RESULT_LABELS: Record<PregnancyResult, string> = {
 /**
  * Labels para resultados de tratamento
  */
-export const DISEASE_RESULT_LABELS: Record<DiseaseResult, string> = {
-  in_treatment: "Em Tratamento",
-  cured: "Curado",
-  death: "Óbito",
+export const DISEASE_RESULT_LABELS: Record<DiseaseResult, { color: string; text: string; icon: string; bg: string }> = {
+  in_treatment: { text: "Em Tratamento", color: "#f5550b", bg: "#f5550b20", icon: "🏥" },
+  cured: { text: "Curado", color: "#22C55E", bg: "#22C55E20", icon: "💚" },
+  death: { text: "Óbito", color: "#EF4444", bg: "#EF444420", icon: "🪦" },
 };
 
 /**

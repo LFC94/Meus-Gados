@@ -108,9 +108,7 @@ export type RootStackParamList = {
   VaccineCatalogCad: { id: string };
   PregnancyAdd: { cattleId: string };
   PregnancyEdit: { id: string };
-  DiseasesAdd: undefined;
-  DiseasesEdit: { id: string };
+  DiseasesCad: { id?: string; cattleId?: string };
   NotificationsSettings: undefined;
   ScheduledNotifications: undefined;
-  ThemeLab: undefined;
 };

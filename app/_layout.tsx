@@ -22,12 +22,10 @@ import { createStackNavigator } from "@react-navigation/stack";
 // Screens
 import { RootStackParamList } from "@/types";
 
-import { NotificationsSettingsScreen, VaccineCadScreen } from ".";
+import { DiseasesCadScreen, NotificationsSettingsScreen, VaccineCadScreen } from ".";
 import CattleDetailScreen from "./cattle/[id]";
 import CattleCadScreen from "./cattle/cad";
 import CattleListScreen from "./cattle/list";
-import DiseasesAddScreen from "./diseases/add";
-import DiseasesEditScreen from "./diseases/edit";
 import HomeScreen from "./home";
 import ScheduledNotificationsScreen from "./notifications/scheduled";
 import PregnancyAddScreen from "./pregnancy/add";
@@ -189,17 +187,10 @@ function MainStackNavigator() {
         }}
       />
       <Stack.Screen
-        name="DiseasesAdd"
-        component={DiseasesAddScreen}
+        name="DiseasesCad"
+        component={DiseasesCadScreen}
         options={{
           title: "Registrar Doença",
-        }}
-      />
-      <Stack.Screen
-        name="DiseasesEdit"
-        component={DiseasesEditScreen}
-        options={{
-          title: "Editar Doença",
         }}
       />
       <Stack.Screen
