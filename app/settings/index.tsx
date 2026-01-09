@@ -2,7 +2,7 @@ import { ScreenContainer } from "@/components/screen-container";
 import { useColors, useNavigation } from "@/hooks";
 
 import { backupService, type BackupData } from "@/lib/backup";
-import { preferencesStorage, type Theme } from "@/lib/preferences";
+import { useThemeContext } from "@/lib/theme-provider";
 import { useFocusEffect } from "@react-navigation/native";
 import * as FileSystem from "expo-file-system/legacy";
 import * as Haptics from "expo-haptics";
@@ -12,10 +12,10 @@ import { ActivityIndicator, Alert, Platform, ScrollView, Text, TouchableOpacity,
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function SettingsScreen() {
+  const { theme, setTheme } = useThemeContext();
   const colors = useColors();
   const navigation = useNavigation();
   const [loading, setLoading] = useState(true);
-  const [theme, setTheme] = useState<Theme>("system");
   const [backups, setBackups] = useState<{ id: string; backup: BackupData }[]>([]);
 
   const insets = useSafeAreaInsets();
@@ -28,10 +28,7 @@ export default function SettingsScreen() {
   const loadSettings = async () => {
     try {
       setLoading(true);
-      const prefs = await preferencesStorage.getPreferences();
-
-      setTheme(prefs.theme);
-
+      // Removed manual theme loading as it is handled by ThemeProvider
       const backupList = await backupService.getBackupList();
       setBackups(
         backupList.sort((a, b) => new Date(b.backup.timestamp).getTime() - new Date(a.backup.timestamp).getTime())
@@ -43,16 +40,14 @@ export default function SettingsScreen() {
     }
   };
 
-  const handleThemeChange = async (newTheme: Theme) => {
+  const handleThemeChange = async (newTheme: "dark" | "light" | "system") => {
     try {
       setTheme(newTheme);
-      await preferencesStorage.updateTheme(newTheme);
       if (Platform.OS !== "web") {
         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
       }
     } catch (error) {
       Alert.alert("Erro", "Não foi possível atualizar o tema");
-      setTheme(theme);
     }
   };
 

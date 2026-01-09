@@ -3,9 +3,11 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState } 
 import { Appearance, View, useColorScheme as useSystemColorScheme } from "react-native";
 
 import { SchemeColors, type ColorScheme } from "@/constants/theme";
-import { preferencesStorage } from "@/lib/preferences";
+import { preferencesStorage, type Theme } from "@/lib/preferences";
 
 type ThemeContextValue = {
+  theme: Theme;
+  setTheme: (theme: Theme) => void;
   colorScheme: ColorScheme;
   setColorScheme: (scheme: ColorScheme) => void;
 };
@@ -15,7 +17,7 @@ const ThemeContext = createContext<ThemeContextValue | null>(null);
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const systemScheme = useSystemColorScheme() ?? "light";
   const [colorScheme, setColorSchemeState] = useState<ColorScheme>(systemScheme);
-  const [themePreference, setThemePreference] = useState<"dark" | "light" | "system">("system");
+  const [themePreference, setThemePreference] = useState<Theme>("system");
   const [isLoading, setIsLoading] = useState(true);
 
   // Carregar preferência de tema ao montar
@@ -70,6 +72,15 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     [applyScheme]
   );
 
+  const setTheme = useCallback(async (newTheme: Theme) => {
+    setThemePreference(newTheme);
+    try {
+      await preferencesStorage.updateTheme(newTheme);
+    } catch (error) {
+      console.error("Error saving theme preference:", error);
+    }
+  }, []);
+
   useEffect(() => {
     applyScheme(colorScheme);
   }, [applyScheme, colorScheme]);
@@ -92,10 +103,12 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
   const value = useMemo(
     () => ({
+      theme: themePreference,
+      setTheme,
       colorScheme,
       setColorScheme,
     }),
-    [colorScheme, setColorScheme]
+    [themePreference, setTheme, colorScheme, setColorScheme]
   );
 
   return (
