@@ -22,20 +22,24 @@ import { createStackNavigator } from "@react-navigation/stack";
 // Screens
 import { RootStackParamList } from "@/types";
 
-import { DiseasesCadScreen, NotificationsSettingsScreen, VaccineCadScreen } from ".";
-import CattleDetailScreen from "./cattle/[id]";
-import CattleCadScreen from "./cattle/cad";
-import CattleListScreen from "./cattle/list";
-import HomeScreen from "./home";
-import ScheduledNotificationsScreen from "./notifications/scheduled";
-import PregnancyAddScreen from "./pregnancy/add";
-import PregnancyEditScreen from "./pregnancy/edit";
-import MilkProductionListScreen from "./production";
-import MilkProductionCadScreen from "./production/cad";
-import SettingsScreen from "./settings";
-import VaccineCatalogCadScreen from "./vaccine_catalog/cad";
-import VaccineCatalogScreen from "./vaccine_catalog/index";
-import VaccinePendingScreen from "./vaccines/pending";
+import {
+  CattleCadScreen,
+  CattleDetailScreen,
+  CattleListScreen,
+  DiseasesCadScreen,
+  HomeScreen,
+  MilkProductionCadScreen,
+  MilkProductionListScreen,
+  NotificationsSettingsScreen,
+  PregnancyAddScreen,
+  PregnancyEditScreen,
+  ScheduledNotificationsScreen,
+  SettingsScreen,
+  VaccineCadScreen,
+  VaccineCatalogCadScreen,
+  VaccineCatalogScreen,
+  VaccinePendingScreen,
+} from "./_screens";
 
 const DEFAULT_WEB_INSETS: EdgeInsets = { top: 0, right: 0, bottom: 0, left: 0 };
 const DEFAULT_WEB_FRAME: Rect = { x: 0, y: 0, width: 0, height: 0 };

@@ -7,6 +7,8 @@ export { default as ScheduledNotificationsScreen } from "./notifications/schedul
 export { default as NotificationsSettingsScreen } from "./notifications/settings";
 export { default as PregnancyAddScreen } from "./pregnancy/add";
 export { default as PregnancyEditScreen } from "./pregnancy/edit";
+export { default as MilkProductionListScreen } from "./production";
+export { default as MilkProductionCadScreen } from "./production/cad";
 export { default as SettingsScreen } from "./settings";
 export { default as VaccineCatalogCadScreen } from "./vaccine_catalog/cad";
 export { default as VaccineCatalogScreen } from "./vaccine_catalog/index";
