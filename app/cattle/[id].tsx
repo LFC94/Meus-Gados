@@ -7,14 +7,14 @@ import { VaccineItem } from "@/components/vaccine-item";
 import { STATUS_CATTLE } from "@/constants/const";
 import { useColors, useNavigation, useScreenHeader } from "@/hooks";
 import { formatDate, formatWeight } from "@/lib/helpers";
-import { cattleStorage, diseaseStorage, pregnancyStorage, vaccinationRecordStorage } from "@/lib/storage";
-import { Cattle, CattleResult, Disease, Pregnancy, RootStackParamList, VaccinationRecordWithDetails } from "@/types";
+import { cattleStorage, diseaseStorage, milkProductionStorage, pregnancyStorage, vaccinationRecordStorage } from "@/lib/storage";
+import { Cattle, CattleResult, Disease, MilkProductionRecord, Pregnancy, RootStackParamList, VaccinationRecordWithDetails } from "@/types";
 import { RouteProp, useFocusEffect, useRoute } from "@react-navigation/native";
 import * as Haptics from "expo-haptics";
 import React, { useState } from "react";
 import { ActivityIndicator, Alert, Platform, ScrollView, Text, TouchableOpacity, View } from "react-native";
 
-type Tab = "info" | "vaccines" | "pregnancy" | "diseases";
+type Tab = "info" | "vaccines" | "pregnancy" | "diseases" | "production";
 
 export default function CattleDetailScreen() {
   const navigation = useNavigation();
@@ -26,6 +26,7 @@ export default function CattleDetailScreen() {
   const [vaccines, setVaccines] = useState<VaccinationRecordWithDetails[]>([]);
   const [pregnancies, setPregnancies] = useState<Pregnancy[]>([]);
   const [diseases, setDiseases] = useState<Disease[]>([]);
+  const [milkRecords, setMilkRecords] = useState<MilkProductionRecord[]>([]);
   const [activeTab, setActiveTab] = useState<Tab>("info");
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
@@ -50,17 +51,25 @@ export default function CattleDetailScreen() {
   const loadData = async () => {
     try {
       setLoading(true);
-      const [cattleData, vaccinesData, pregnanciesData, diseasesData] = await Promise.all([
+      const results = await Promise.all([
         cattleStorage.getById(id),
         vaccinationRecordStorage.getByCattleId(id),
         pregnancyStorage.getByCattleId(id),
         diseaseStorage.getByCattleId(id),
+        milkProductionStorage.getByCattleId(id),
       ]);
+      
+      const cattleData = results[0];
+      const vaccinesData = results[1];
+      const pregnanciesData = results[2];
+      const diseasesData = results[3];
+      const milkRecordsData = results[4];
 
       setCattle(cattleData);
       setVaccines(vaccinesData);
       setPregnancies(pregnanciesData);
       setDiseases(diseasesData);
+      setMilkRecords(milkRecordsData);
     } catch (error) {
       console.error("Error loading cattle data:", error);
     } finally {
@@ -232,10 +241,12 @@ export default function CattleDetailScreen() {
           </View>
 
           {/* Tabs */}
-          <View className="flex-row gap-2 mt-2">
+
+          
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} className="flex-row gap-2 mt-2 pb-2">
             <TouchableOpacity
               onPress={() => setActiveTab("info")}
-              className="flex-1 py-3 rounded-xl items-center border"
+              className="px-6 py-3 rounded-xl items-center border"
               style={{
                 backgroundColor: activeTab === "info" ? colors.primary : colors.surface,
                 borderColor: activeTab === "info" ? colors.primary : colors.border,
@@ -251,8 +262,27 @@ export default function CattleDetailScreen() {
             </TouchableOpacity>
 
             <TouchableOpacity
+              onPress={() => setActiveTab("production")}
+              className="px-6 py-3 rounded-xl items-center border"
+              style={{
+                backgroundColor: activeTab === "production" ? colors.primary : colors.surface,
+                borderColor: activeTab === "production" ? colors.primary : colors.border,
+                opacity: 1,
+              }}
+            >
+              <Text
+                className="font-semibold text-sm"
+                style={{
+                  color: activeTab === "production" ? colors.background : colors.foreground,
+                }}
+              >
+                Produção
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
               onPress={() => setActiveTab("vaccines")}
-              className="flex-1 py-3 rounded-xl items-center border"
+              className="px-6 py-3 rounded-xl items-center border"
               style={{
                 backgroundColor: activeTab === "vaccines" ? colors.primary : colors.surface,
                 borderColor: activeTab === "vaccines" ? colors.primary : colors.border,
@@ -271,7 +301,7 @@ export default function CattleDetailScreen() {
 
             <TouchableOpacity
               onPress={() => setActiveTab("pregnancy")}
-              className="flex-1 py-3 rounded-xl items-center border"
+              className="px-6 py-3 rounded-xl items-center border"
               style={{
                 backgroundColor: activeTab === "pregnancy" ? colors.primary : colors.surface,
                 borderColor: activeTab === "pregnancy" ? colors.primary : colors.border,
@@ -279,7 +309,7 @@ export default function CattleDetailScreen() {
               }}
             >
               <Text
-                className="font-semibold text-xs"
+                className="font-semibold text-sm"
                 style={{
                   color: activeTab === "pregnancy" ? colors.background : colors.foreground,
                 }}
@@ -290,7 +320,7 @@ export default function CattleDetailScreen() {
 
             <TouchableOpacity
               onPress={() => setActiveTab("diseases")}
-              className="flex-1 py-3 rounded-xl items-center border"
+              className="px-6 py-3 rounded-xl items-center border"
               style={{
                 backgroundColor: activeTab === "diseases" ? colors.primary : colors.surface,
                 borderColor: activeTab === "diseases" ? colors.primary : colors.border,
@@ -298,7 +328,7 @@ export default function CattleDetailScreen() {
               }}
             >
               <Text
-                className="font-semibold text-xs"
+                className="font-semibold text-sm"
                 style={{
                   color: activeTab === "diseases" ? colors.background : colors.foreground,
                 }}
@@ -306,7 +336,7 @@ export default function CattleDetailScreen() {
                 Doenças
               </Text>
             </TouchableOpacity>
-          </View>
+          </ScrollView>
 
           {/* Tab Content */}
           {activeTab === "info" && (
@@ -429,6 +459,58 @@ export default function CattleDetailScreen() {
                     style={{ opacity: 1 }}
                   >
                     <Text className="text-background font-semibold">+ Registrar Gestação</Text>
+                  </TouchableOpacity>
+                </>
+              )}
+            </View>
+          )}
+
+          {activeTab === "production" && (
+            <View className="gap-3">
+              {milkRecords.length === 0 ? (
+                <View className="items-center py-8">
+                  <Text className="text-muted text-center mb-4">Nenhuma produção registrada</Text>
+                  <TouchableOpacity
+                    onPress={() => navigation.navigate("MilkProductionCad" as never, { cattleId: id } as never)}
+                    className="bg-primary rounded-full px-6 py-3"
+                    style={{ opacity: 1 }}
+                  >
+                    <Text className="text-background font-semibold">+ Registrar Produção</Text>
+                  </TouchableOpacity>
+                </View>
+              ) : (
+                <>
+                  {milkRecords.map((record) => (
+                    <TouchableOpacity
+                      key={record.id}
+                      onPress={() => navigation.navigate("MilkProductionCad" as never, { id: record.id } as never)}
+                      className="bg-surface rounded-2xl p-4 border border-border"
+                      style={{ opacity: 1 }}
+                    >
+                      <View className="flex-row items-center justify-between">
+                        <View>
+                          <Text className="text-base font-semibold text-foreground">{formatDate(record.date)}</Text>
+                          <Text className="text-sm text-muted uppercase">
+                            {record.period === "morning"
+                              ? "Manhã"
+                              : record.period === "afternoon"
+                              ? "Tarde"
+                              : "Dia Todo"}
+                          </Text>
+                        </View>
+                        <View className="items-end">
+                          <Text className="text-2xl font-bold text-primary">{record.quantity.toFixed(1)}</Text>
+                          <Text className="text-xs text-muted">Litros</Text>
+                        </View>
+                      </View>
+                    </TouchableOpacity>
+                  ))}
+                  <TouchableOpacity
+                    onPress={() => navigation.navigate("MilkProductionCad" as never, { cattleId: id } as never)}
+                    className="bg-primary rounded-full p-4 items-center mt-2"
+                    style={{ opacity: 1 }}
+                  >
+                    <Text className="text-background font-semibold">+ Registrar Produção</Text>
                   </TouchableOpacity>
                 </>
               )}

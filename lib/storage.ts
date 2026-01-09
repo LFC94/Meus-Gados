@@ -6,6 +6,7 @@ import { STORAGE_KEYS } from "@/constants/const";
 import {
   Cattle,
   Disease,
+  MilkProductionRecord,
   Pregnancy,
   VaccinationRecord,
   VaccinationRecordWithDetails,
@@ -347,6 +348,47 @@ export const diseaseStorage = {
 };
 
 /**
+ * Funções específicas para Produção de Leite
+ */
+export const milkProductionStorage = {
+  getAll: () => getItems<MilkProductionRecord>(STORAGE_KEYS.MILK_PRODUCTION),
+
+  getById: (id: string) => getItemById<MilkProductionRecord>(STORAGE_KEYS.MILK_PRODUCTION, id),
+
+  getByCattleId: async (cattleId: string): Promise<MilkProductionRecord[]> => {
+    const allRecords = await getItems<MilkProductionRecord>(STORAGE_KEYS.MILK_PRODUCTION);
+    return allRecords
+      .filter((record) => record.cattleId === cattleId)
+      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+  },
+
+  add: (record: Omit<MilkProductionRecord, "id" | "createdAt" | "updatedAt">) => {
+    const id = `milk_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    return addItem<MilkProductionRecord>(STORAGE_KEYS.MILK_PRODUCTION, { ...record, id } as MilkProductionRecord);
+  },
+
+  update: (id: string, updates: Partial<MilkProductionRecord>) =>
+    updateItem<MilkProductionRecord>(STORAGE_KEYS.MILK_PRODUCTION, id, updates),
+
+  delete: (id: string) => deleteItem<MilkProductionRecord>(STORAGE_KEYS.MILK_PRODUCTION, id),
+
+  getRecent: async (limit = 20): Promise<(MilkProductionRecord & { cattle: Cattle })[]> => {
+    const allRecords = await getItems<MilkProductionRecord>(STORAGE_KEYS.MILK_PRODUCTION);
+    const allCattle = await getItems<Cattle>(STORAGE_KEYS.CATTLE);
+
+    return allRecords
+      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+      .slice(0, limit)
+      .map((record) => {
+        const cattle = allCattle.find((c) => c.id === record.cattleId);
+        if (!cattle) return null;
+        return { ...record, cattle };
+      })
+      .filter((item): item is MilkProductionRecord & { cattle: Cattle } => item !== null);
+  },
+};
+
+/**
  * Função para limpar todos os dados (útil para testes)
  */
 export const clearAllData = async (): Promise<void> => {
@@ -357,6 +399,7 @@ export const clearAllData = async (): Promise<void> => {
       STORAGE_KEYS.VACCINATION_RECORDS,
       STORAGE_KEYS.PREGNANCIES,
       STORAGE_KEYS.DISEASES,
+      STORAGE_KEYS.MILK_PRODUCTION,
     ]);
   } catch (error) {
     console.error("Error clearing all data:", error);
@@ -368,12 +411,13 @@ export const clearAllData = async (): Promise<void> => {
  * Função para exportar todos os dados
  */
 export const exportAllData = async (): Promise<string> => {
-  const [cattle, vaccineCatalog, vaccinationRecords, pregnancies, diseases] = await Promise.all([
+  const [cattle, vaccineCatalog, vaccinationRecords, pregnancies, diseases, milkProduction] = await Promise.all([
     cattleStorage.getAll(),
     vaccineCatalogStorage.getAllIncludingInactive(),
     vaccinationRecordStorage.getAll(),
     pregnancyStorage.getAll(),
     diseaseStorage.getAll(),
+    milkProductionStorage.getAll(),
   ]);
 
   return JSON.stringify(
@@ -383,6 +427,7 @@ export const exportAllData = async (): Promise<string> => {
       vaccinationRecords,
       pregnancies,
       diseases,
+      milkProduction,
       exportedAt: new Date().toISOString(),
     },
     null,
@@ -403,6 +448,7 @@ export const importAllData = async (jsonData: string): Promise<void> => {
       setItems(STORAGE_KEYS.VACCINATION_RECORDS, data.vaccinationRecords || []),
       setItems(STORAGE_KEYS.PREGNANCIES, data.pregnancies || []),
       setItems(STORAGE_KEYS.DISEASES, data.diseases || []),
+      setItems(STORAGE_KEYS.MILK_PRODUCTION, data.milkProduction || []),
     ]);
   } catch (error) {
     console.error("Error importing data:", error);

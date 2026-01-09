@@ -22,6 +22,7 @@ const MAPPING = {
   pencil: "edit",
   "gearshape.fill": "settings",
   trash: "delete",
+  plus: "plus-one",
 } as IconMapping;
 
 /**

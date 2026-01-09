@@ -30,6 +30,8 @@ import HomeScreen from "./home";
 import ScheduledNotificationsScreen from "./notifications/scheduled";
 import PregnancyAddScreen from "./pregnancy/add";
 import PregnancyEditScreen from "./pregnancy/edit";
+import MilkProductionListScreen from "./production";
+import MilkProductionCadScreen from "./production/cad";
 import SettingsScreen from "./settings";
 import VaccineCatalogCadScreen from "./vaccine_catalog/cad";
 import VaccineCatalogScreen from "./vaccine_catalog/index";
@@ -87,6 +89,16 @@ function DrawerNavigator() {
           drawerLabel: "Animais",
           title: "Animais",
           drawerIcon: () => <Text className="text-lg">🐄</Text>,
+        }}
+      />
+
+      <Drawer.Screen
+        name="MilkProductionList"
+        component={MilkProductionListScreen}
+        options={{
+          title: "Controle de Leite",
+          drawerLabel: "Controle de Leite",
+          drawerIcon: () => <Text className="text-lg">🥛</Text>,
         }}
       />
       <Drawer.Screen
@@ -198,6 +210,13 @@ function MainStackNavigator() {
         component={NotificationsSettingsScreen}
         options={{
           title: "Configurar Notificações",
+        }}
+      />
+      <Stack.Screen
+        name="MilkProductionCad"
+        component={MilkProductionCadScreen}
+        options={{
+          title: "Registrar Produção",
         }}
       />
     </Stack.Navigator>

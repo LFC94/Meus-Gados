@@ -80,6 +80,17 @@ export interface Disease {
 
 export type DiseaseResult = "in_treatment" | "cured" | "death";
 
+export interface MilkProductionRecord {
+  id: string;
+  cattleId: string;
+  date: string; // ISO Date string
+  period: "morning" | "afternoon" | "full_day";
+  quantity: number; // in Liters
+  notes?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 /**
  * Tipos combinados para visualização
  */
@@ -112,4 +123,6 @@ export type RootStackParamList = {
   DiseasesCad: { id?: string; cattleId?: string };
   NotificationsSettings: undefined;
   ScheduledNotifications: undefined;
+  MilkProductionList: undefined;
+  MilkProductionCad: { id?: string; cattleId?: string };
 };

@@ -31,6 +31,7 @@ export const STORAGE_KEYS = {
   VACCINATION_RECORDS: "@meus_gados:vaccination_records",
   PREGNANCIES: "@meus_gados:pregnancies",
   DISEASES: "@meus_gados:diseases",
+  MILK_PRODUCTION: "@meus_gados:milk_production",
 } as const;
 
 /**
