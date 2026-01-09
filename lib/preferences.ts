@@ -10,6 +10,8 @@ export interface AppPreferences {
   unit: Unit;
   language: Language;
   theme: Theme;
+  backupEnabled?: boolean;
+  backupFrequency?: "daily" | "weekly";
 }
 
 const PREFERENCES_KEY = STORAGE_KEYS.PREFERENCES;

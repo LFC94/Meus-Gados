@@ -236,6 +236,9 @@ export default function RootLayout() {
 
   useEffect(() => {
     initManusRuntime();
+    // Register task if enabled (or always try to register/check)
+    // Here we just ensure it's defined. The toggle in settings controls registration.
+    // But for robustness, we could check prefs here too.
   }, []);
 
   const handleSafeAreaUpdate = useCallback((metrics: Metrics) => {
