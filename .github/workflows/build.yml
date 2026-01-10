@@ -29,14 +29,11 @@ jobs:
       - name: 🏗 Checkout
         uses: actions/checkout@v4
 
-      - name: 📦 Setup pnpm
-        uses: pnpm/action-setup@v4
-
       - name: 🏗 Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: "pnpm"
+          cache: "npm"
 
       - name: 🚀 Setup Expo
         uses: expo/expo-github-action@v8
@@ -46,7 +43,7 @@ jobs:
           token: ${{ secrets.EXPO_TOKEN }}
 
       - name: 📦 Install dependencies
-        run: pnpm install
+        run: npm install
 
       - name: 📝 Create .env file
         run: |
