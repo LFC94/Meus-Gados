@@ -123,33 +123,36 @@ export default function CattleListScreen() {
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={loadData} tintColor={colors.primary} />}
         contentContainerStyle={{ flexGrow: 1 }}
         className="pt-4"
-        style={{ paddingBottom: insets.bottom }}
       >
-        <View className="px-6 gap-4 flex-1">
+        <View className="p-6 gap-4 flex-1" style={{ paddingBottom: insets.bottom }}>
           {/* Search */}
-          <View className="bg-surface rounded-xl px-4 border border-border">
-            <TextInput
-              placeholder="Buscar por número, nome ou raça..."
-              placeholderTextColor={colors.muted}
-              value={searchQuery}
-              onChangeText={setSearchQuery}
-              className="text-base text-foreground"
-            />
-          </View>
+          {(filteredCattle.length > 0 || searchQuery) && (
+            <View className="bg-surface rounded-xl px-4 border border-border">
+              <TextInput
+                placeholder="Buscar por número, nome ou raça..."
+                placeholderTextColor={colors.muted}
+                value={searchQuery}
+                onChangeText={setSearchQuery}
+                className="text-base text-foreground"
+              />
+            </View>
+          )}
 
           {/* List */}
           {filteredCattle.length === 0 ? (
             <View className="flex-1 items-center justify-center py-12">
+              <Text className="text-4xl mb-4">🐄</Text>
               <Text className="text-muted text-center text-base">
                 {searchQuery ? "Nenhum animal encontrado" : "Nenhum animal cadastrado ainda"}
               </Text>
+
               {!searchQuery && (
                 <TouchableOpacity
                   onPress={() => navigation.navigate("CattleCad")}
                   className="mt-4 bg-primary rounded-full px-6 py-3"
                   style={{ opacity: 1 }}
                 >
-                  <Text className="text-background font-semibold">Cadastrar Primeiro Animal</Text>
+                  <Text className="text-white font-semibold">+ Cadastrar Primeiro Animal</Text>
                 </TouchableOpacity>
               )}
             </View>
