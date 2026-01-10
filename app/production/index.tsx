@@ -69,16 +69,19 @@ export default function MilkProductionListScreen() {
       <ScrollView
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} tintColor={colors.primary} />}
         contentContainerStyle={{ flexGrow: 1 }}
-        style={{ paddingBottom: insets.bottom }}
       >
-        <View className="px-6 gap-4 flex-1">
+        <View className="p-6 gap-4 flex-1" style={{ paddingBottom: insets.bottom }}>
           {records.length === 0 ? (
             <View className="flex-1 items-center justify-center py-12">
-              <Text className="text-6xl mb-4">🥛</Text>
-              <Text className="text-lg font-semibold text-foreground text-center">Nenhum registro encontrado</Text>
-              <Text className="text-muted text-center mt-2">
-                Comece registrando a produção de leite dos seus animais.
-              </Text>
+              <Text className="text-4xl mb-4">🥛</Text>
+              <Text className="text-muted text-center text-base">Nenhum registro encontrado Ordenha</Text>
+              <TouchableOpacity
+                onPress={() => navigation.navigate("MilkProductionCad")}
+                className="mt-4 bg-primary rounded-full px-6 py-3"
+                style={{ opacity: 1 }}
+              >
+                <Text className="text-white font-semibold">+ Cadastrar Primeira Ordenha</Text>
+              </TouchableOpacity>
             </View>
           ) : (
             <View className="gap-3">
@@ -112,14 +115,17 @@ export default function MilkProductionListScreen() {
               ))}
             </View>
           )}
+
           {/* Add Button */}
-          <TouchableOpacity
-            onPress={() => navigation.navigate("MilkProductionCad", {})}
-            className="bg-primary rounded-full p-4 items-center mt-4"
-            style={{ opacity: 1 }}
-          >
-            <Text className="text-background font-semibold text-base">+ Cadastrar Ordenha</Text>
-          </TouchableOpacity>
+          {records.length > 0 && (
+            <TouchableOpacity
+              onPress={() => navigation.navigate("MilkProductionCad")}
+              className="bg-primary rounded-full p-4 items-center mt-2"
+              style={{ opacity: 1 }}
+            >
+              <Text className="text-white font-semibold text-base">+ Cadastrar Nova Ordenha</Text>
+            </TouchableOpacity>
+          )}
         </View>
       </ScrollView>
     </ScreenContainer>

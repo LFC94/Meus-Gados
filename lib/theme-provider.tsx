@@ -1,3 +1,4 @@
+import { StatusBar } from "expo-status-bar";
 import { colorScheme as nativewindColorScheme, vars } from "nativewind";
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { Appearance, View, useColorScheme as useSystemColorScheme } from "react-native";
@@ -113,6 +114,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
   return (
     <ThemeContext.Provider value={value}>
+      <StatusBar style={colorScheme === "dark" ? "light" : "dark"} />
       <View style={[{ flex: 1 }, themeVariables]}>{children}</View>
     </ThemeContext.Provider>
   );
