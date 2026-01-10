@@ -1,5 +1,6 @@
 import "@/global.css";
 import "@/lib/_core/nativewind-pressable";
+import { requestNotificationPermission } from "@/lib/notifications";
 import { ThemeProvider } from "@/lib/theme-provider";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -236,9 +237,11 @@ export default function RootLayout() {
 
   useEffect(() => {
     initManusRuntime();
-    // Register task if enabled (or always try to register/check)
-    // Here we just ensure it's defined. The toggle in settings controls registration.
-    // But for robustness, we could check prefs here too.
+
+    // Request notification permissions on app startup
+    if (Platform.OS !== "web") {
+      requestNotificationPermission();
+    }
   }, []);
 
   const handleSafeAreaUpdate = useCallback((metrics: Metrics) => {
