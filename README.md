@@ -153,7 +153,60 @@ O projeto utiliza variáveis de ambiente para configurações sensíveis. Crie u
 # Notificações (Opcional para desenvolvimento local)
 EXPO_NOTIFICATIONS_ANDROID_ICON=ic_notification
 EXPO_NOTIFICATIONS_ANDROID_COLOR=#2563EB
+
+# Google Cloud Platform (Obrigatório para Backup em Nuvem)
+# Veja seção "Configurando Google Drive" abaixo
+EXPO_PUBLIC_GOOGLE_ANDROID_CLIENT_ID=seu_android_client_id
+EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID=seu_ios_client_id
+EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID=seu_web_client_id
+
+# Expo Application Services (Obrigatório para Build)
+# Encontrado no dashboard do EAS
+EXPO_PUBLIC_EAS_PROJECT_ID=seu_project_id
 ```
+
+### 🔐 Configurando Google Drive Backup
+
+Para habilitar o backup automático no Google Drive, você precisa configurar um projeto no Google Cloud Console:
+
+1.  Acesse o [Google Cloud Console](https://console.cloud.google.com/)
+2.  Crie um novo projeto
+3.  Vá em **APIs & Services > Library** e ative a **Google Drive API**
+4.  Vá em **APIs & Services > Credentials**
+5.  Clique em **Create Credentials > OAuth client ID**
+6.  Configure a tela de consentimento (OAuth consent screen) se solicitado
+7.  Crie credenciais separadas para cada plataforma:
+    *   **Android**: Requer o hash SHA-1 do seu certificado de assinatura (debug ou produção) e o nome do pacote (`com.lfcapp.meus.gados`)
+    *   **iOS**: Requer o Bundle ID (`com.lfcapp.meus.gados`) e App Store ID (se publicado)
+    *   **Web**: Para uso com Expo Go ou web
+8.  Copie os Client IDs gerados para o seu arquivo `.env`
+
+#### 🔑 Como obter o SHA-1 (Android)
+
+**Para Desenvolvimento (Debug/Expo Go):**
+Execute o comando abaixo na pasta do projeto:
+```bash
+# Windows (PowerShell)
+keytool -list -v -keystore "C:\Users\$env:USERNAME\.android\debug.keystore" -alias androiddebugkey -storepass android -keypass android
+
+# Mac/Linux
+keytool -list -v -keystore ~/.android/debug.keystore -alias androiddebugkey -storepass android -keypass android
+```
+
+**Para Produção (EAS Build):**
+Se você deixa o EAS gerenciar suas credenciais:
+1.  Execute: `eas credentials`
+2.  Selecione `Android` > `Production` > `Keystore`
+3.  Procure por `SHA1 Fingerprint` nos detalhes exibidos.
+
+### 🆔 Configurando EAS Project ID
+
+O `EXPO_PUBLIC_EAS_PROJECT_ID` é usado para identificar seu projeto nos serviços da Expo.
+
+1.  Se ainda não tem, instale a CLI do EAS: `npm install -g eas-cli`
+2.  Faça login: `eas login`
+3.  Configure o projeto: `eas build:configure`
+4.  O ID será gerado no `app.json` (ou `app.config.ts`). Copie este ID para seu `.env`.
 
 ### Temas
 

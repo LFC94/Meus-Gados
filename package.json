@@ -10,7 +10,7 @@
     "lint": "expo lint",
     "format": "prettier --write .",
     "test": "vitest run",
-    "android": "expo run:android",
+    "android": "expo run:android --debug",
     "ios": "expo run:ios",
     "qr": "node scripts/generate_qr.mjs"
   },
