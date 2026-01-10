@@ -76,7 +76,7 @@ export default function MilkProductionListScreen() {
               <Text className="text-4xl mb-4">🥛</Text>
               <Text className="text-muted text-center text-base">Nenhum registro encontrado Ordenha</Text>
               <TouchableOpacity
-                onPress={() => navigation.navigate("MilkProductionCad")}
+                onPress={() => navigation.navigate("MilkProductionCad", {})}
                 className="mt-4 bg-primary rounded-full px-6 py-3"
                 style={{ opacity: 1 }}
               >

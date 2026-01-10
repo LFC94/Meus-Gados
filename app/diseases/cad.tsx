@@ -7,7 +7,7 @@ import { cattleStorage, diseaseStorage } from "@/lib/storage";
 import { Cattle, DiseaseResult, RootStackParamList } from "@/types";
 import { RouteProp, useRoute } from "@react-navigation/native";
 import * as Haptics from "expo-haptics";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { ActivityIndicator, Alert, Platform, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -29,7 +29,7 @@ export default function DiseaseCadScreen() {
   const [formData, setFormData] = useState<{
     cattleId?: string;
     type: string;
-    diagnosisDate: Date;
+    diagnosisDate: Date | null;
     symptoms: string;
     treatment: string;
     result: DiseaseResult;
@@ -41,17 +41,8 @@ export default function DiseaseCadScreen() {
     treatment: "",
     result: "in_treatment",
   });
-  const [showResultPicker, setShowResultPicker] = useState(false);
 
-  useEffect(() => {
-    loadDisease();
-  }, [id]);
-
-  useEffect(() => {
-    loadCattle();
-  }, [formData.cattleId]);
-
-  const loadCattle = async () => {
+  const loadCattle = useCallback(async () => {
     try {
       setLoadingCattle(true);
       const data = await cattleStorage.getAll();
@@ -61,9 +52,9 @@ export default function DiseaseCadScreen() {
     } finally {
       setLoadingCattle(false);
     }
-  };
+  }, []);
 
-  const loadDisease = async () => {
+  const loadDisease = useCallback(async () => {
     try {
       if (!id) return;
       const disease = await diseaseStorage.getById(id);
@@ -83,7 +74,15 @@ export default function DiseaseCadScreen() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [id]);
+
+  useEffect(() => {
+    loadDisease();
+  }, [loadDisease]);
+
+  useEffect(() => {
+    loadCattle();
+  }, [loadCattle]);
 
   const handleSave = async () => {
     // Validações
@@ -94,6 +93,11 @@ export default function DiseaseCadScreen() {
 
     if (!formData.type.trim()) {
       Alert.alert("Erro", "Informe o tipo de doença");
+      return;
+    }
+
+    if (!formData.diagnosisDate) {
+      Alert.alert("Erro", "A data de diagnóstico é obrigatória");
       return;
     }
 

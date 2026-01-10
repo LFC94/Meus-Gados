@@ -7,7 +7,7 @@ import { cattleStorage, pregnancyStorage } from "@/lib/storage";
 import { Cattle, PregnancyResult, RootStackParamList } from "@/types";
 import { RouteProp, useRoute } from "@react-navigation/native";
 import * as Haptics from "expo-haptics";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { ActivityIndicator, Alert, Platform, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -23,20 +23,23 @@ export default function EditPregnancyScreen() {
   const [creatingCalf, setCreatingCalf] = useState(false);
   const [pregnancy, setPregnancy] = useState<any>(null);
   const [cattle, setCattle] = useState<Cattle | null>(null);
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<{
+    coverageDate: Date | null;
+    expectedBirthDate: Date | null;
+    actualBirthDate: Date | null;
+    result: PregnancyResult;
+    complications: string;
+  }>({
     coverageDate: new Date(),
     expectedBirthDate: new Date(),
-    actualBirthDate: null as Date | null,
+    actualBirthDate: null,
     result: "pending" as PregnancyResult,
     complications: "",
   });
 
   useScreenHeader("Editar Gestação", `Animal: ${cattle?.name || `Animal ${cattle?.number}`}`);
-  useEffect(() => {
-    loadPregnancy();
-  }, [id]);
 
-  const loadPregnancy = async () => {
+  const loadPregnancy = useCallback(async () => {
     try {
       if (!id) return;
       const pregnancyData = await pregnancyStorage.getById(id);
@@ -60,9 +63,23 @@ export default function EditPregnancyScreen() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [id]);
+
+  useEffect(() => {
+    loadPregnancy();
+  }, [loadPregnancy]);
 
   const handleSave = async () => {
+    if (!formData.coverageDate) {
+      Alert.alert("Erro", "A data de cobertura é obrigatória");
+      return;
+    }
+
+    if (!formData.expectedBirthDate) {
+      Alert.alert("Erro", "A data prevista de parto é obrigatória");
+      return;
+    }
+
     try {
       setSaving(true);
 
@@ -227,7 +244,7 @@ export default function EditPregnancyScreen() {
                 <CustomDatePicker
                   value={formData.expectedBirthDate}
                   onChange={(date) => setFormData({ ...formData, expectedBirthDate: date })}
-                  minimumDate={formData.coverageDate}
+                  minimumDate={formData.coverageDate || undefined}
                   disabled={saving}
                 />
               </View>

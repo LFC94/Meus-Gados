@@ -8,7 +8,7 @@ import { cattleStorage, milkProductionStorage } from "@/lib/storage";
 import { Cattle, RootStackParamList } from "@/types";
 import { RouteProp, useRoute } from "@react-navigation/native";
 import * as Haptics from "expo-haptics";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { ActivityIndicator, Alert, Platform, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -21,7 +21,13 @@ export default function MilkProductionCadScreen() {
   const [loadingCattle, setLoadingCattle] = useState(true);
   const [cattle, setCattle] = useState<Cattle[]>([]);
 
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<{
+    cattleId: string;
+    date: Date | null;
+    period: "morning" | "afternoon" | "full_day";
+    quantity: string;
+    notes: string;
+  }>({
     cattleId: cattleId || "",
     date: new Date(),
     period: "morning" as "morning" | "afternoon" | "full_day",
@@ -33,17 +39,7 @@ export default function MilkProductionCadScreen() {
 
   useScreenHeader(id ? "Editar Produção" : "Registrar Produção");
 
-  useEffect(() => {
-    loadCattle();
-  }, []);
-
-  useEffect(() => {
-    if (id) {
-      loadProduction();
-    }
-  }, [id]);
-
-  const loadCattle = async () => {
+  const loadCattle = useCallback(async () => {
     try {
       setLoadingCattle(true);
       const data = await cattleStorage.getAll();
@@ -53,9 +49,9 @@ export default function MilkProductionCadScreen() {
     } finally {
       setLoadingCattle(false);
     }
-  };
+  }, []);
 
-  const loadProduction = async () => {
+  const loadProduction = useCallback(async () => {
     try {
       setLoading(true);
       if (!id) return;
@@ -75,11 +71,26 @@ export default function MilkProductionCadScreen() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [id]);
+
+  useEffect(() => {
+    loadCattle();
+  }, [loadCattle]);
+
+  useEffect(() => {
+    if (id) {
+      loadProduction();
+    }
+  }, [id, loadProduction]);
 
   const handleSave = async () => {
     if (!formData.cattleId) {
       Alert.alert("Erro", "Selecione um animal");
+      return;
+    }
+
+    if (!formData.date) {
+      Alert.alert("Erro", "A data da ordenha é obrigatória");
       return;
     }
 

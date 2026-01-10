@@ -7,7 +7,7 @@ import { vaccineCatalogStorage } from "@/lib/storage";
 import { RootStackParamList } from "@/types";
 import { RouteProp, useRoute } from "@react-navigation/native";
 import * as Haptics from "expo-haptics";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { ActivityIndicator, Alert, Platform, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -36,11 +36,7 @@ export default function VaccineCatalogCadScreen() {
     isActive: true,
   });
 
-  useEffect(() => {
-    loadVaccine();
-  }, [id]);
-
-  const loadVaccine = async () => {
+  const loadVaccine = useCallback(async () => {
     try {
       if (!id) return;
       const vaccine = await vaccineCatalogStorage.getById(id);
@@ -61,7 +57,11 @@ export default function VaccineCatalogCadScreen() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [id]);
+
+  useEffect(() => {
+    loadVaccine();
+  }, [loadVaccine]);
 
   const handleSave = async () => {
     if (!formData.name.trim()) {

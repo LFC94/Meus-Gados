@@ -9,7 +9,7 @@ import { cattleStorage, vaccinationRecordStorage, vaccineCatalogStorage } from "
 import { Cattle, RootStackParamList, VaccineModel } from "@/types";
 import { RouteProp, useRoute } from "@react-navigation/native";
 import * as Haptics from "expo-haptics";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { ActivityIndicator, Alert, Platform, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -24,11 +24,18 @@ export default function VaccineCadScreen() {
   const [cattle, setCattle] = useState<Cattle[]>([]);
   const [vaccineCatalog, setVaccineCatalog] = useState<VaccineModel[]>([]);
 
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<{
+    cattleId: string | undefined;
+    vaccineId: string;
+    appliedDate: Date | null;
+    nextDose: Date | null;
+    batchUsed: string;
+    notes: string;
+  }>({
     cattleId: cattleId,
     vaccineId: vaccineId || "",
     appliedDate: new Date(),
-    nextDose: new Date(),
+    nextDose: null,
     batchUsed: "",
     notes: "",
   });
@@ -36,16 +43,7 @@ export default function VaccineCadScreen() {
 
   useScreenHeader(id ? "Editar Vacina" : "Registrar Vacina");
 
-  useEffect(() => {
-    loadCattle();
-    loadVaccineCatalog();
-  }, []);
-
-  useEffect(() => {
-    loadVaccine();
-  }, [id]);
-
-  const loadCattle = async () => {
+  const loadCattle = useCallback(async () => {
     try {
       setLoadingCattle(true);
       const data = await cattleStorage.getAll();
@@ -55,9 +53,21 @@ export default function VaccineCadScreen() {
     } finally {
       setLoadingCattle(false);
     }
-  };
+  }, []);
 
-  const loadVaccine = async () => {
+  const loadVaccineCatalog = useCallback(async () => {
+    try {
+      setLoadingCatalog(true);
+      const vaccines = await vaccineCatalogStorage.getAll();
+      setVaccineCatalog(vaccines);
+    } catch (error) {
+      console.error("Erro ao carregar catálogo de vacinas:", error);
+    } finally {
+      setLoadingCatalog(false);
+    }
+  }, []);
+
+  const loadVaccine = useCallback(async () => {
     try {
       if (!id) return;
 
@@ -72,7 +82,7 @@ export default function VaccineCadScreen() {
           cattleId: vaccination.cattleId,
           vaccineId: vaccination.vaccineId,
           appliedDate: new Date(vaccination.dateApplied),
-          nextDose: new Date(vaccination.nextDoseDate || ""),
+          nextDose: vaccination.nextDoseDate ? new Date(vaccination.nextDoseDate) : null,
           batchUsed: vaccination.batchUsed || "",
           notes: vaccination.notes || "",
         });
@@ -83,19 +93,16 @@ export default function VaccineCadScreen() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [id]);
 
-  const loadVaccineCatalog = async () => {
-    try {
-      setLoadingCatalog(true);
-      const vaccines = await vaccineCatalogStorage.getAll();
-      setVaccineCatalog(vaccines);
-    } catch (error) {
-      console.error("Erro ao carregar catálogo de vacinas:", error);
-    } finally {
-      setLoadingCatalog(false);
-    }
-  };
+  useEffect(() => {
+    loadCattle();
+    loadVaccineCatalog();
+  }, [loadCattle, loadVaccineCatalog]);
+
+  useEffect(() => {
+    loadVaccine();
+  }, [loadVaccine]);
 
   const handleSave = async () => {
     if (!formData.cattleId) {
@@ -105,6 +112,11 @@ export default function VaccineCadScreen() {
 
     if (!formData.vaccineId) {
       Alert.alert("Erro", "Selecione uma vacina");
+      return;
+    }
+
+    if (!formData.appliedDate) {
+      Alert.alert("Erro", "A data de aplicação é obrigatória");
       return;
     }
 
@@ -236,7 +248,7 @@ export default function VaccineCadScreen() {
               label="Próxima Dose"
               value={formData.nextDose}
               onChange={(date) => setFormData({ ...formData, nextDose: date })}
-              minimumDate={formData.appliedDate}
+              minimumDate={formData.appliedDate || undefined}
               placeholder="Selecionar data"
             />
 

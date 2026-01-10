@@ -8,7 +8,7 @@ import { cattleStorage } from "@/lib/storage";
 import { RootStackParamList } from "@/types";
 import { RouteProp, useRoute } from "@react-navigation/native";
 import * as Haptics from "expo-haptics";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { ActivityIndicator, Alert, Platform, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -19,7 +19,13 @@ export default function CattleCadScreen() {
   const id = route.params?.id;
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<{
+    number: string;
+    name: string;
+    breed: string;
+    birthDate: Date | null;
+    weight: string;
+  }>({
     number: "",
     name: "",
     breed: "Nelore",
@@ -30,11 +36,7 @@ export default function CattleCadScreen() {
 
   useScreenHeader(id ? "Editar Animal" : "Cadastrar Animal", id ? "Atualize os dados do animal" : undefined);
 
-  useEffect(() => {
-    loadCattle();
-  }, [id]);
-
-  const loadCattle = async () => {
+  const loadCattle = useCallback(async () => {
     try {
       if (!id) {
         setLoading(false);
@@ -46,7 +48,7 @@ export default function CattleCadScreen() {
           number: cattle.number,
           name: cattle.name || "",
           breed: cattle.breed,
-          birthDate: new Date(cattle.birthDate),
+          birthDate: cattle.birthDate ? new Date(cattle.birthDate) : null,
           weight: cattle.weight.toString(),
         });
       }
@@ -56,12 +58,21 @@ export default function CattleCadScreen() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [id]);
+
+  useEffect(() => {
+    loadCattle();
+  }, [loadCattle]);
 
   const handleSave = async () => {
     // Validações
     if (!validateCattleNumber(formData.number)) {
       Alert.alert("Erro", "O número do animal é obrigatório");
+      return;
+    }
+
+    if (!formData.birthDate) {
+      Alert.alert("Erro", "A data de nascimento é obrigatória");
       return;
     }
 

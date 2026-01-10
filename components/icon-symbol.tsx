@@ -23,6 +23,7 @@ const MAPPING = {
   "gearshape.fill": "settings",
   trash: "delete",
   plus: "plus-one",
+  "xmark.circle.fill": "cancel",
 } as IconMapping;
 
 /**

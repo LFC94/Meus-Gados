@@ -8,7 +8,7 @@ import { cattleStorage, pregnancyStorage } from "@/lib/storage";
 import { Cattle, RootStackParamList } from "@/types";
 import { RouteProp, useRoute } from "@react-navigation/native";
 import * as Haptics from "expo-haptics";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { ActivityIndicator, Alert, Platform, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -20,7 +20,11 @@ export default function AddPregnancyScreen() {
   const [loading, setLoading] = useState(false);
   const [loadingCattle, setLoadingCattle] = useState(true);
   const [cattle, setCattle] = useState<Cattle[]>([]);
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<{
+    cattleId: string | undefined;
+    coverageDate: Date | null;
+    expectedBirthDate: Date | null;
+  }>({
     cattleId: cattleId,
     coverageDate: new Date(),
     expectedBirthDate: new Date(),
@@ -30,9 +34,21 @@ export default function AddPregnancyScreen() {
 
   useScreenHeader("Registrar Gestação");
 
+  const loadCattle = useCallback(async () => {
+    try {
+      setLoadingCattle(true);
+      const data = await cattleStorage.getAll();
+      setCattle(data);
+    } catch (error) {
+      console.error("Error loading cattle:", error);
+    } finally {
+      setLoadingCattle(false);
+    }
+  }, []);
+
   useEffect(() => {
     loadCattle();
-  }, []);
+  }, [loadCattle]);
 
   useEffect(() => {
     if (formData.coverageDate) {
@@ -44,22 +60,20 @@ export default function AddPregnancyScreen() {
     }
   }, [formData.coverageDate]);
 
-  const loadCattle = async () => {
-    try {
-      setLoadingCattle(true);
-      const data = await cattleStorage.getAll();
-      setCattle(data);
-    } catch (error) {
-      console.error("Error loading cattle:", error);
-    } finally {
-      setLoadingCattle(false);
-    }
-  };
-
   const handleSave = async () => {
     // Validações
     if (!formData.cattleId) {
       Alert.alert("Erro", "Selecione um animal");
+      return;
+    }
+
+    if (!formData.coverageDate) {
+      Alert.alert("Erro", "A data de cobertura é obrigatória");
+      return;
+    }
+
+    if (!formData.expectedBirthDate) {
+      Alert.alert("Erro", "A data prevista de parto é obrigatória");
       return;
     }
 
@@ -131,11 +145,19 @@ export default function AddPregnancyScreen() {
               label="Data de Cobertura/Inseminação *"
               value={formData.coverageDate}
               onChange={(date) => {
-                setFormData({
-                  ...formData,
-                  coverageDate: date,
-                  expectedBirthDate: calculateExpectedBirthDateAsDate(date),
-                });
+                if (date) {
+                  setFormData({
+                    ...formData,
+                    coverageDate: date,
+                    expectedBirthDate: calculateExpectedBirthDateAsDate(date),
+                  });
+                } else {
+                  setFormData({
+                    ...formData,
+                    coverageDate: null,
+                    expectedBirthDate: null,
+                  });
+                }
               }}
               maximumDate={new Date()}
               placeholder="Selecionar data"
@@ -146,7 +168,7 @@ export default function AddPregnancyScreen() {
               label="Data Prevista de Parto *"
               value={formData.expectedBirthDate}
               onChange={(date) => setFormData({ ...formData, expectedBirthDate: date })}
-              minimumDate={formData.coverageDate}
+              minimumDate={formData.coverageDate || undefined}
               placeholder="Selecionar data"
             />
 
