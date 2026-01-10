@@ -3,10 +3,10 @@
 <div align="center">
 
 ![Meus Gados](https://img.shields.io/badge/Meus%20Gados-Gerenciamento%20de%20Rebanho-blue?style=for-the-badge&logo=github)
-![React Native](https://img.shields.io/badge/React%20Native-0.76-blue?style=for-the-badge&logo=react)
-![Expo](https://img.shields.io/badge/Expo-52.0.0-black?style=for-the-badge&logo=expo)
-![TypeScript](https://img.shields.io/badge/TypeScript-5.7-blue?style=for-the-badge&logo=typescript)
-![NativeWind](https://img.shields.io/badge/NativeWind-4.0-blue?style=for-the-badge&logo=tailwindcss)
+![React Native](https://img.shields.io/badge/React%20Native-0.81-blue?style=for-the-badge&logo=react)
+![Expo](https://img.shields.io/badge/Expo-54.0-black?style=for-the-badge&logo=expo)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.9-blue?style=for-the-badge&logo=typescript)
+![NativeWind](https://img.shields.io/badge/NativeWind-4.2-blue?style=for-the-badge&logo=tailwindcss)
 
 **Aplicativo móvel para gerenciamento completo do seu rebanho de bovinos**
 
@@ -93,10 +93,10 @@ yarn install
 
 ```bash
 # Usando pnpm
-pnpm start
+pnpm dev
 
 # Ou usando npm
-npm start
+npm run dev
 
 # Ou usando expo
 npx expo start
@@ -107,14 +107,15 @@ npx expo start
 - Pressione `a` para Android ou `i` para iOS
 - Ou escaneie o QR code com o aplicativo Expo Go no dispositivo físico
 
-### Build para Produção
-
 ```bash
-# Gerar build para Android
-eas build -p android
+# Gerar build de desenvolvimento (Android)
+npm run build:dev
 
-# Gerar build para iOS
-eas build -p ios
+# Gerar build para teste interno (Android APK)
+npm run build:preview
+
+# Gerar build de produção (Play Store AAB)
+npm run build:prod
 ```
 
 ## 🛠️ Tecnologias
@@ -154,59 +155,10 @@ O projeto utiliza variáveis de ambiente para configurações sensíveis. Crie u
 EXPO_NOTIFICATIONS_ANDROID_ICON=ic_notification
 EXPO_NOTIFICATIONS_ANDROID_COLOR=#2563EB
 
-# Google Cloud Platform (Obrigatório para Backup em Nuvem)
-# Veja seção "Configurando Google Drive" abaixo
-EXPO_PUBLIC_GOOGLE_ANDROID_CLIENT_ID=seu_android_client_id
-EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID=seu_ios_client_id
-EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID=seu_web_client_id
-
 # Expo Application Services (Obrigatório para Build)
 # Encontrado no dashboard do EAS
 EXPO_PUBLIC_EAS_PROJECT_ID=seu_project_id
 ```
-
-### 🔐 Configurando Google Drive Backup
-
-Para habilitar o backup automático no Google Drive, você precisa configurar um projeto no Google Cloud Console:
-
-1.  Acesse o [Google Cloud Console](https://console.cloud.google.com/)
-2.  Crie um novo projeto
-3.  Vá em **APIs & Services > Library** e ative a **Google Drive API**
-4.  Vá em **APIs & Services > Credentials**
-5.  Clique em **Create Credentials > OAuth client ID**
-6.  Configure a tela de consentimento (OAuth consent screen) se solicitado
-7.  Crie credenciais separadas para cada plataforma:
-    *   **Android**: Requer o hash SHA-1 do seu certificado de assinatura (debug ou produção) e o nome do pacote (`com.lfcapp.meus.gados`)
-    *   **iOS**: Requer o Bundle ID (`com.lfcapp.meus.gados`) e App Store ID (se publicado)
-    *   **Web**: Para uso com Expo Go ou web
-8.  Copie os Client IDs gerados para o seu arquivo `.env`
-
-#### 🔑 Como obter o SHA-1 (Android)
-
-**Para Desenvolvimento (Debug/Expo Go):**
-Execute o comando abaixo na pasta do projeto:
-```bash
-# Windows (PowerShell)
-keytool -list -v -keystore "C:\Users\$env:USERNAME\.android\debug.keystore" -alias androiddebugkey -storepass android -keypass android
-
-# Mac/Linux
-keytool -list -v -keystore ~/.android/debug.keystore -alias androiddebugkey -storepass android -keypass android
-```
-
-**Para Produção (EAS Build):**
-Se você deixa o EAS gerenciar suas credenciais:
-1.  Execute: `eas credentials`
-2.  Selecione `Android` > `Production` > `Keystore`
-3.  Procure por `SHA1 Fingerprint` nos detalhes exibidos.
-
-### 🆔 Configurando EAS Project ID
-
-O `EXPO_PUBLIC_EAS_PROJECT_ID` é usado para identificar seu projeto nos serviços da Expo.
-
-1.  Se ainda não tem, instale a CLI do EAS: `npm install -g eas-cli`
-2.  Faça login: `eas login`
-3.  Configure o projeto: `eas build:configure`
-4.  O ID será gerado no `app.json` (ou `app.config.ts`). Copie este ID para seu `.env`.
 
 ### Temas
 
@@ -225,27 +177,22 @@ pnpm test:coverage
 pnpm type-check
 ```
 
-## 📦 Build e Deploy
+### Scripts de Build (EAS)
 
-### Android (Google Play)
+O projeto está configurado com perfis específicos no `eas.json` para facilitar o fluxo de trabalho:
 
 ```bash
-# Configurar conta EAS
+# 1. Login no Expo
 eas login
 
-# Configurar projeto
-eas build:configure
-
-# Gerar build de produção
-eas build --platform android --profile production
+# 2. Executar o build desejado
+npm run build:dev      # APK de Desenvolvimento
+npm run build:preview  # APK de Preview (Teste)
+npm run build:prod     # AAB de Produção (Loja)
+npm run build:web      # Exportação Estática para Web
 ```
 
-### iOS (App Store)
-
-```bash
-# Gerar build de produção
-eas build --platform ios --profile production
-```
+Para iOS, utilize os comandos `eas build --platform ios` com o perfil desejado (`--profile production`).
 
 ## 🤝 Contribuição
 
