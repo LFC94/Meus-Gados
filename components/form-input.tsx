@@ -1,10 +1,7 @@
 import { IconSymbol } from "@/components/icon-symbol";
 import { useColors } from "@/hooks/use-colors";
 import React, { useState } from "react";
-import { Text, TextInput, TouchableOpacity, View } from "react-native";
-
-// Import ScrollView for FormSelect
-import { ScrollView } from "react-native";
+import { ScrollView, Text, TextInput, TouchableOpacity, View } from "react-native";
 
 interface FormInputProps {
   label: string;

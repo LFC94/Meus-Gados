@@ -111,7 +111,7 @@ export type RootStackParamList = {
   Home: undefined;
   Drawer: undefined;
   Settings: undefined;
-  CattleList: undefined;
+  CattleList: { status?: CattleResult };
   CattleDetail: { id: string };
   CattleCad: { id?: string };
   VaccinePending: undefined;

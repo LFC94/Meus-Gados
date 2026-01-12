@@ -5,13 +5,14 @@ interface StatusChipProps {
   label: string;
   selected: boolean;
   onPress: () => void;
+  className?: string;
 }
 
-export function StatusChip({ label, selected, onPress }: StatusChipProps) {
+export function StatusChip({ label, selected, onPress, className }: StatusChipProps) {
   return (
     <TouchableOpacity
       onPress={onPress}
-      className={`px-4 py-2 rounded-full border mr-2 ${selected ? "bg-primary border-primary" : "bg-surface border-border"}`}
+      className={`px-4 py-2 rounded-2xl border ${className} ${selected ? "bg-primary border-primary" : "bg-surface border-border"}`}
     >
       <Text className={`text-sm font-medium ${selected ? "text-background" : "text-foreground"}`}>{label}</Text>
     </TouchableOpacity>

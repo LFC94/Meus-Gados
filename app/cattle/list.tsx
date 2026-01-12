@@ -1,12 +1,13 @@
-import { CattleCard, IconSymbol, StatusChip } from "@/components/";
+import { CattleCard, FormSelect, IconSymbol } from "@/components/";
 import { ScreenContainer } from "@/components/screen-container";
+import { STATUS_CATTLE } from "@/constants/const";
 import { useColors } from "@/hooks/use-colors";
 import useNavigation from "@/hooks/use-navigation";
 import useScreenHeader from "@/hooks/use-screen-header";
 import { calculateAge } from "@/lib/helpers";
 import { cattleStorage, diseaseStorage, pregnancyStorage, vaccinationRecordStorage } from "@/lib/storage";
-import { Cattle, CattleResult, Disease, Pregnancy, VaccinationRecord } from "@/types";
-import { useFocusEffect } from "@react-navigation/native";
+import { Cattle, CattleResult, Disease, Pregnancy, RootStackParamList, VaccinationRecord } from "@/types";
+import { RouteProp, useFocusEffect, useRoute } from "@react-navigation/native";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
   ActivityIndicator,
@@ -21,6 +22,7 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function CattleListScreen() {
+  const route = useRoute<RouteProp<RootStackParamList, "CattleList">>();
   const navigation = useNavigation();
   const colors = useColors();
   const [loading, setLoading] = useState(true);
@@ -34,42 +36,22 @@ export default function CattleListScreen() {
 
   // Filters State
   const [showFilters, setShowFilters] = useState(false);
-  const [statusFilter, setStatusFilter] = useState<CattleResult | "all">("all");
+  const [statusFilter, setStatusFilter] = useState<CattleResult | "all">(route.params?.status || "all");
   const [breedFilter, setBreedFilter] = useState<string>("all");
   const [ageRange, setAgeRange] = useState<{ min: string; max: string }>({ min: "", max: "" });
   const insets = useSafeAreaInsets();
   useScreenHeader("Meu Rebanho", `${cattle.length} ${cattle.length === 1 ? "animal" : "animais"} cadastrados`);
+
+  useEffect(() => {
+    setStatusFilter(route.params?.status || "all");
+    setShowFilters(!!route.params?.status);
+  }, [route.params?.status]);
+
   useFocusEffect(
     React.useCallback(() => {
       loadData();
     }, [])
   );
-
-  const breeds = useMemo(() => {
-    const uniqueBreeds = Array.from(new Set(cattle.map((c) => c.breed))).filter(Boolean);
-    return ["all", ...uniqueBreeds.sort()];
-  }, [cattle]);
-
-  const loadData = async () => {
-    try {
-      setLoading(true);
-      const [cattleData, pregnanciesData, diseasesData, vaccinesData] = await Promise.all([
-        cattleStorage.getAll(),
-        pregnancyStorage.getAll(),
-        diseaseStorage.getAll(),
-        vaccinationRecordStorage.getAll(),
-      ]);
-      const sorted = [...cattleData].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-      setCattle(sorted);
-      setPregnancies(pregnanciesData);
-      setDiseases(diseasesData);
-      setVaccines(vaccinesData);
-    } catch (error) {
-      console.error("Error loading cattle:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const getStatus = useCallback(
     (cattleItem: Cattle): CattleResult => {
@@ -111,6 +93,32 @@ export default function CattleListScreen() {
     },
     [diseases, pregnancies, vaccines]
   );
+
+  const breeds = useMemo(() => {
+    const uniqueBreeds = Array.from(new Set(cattle.map((c) => c.breed))).filter(Boolean);
+    return ["all", ...uniqueBreeds.sort()];
+  }, [cattle]);
+
+  const loadData = async () => {
+    try {
+      setLoading(true);
+      const [cattleData, pregnanciesData, diseasesData, vaccinesData] = await Promise.all([
+        cattleStorage.getAll(),
+        pregnancyStorage.getAll(),
+        diseaseStorage.getAll(),
+        vaccinationRecordStorage.getAll(),
+      ]);
+      const sorted = [...cattleData].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+      setCattle(sorted);
+      setPregnancies(pregnanciesData);
+      setDiseases(diseasesData);
+      setVaccines(vaccinesData);
+    } catch (error) {
+      console.error("Error loading cattle:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const filterCattle = useCallback(() => {
     let filtered = [...cattle];
@@ -196,52 +204,34 @@ export default function CattleListScreen() {
           {showFilters && (
             <View className="bg-surface rounded-xl p-4 border border-border gap-4">
               {/* Status Filter */}
-              <View className="gap-2">
-                <Text className="text-sm font-semibold text-muted">Status</Text>
-                <ScrollView horizontal showsHorizontalScrollIndicator={false} className="flex-row gap-2">
-                  <StatusChip label="Todos" selected={statusFilter === "all"} onPress={() => setStatusFilter("all")} />
-                  <StatusChip
-                    label="Saudável"
-                    selected={statusFilter === "healthy"}
-                    onPress={() => setStatusFilter("healthy")}
+              {
+                <View className="gap-2">
+                  <FormSelect
+                    value={statusFilter}
+                    label="Status"
+                    onValueChange={(value) => setStatusFilter(value as CattleResult)}
+                    options={["all", ...Object.keys(STATUS_CATTLE)].map((status: string) => ({
+                      label: status === "all" ? "Todos" : STATUS_CATTLE[status as CattleResult].text,
+                      value: status,
+                    }))}
                   />
-                  <StatusChip
-                    label="Em Tratamento"
-                    selected={statusFilter === "in_treatment"}
-                    onPress={() => setStatusFilter("in_treatment")}
-                  />
-                  <StatusChip
-                    label="Gestante"
-                    selected={statusFilter === "pregnancy"}
-                    onPress={() => setStatusFilter("pregnancy")}
-                  />
-                  <StatusChip
-                    label="Atrasada"
-                    selected={statusFilter === "overdue_pregnancy"}
-                    onPress={() => setStatusFilter("overdue_pregnancy")}
-                  />
-                  <StatusChip
-                    label="Vacina Pendente"
-                    selected={statusFilter === "pending_vaccine"}
-                    onPress={() => setStatusFilter("pending_vaccine")}
-                  />
-                </ScrollView>
-              </View>
+                </View>
+              }
 
               {/* Breed Filter */}
-              <View className="gap-2">
-                <Text className="text-sm font-semibold text-muted">Raça</Text>
-                <ScrollView horizontal showsHorizontalScrollIndicator={false} className="flex-row gap-2">
-                  {breeds.map((breed) => (
-                    <StatusChip
-                      key={breed}
-                      label={breed === "all" ? "Todas" : breed}
-                      selected={breedFilter === breed}
-                      onPress={() => setBreedFilter(breed)}
-                    />
-                  ))}
-                </ScrollView>
-              </View>
+              {breeds.length > 2 && (
+                <View className="gap-2">
+                  <FormSelect
+                    value={breedFilter}
+                    label="Raça"
+                    onValueChange={(value) => setBreedFilter(value)}
+                    options={breeds.map((breed) => ({
+                      label: breed === "all" ? "Todas" : breed,
+                      value: breed,
+                    }))}
+                  />
+                </View>
+              )}
 
               {/* Age Range Filter */}
               <View className="gap-2">

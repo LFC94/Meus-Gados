@@ -4,9 +4,9 @@ import { ScreenContainer } from "@/components/screen-container";
 import { useColors } from "@/hooks/use-colors";
 import useNavigation from "@/hooks/use-navigation";
 import { cattleStorage, diseaseStorage, pregnancyStorage, vaccinationRecordStorage } from "@/lib/storage";
-import { Cattle, Disease, Pregnancy, VaccinationRecord } from "@/types";
+import { Cattle } from "@/types";
 import { useFocusEffect } from "@react-navigation/native";
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import { ActivityIndicator, RefreshControl, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -14,7 +14,7 @@ export default function HomeScreen() {
   const navigation = useNavigation();
   const colors = useColors();
   const [loading, setLoading] = useState(true);
-  const [refreshing, setRefreshing] = useState(false);
+  const [refreshing] = useState(false);
   const [stats, setStats] = useState({
     totalCattle: 0,
     healthy: 0,
@@ -24,18 +24,9 @@ export default function HomeScreen() {
     overduePregnancies: 0,
   });
   const [recentCattle, setRecentCattle] = useState<Cattle[]>([]);
-  const [pregnancies, setPregnancies] = useState<Pregnancy[]>([]);
-  const [diseases, setDiseases] = useState<Disease[]>([]);
-  const [vaccines, setVaccines] = useState<VaccinationRecord[]>([]);
   const insets = useSafeAreaInsets();
 
-  useFocusEffect(
-    React.useCallback(() => {
-      loadData();
-    }, [])
-  );
-
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     try {
       setLoading(true);
       const [cattle, vaccinesData, pregnanciesData, diseasesData] = await Promise.all([
@@ -44,10 +35,6 @@ export default function HomeScreen() {
         pregnancyStorage.getAll(),
         diseaseStorage.getAll(),
       ]);
-
-      setVaccines(vaccinesData);
-      setPregnancies(pregnanciesData);
-      setDiseases(diseasesData);
 
       // Calculate stats
       let healthy = 0;
@@ -60,13 +47,13 @@ export default function HomeScreen() {
       const thirtyDaysFromNow = new Date(today.getTime() + 30 * 24 * 60 * 60 * 1000);
 
       for (const animal of cattle) {
-        const inDeath = diseases.find((d) => d.cattleId === animal.id && d.result === "death");
+        const inDeath = diseasesData.find((d) => d.cattleId === animal.id && d.result === "death");
         if (inDeath) {
           continue;
         }
 
         // Check pregnancy status
-        const activePregnancy = pregnancies.find((p) => p.cattleId === animal.id && p.result === "pending");
+        const activePregnancy = pregnanciesData.find((p) => p.cattleId === animal.id && p.result === "pending");
         if (activePregnancy) {
           const expectedBirthDate = new Date(activePregnancy.expectedBirthDate);
           if (today > expectedBirthDate) {
@@ -78,14 +65,14 @@ export default function HomeScreen() {
         }
 
         // Check disease status
-        const inTreat = diseases.find((d) => d.cattleId === animal.id && d.result === "in_treatment");
+        const inTreat = diseasesData.find((d) => d.cattleId === animal.id && d.result === "in_treatment");
         if (inTreat) {
           inTreatment++;
           continue; // Animals in treatment are counted separately
         }
 
         // Check vaccine status
-        const animalVaccines = vaccines.filter((v) => v.cattleId === animal.id);
+        const animalVaccines = vaccinesData.filter((v) => v.cattleId === animal.id);
         const hasPendingVaccine = animalVaccines.some((v) => {
           if (!v.nextDoseDate) return false;
           const nextDoseDate = new Date(v.nextDoseDate);
@@ -117,7 +104,13 @@ export default function HomeScreen() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      loadData();
+    }, [loadData])
+  );
 
   if (loading) {
     return (
@@ -142,7 +135,7 @@ export default function HomeScreen() {
               <TouchableOpacity
                 className="flex-1 bg-surface rounded-2xl p-4 border border-border"
                 style={{ opacity: 1 }}
-                onPress={() => navigation.navigate("CattleList")}
+                onPress={() => navigation.navigate("CattleList", { status: "healthy" })}
               >
                 <Text className="text-3xl font-bold" style={{ color: "#22C55E" }}>
                   {stats.healthy}
@@ -154,7 +147,7 @@ export default function HomeScreen() {
               <TouchableOpacity
                 className="flex-1 bg-surface rounded-2xl p-4 border border-border"
                 style={{ opacity: 1 }}
-                onPress={() => navigation.navigate("CattleList")}
+                onPress={() => navigation.navigate("CattleList", { status: "pregnancy" })}
               >
                 <Text className="text-3xl font-bold" style={{ color: "#3B82F6" }}>
                   {stats.pregnant}
@@ -180,7 +173,7 @@ export default function HomeScreen() {
               <TouchableOpacity
                 className="flex-1 bg-surface rounded-2xl p-4 border border-border"
                 style={{ opacity: 1 }}
-                onPress={() => navigation.navigate("CattleList")}
+                onPress={() => navigation.navigate("CattleList", { status: "in_treatment" })}
               >
                 <Text className="text-3xl font-bold" style={{ color: "#EF4444" }}>
                   {stats.inTreatment}
