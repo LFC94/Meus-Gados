@@ -24,6 +24,8 @@ const MAPPING = {
   trash: "delete",
   plus: "plus-one",
   "xmark.circle.fill": "cancel",
+  "slider.horizontal.3": "tune",
+  magnifyingglass: "search",
 } as IconMapping;
 
 /**
