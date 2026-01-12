@@ -47,7 +47,15 @@ jobs:
 
       - name: 📝 Create .env file
         run: |
-          echo "EXPO_PUBLIC_EAS_PROJECT_ID=${{ secrets.EXPO_PUBLIC_EAS_PROJECT_ID }}" > .env
+          # 1. Pull dynamic variables from GitHub Repository Variables (vars)
+          echo '${{ toJSON(vars) }}' | jq -r 'to_entries[]? | select(.key | startswith("EXPO_PUBLIC_")) | "\(.key)=\(.value)"' > .env
+
+          # 2. Pull dynamic variables from GitHub Repository Secrets (secrets)
+          # This catches secrets like EXPO_PUBLIC_FIREBASE_API_KEY without manual mapping
+          echo '${{ toJSON(secrets) }}' | jq -r 'to_entries[]? | select(.key | startswith("EXPO_PUBLIC_")) | "\(.key)=\(.value)"' >> .env
+
+          echo "Generated .env file keys (values masked):"
+          cut -d'=' -f1 .env
 
       - name: 🏗 Run EAS Build
         run: |
