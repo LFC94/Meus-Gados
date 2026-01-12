@@ -1,4 +1,4 @@
-const { themeColors } = require("./theme.config");
+const { themeColors } = require("./src/theme.config");
 const plugin = require("tailwindcss/plugin");
 
 const tailwindColors = Object.fromEntries(
@@ -9,14 +9,19 @@ const tailwindColors = Object.fromEntries(
       light: swatch.light,
       dark: swatch.dark,
     },
-  ]),
+  ])
 );
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   darkMode: "class",
   // Scan all component and app files for Tailwind classes
-  content: ["./app/**/*.{js,ts,tsx}", "./components/**/*.{js,ts,tsx}", "./lib/**/*.{js,ts,tsx}", "./hooks/**/*.{js,ts,tsx}"],
+  content: [
+    "./src/app/**/*.{js,ts,tsx}",
+    "./src/components/**/*.{js,ts,tsx}",
+    "./src/lib/**/*.{js,ts,tsx}",
+    "./src/hooks/**/*.{js,ts,tsx}",
+  ],
 
   presets: [require("nativewind/preset")],
   theme: {

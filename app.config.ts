@@ -1,6 +1,6 @@
 // Load environment variables with proper priority (system > .env)
 import type { ExpoConfig } from "expo/config";
-import "./scripts/load-env.js";
+import "./src/scripts/load-env.js";
 
 const bundleId = "com.lfcapp.meus.gados.t20260102074808";
 const timestamp = bundleId.split(".").pop()?.replace(/^t/, "") ?? "";
@@ -10,7 +10,7 @@ const env = {
   // App branding - update these values directly (do not use env vars)
   appName: "Meus Gados",
   appSlug: "meus-gados",
-  logoUrl: "./assets/images/icon.png",
+  logoUrl: "./src/assets/images/icon.png",
   scheme: schemeFromBundleId,
   iosBundleId: bundleId,
   androidPackage: bundleId,
@@ -21,7 +21,7 @@ const config: ExpoConfig = {
   slug: env.appSlug,
   version: "1.0.0",
   orientation: "portrait",
-  icon: "./assets/images/icon.png",
+  icon: "./src/assets/images/icon.png",
   scheme: env.scheme,
   userInterfaceStyle: "automatic",
   newArchEnabled: true,
@@ -38,9 +38,9 @@ const config: ExpoConfig = {
   android: {
     adaptiveIcon: {
       backgroundColor: "#E6F4FE",
-      foregroundImage: "./assets/images/android-icon-foreground.png",
-      backgroundImage: "./assets/images/android-icon-background.png",
-      monochromeImage: "./assets/images/android-icon-monochrome.png",
+      foregroundImage: "./src/assets/images/android-icon-foreground.png",
+      backgroundImage: "./src/assets/images/android-icon-background.png",
+      monochromeImage: "./src/assets/images/android-icon-monochrome.png",
     },
     edgeToEdgeEnabled: true,
     predictiveBackGestureEnabled: false,
@@ -63,7 +63,7 @@ const config: ExpoConfig = {
   web: {
     bundler: "metro",
     output: "static",
-    favicon: "./assets/images/favicon.png",
+    favicon: "./src/assets/images/favicon.png",
   },
   plugins: [
     "@react-native-community/datetimepicker",
@@ -72,7 +72,7 @@ const config: ExpoConfig = {
     [
       "expo-splash-screen",
       {
-        image: "./assets/images/splash-icon.png",
+        image: "./src/assets/images/splash-icon.png",
         imageWidth: 200,
         resizeMode: "contain",
         backgroundColor: "#ffffff",
