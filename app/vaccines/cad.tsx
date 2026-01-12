@@ -4,6 +4,7 @@ import { ScreenContainer } from "@/components/screen-container";
 import { useNavigation } from "@/hooks";
 import { useColors } from "@/hooks/use-colors";
 import useScreenHeader from "@/hooks/use-screen-header";
+import { addDaysToDate } from "@/lib/helpers";
 import { scheduleVaccineNotification } from "@/lib/notifications";
 import { cattleStorage, vaccinationRecordStorage, vaccineCatalogStorage } from "@/lib/storage";
 import { Cattle, RootStackParamList, VaccineModel } from "@/types";
@@ -211,10 +212,17 @@ export default function VaccineCadScreen() {
               value={formData.vaccineId}
               onValueChange={(value) => {
                 const selected = vaccineCatalog.find((v) => v.id === value);
+                let nextDose = formData.nextDose;
+
+                if (selected?.daysBetweenDoses && formData.appliedDate) {
+                  nextDose = addDaysToDate(formData.appliedDate, selected.daysBetweenDoses);
+                }
+
                 setFormData({
                   ...formData,
                   vaccineId: value,
                   batchUsed: selected?.batchNumber || "",
+                  nextDose,
                 });
               }}
               options={vaccineCatalog.map((v) => ({
@@ -239,7 +247,16 @@ export default function VaccineCadScreen() {
             <CustomDatePicker
               label="Data Aplicada *"
               value={formData.appliedDate}
-              onChange={(date) => setFormData({ ...formData, appliedDate: date })}
+              onChange={(date) => {
+                const selected = vaccineCatalog.find((v) => v.id === formData.vaccineId);
+                let nextDose = formData.nextDose;
+
+                if (date && selected?.daysBetweenDoses) {
+                  nextDose = addDaysToDate(date, selected.daysBetweenDoses);
+                }
+
+                setFormData({ ...formData, appliedDate: date, nextDose });
+              }}
               maximumDate={new Date()}
               placeholder="Selecionar data"
             />
