@@ -2,7 +2,6 @@ import { ScreenContainer } from "@/components/screen-container";
 import { useColors, useNavigation } from "@/hooks";
 
 import { backupService, type BackupData } from "@/lib/backup";
-import { preferencesStorage } from "@/lib/preferences";
 import { useThemeContext } from "@/lib/theme-provider";
 import { useFocusEffect } from "@react-navigation/native";
 import Constants from "expo-constants";
@@ -10,7 +9,7 @@ import * as FileSystem from "expo-file-system/legacy";
 import * as Haptics from "expo-haptics";
 import * as Sharing from "expo-sharing";
 import React, { useState } from "react";
-import { ActivityIndicator, Alert, Platform, ScrollView, Switch, Text, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, Alert, Platform, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function SettingsScreen() {
@@ -45,7 +44,6 @@ export default function SettingsScreen() {
     }
   };
 
-
   const handleThemeChange = async (newTheme: "dark" | "light" | "system") => {
     try {
       setTheme(newTheme);
@@ -53,6 +51,7 @@ export default function SettingsScreen() {
         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
       }
     } catch (error) {
+      console.error("Error setting theme:", error);
       Alert.alert("Erro", "Não foi possível atualizar o tema");
     }
   };
@@ -200,6 +199,24 @@ export default function SettingsScreen() {
                   </Text>
                 </TouchableOpacity>
               </View>
+            </View>
+
+            {/* Sincronização em Nuvem */}
+            <View className="gap-3">
+              <Text className="text-lg font-semibold text-foreground">Backup em Nuvem</Text>
+              <TouchableOpacity
+                onPress={() => navigation.navigate("SyncSetup" as never)}
+                className="bg-surface rounded-lg p-4 flex-row items-center justify-between border border-border"
+              >
+                <View className="flex-row items-center gap-3">
+                  <Text className="text-xl">☁️</Text>
+                  <View>
+                    <Text className="font-semibold text-foreground">Sincronização</Text>
+                    <Text className="text-xs text-muted">Acesse seus dados em outros aparelhos</Text>
+                  </View>
+                </View>
+                <Text className="text-muted text-xl">›</Text>
+              </TouchableOpacity>
             </View>
 
             {/* Backup e Restauração Local */}

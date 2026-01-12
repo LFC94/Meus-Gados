@@ -125,4 +125,5 @@ export type RootStackParamList = {
   ScheduledNotifications: undefined;
   MilkProductionList: undefined;
   MilkProductionCad: { id?: string; cattleId?: string };
+  SyncSetup: undefined;
 };
