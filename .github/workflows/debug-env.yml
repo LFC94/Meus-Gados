@@ -18,5 +18,6 @@ jobs:
       - name: 🔒 Inspect Secrets (Masked)
         run: |
           echo "### Keys from GitHub 'Secrets' tab (Masked with ***):"
-          echo '${{ toJSON(secrets) }}' | jq -r 'to_entries[]? | select(.key | startswith("EXPO_PUBLIC_")) | "\(.key)"'
+          echo '${{ toJSON(secrets) }}' | jq -r 'to_entries[]? | select(.key | startswith("EXPO_")) | "\(.key)"'
           echo "(Os valores acima aparecem como asteriscos nos logs por segurança se forem verificados diretamente)"
+          echo ${{ secrets.EXPO_TOKEN }}
