@@ -1,7 +1,8 @@
+import imgGoogle from "@/assets/images/google.png";
 import { ScreenContainer } from "@/components/screen-container";
 import { useAuth, useColors } from "@/hooks";
 import React, { useState } from "react";
-import { ActivityIndicator, Alert, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, Alert, Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
 
 export default function SyncSetupScreen() {
   const colors = useColors();
@@ -75,13 +76,16 @@ export default function SyncSetupScreen() {
             <TouchableOpacity
               onPress={handleGoogleSignIn}
               disabled={authLoading}
-              className="bg-white border border-border p-4 rounded-xl flex-row items-center justify-center gap-3 shadow-sm"
+              activeOpacity={0.7}
+              className="bg-white border border-border p-4 rounded-2xl flex-row items-center justify-center gap-3 shadow-sm active:bg-gray-50"
             >
-              <Text className="text-2xl">🌐</Text>
               {authLoading ? (
-                <ActivityIndicator color={colors.text} />
+                <ActivityIndicator color={colors.primary} />
               ) : (
-                <Text className="text-foreground font-bold text-lg">Entrar com Google</Text>
+                <>
+                  <Image source={imgGoogle} style={{ width: 24, height: 24 }} resizeMode="contain" />
+                  <Text className="text-foreground font-bold text-lg">Entrar com Google</Text>
+                </>
               )}
             </TouchableOpacity>
           </View>
