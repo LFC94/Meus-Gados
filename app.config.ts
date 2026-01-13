@@ -69,6 +69,7 @@ const config: ExpoConfig = {
     "@react-native-community/datetimepicker",
     "expo-font",
     "expo-router",
+    "@logrocket/react-native",
     [
       "expo-splash-screen",
       {
