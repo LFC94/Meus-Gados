@@ -10,6 +10,7 @@ export { default as PregnancyEditScreen } from "./pregnancy/edit";
 export { default as MilkProductionListScreen } from "./production";
 export { default as MilkProductionCadScreen } from "./production/cad";
 export { default as SettingsScreen } from "./settings";
+export { default as SyncSetupScreen } from "./settings/sync-setup";
 export { default as VaccineCatalogCadScreen } from "./vaccine_catalog/cad";
 export { default as VaccineCatalogScreen } from "./vaccine_catalog/index";
 export { default as VaccineCadScreen } from "./vaccines/cad";

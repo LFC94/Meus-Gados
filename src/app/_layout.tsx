@@ -15,6 +15,7 @@ import {
 } from "react-native-safe-area-context";
 
 import { useColors, useScreenOptions } from "@/hooks/";
+import { AuthProvider } from "@/hooks/use-auth";
 
 import { initManusRuntime, subscribeSafeAreaInsets } from "@/lib/_core/manus-runtime";
 import { createDrawerNavigator } from "@react-navigation/drawer";
@@ -36,6 +37,7 @@ import {
   PregnancyEditScreen,
   ScheduledNotificationsScreen,
   SettingsScreen,
+  SyncSetupScreen,
   VaccineCadScreen,
   VaccineCatalogCadScreen,
   VaccineCatalogScreen,
@@ -224,6 +226,13 @@ function MainStackNavigator() {
           title: "Registrar Produção",
         }}
       />
+      <Stack.Screen
+        name="SyncSetup"
+        component={SyncSetupScreen}
+        options={{
+          title: "Sincronização em Nuvem",
+        }}
+      />
     </Stack.Navigator>
   );
 }
@@ -274,18 +283,22 @@ export default function RootLayout() {
   if (shouldOverrideSafeArea) {
     return (
       <ThemeProvider>
-        <SafeAreaProvider initialMetrics={providerInitialMetrics}>
-          <SafeAreaFrameContext.Provider value={frame}>
-            <SafeAreaInsetsContext.Provider value={insets}>{content}</SafeAreaInsetsContext.Provider>
-          </SafeAreaFrameContext.Provider>
-        </SafeAreaProvider>
+        <AuthProvider>
+          <SafeAreaProvider initialMetrics={providerInitialMetrics}>
+            <SafeAreaFrameContext.Provider value={frame}>
+              <SafeAreaInsetsContext.Provider value={insets}>{content}</SafeAreaInsetsContext.Provider>
+            </SafeAreaFrameContext.Provider>
+          </SafeAreaProvider>
+        </AuthProvider>
       </ThemeProvider>
     );
   }
 
   return (
     <ThemeProvider>
-      <SafeAreaProvider initialMetrics={providerInitialMetrics}>{content}</SafeAreaProvider>
+      <AuthProvider>
+        <SafeAreaProvider initialMetrics={providerInitialMetrics}>{content}</SafeAreaProvider>
+      </AuthProvider>
     </ThemeProvider>
   );
 }
