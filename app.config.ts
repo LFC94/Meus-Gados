@@ -6,6 +6,13 @@ const bundleId = "com.lfcapp.meus.gados.t20260102074808";
 const timestamp = bundleId.split(".").pop()?.replace(/^t/, "") ?? "";
 const schemeFromBundleId = `lfcapp${timestamp}`;
 
+const now = new Date();
+const year = now.getFullYear();
+const month = String(now.getMonth() + 1).padStart(2, "0");
+const day = String(now.getDate()).padStart(2, "0");
+const rand = String(Math.floor(Math.random() * 101)).padStart(3, "0");
+const dynamicVersion = `1.0.${year}${month}${day}${rand}`;
+
 const env = {
   // App branding - update these values directly (do not use env vars)
   appName: "Meus Gados",
@@ -14,12 +21,13 @@ const env = {
   scheme: schemeFromBundleId,
   iosBundleId: bundleId,
   androidPackage: bundleId,
+  version: dynamicVersion,
 };
 
 const config: ExpoConfig = {
   name: env.appName,
   slug: env.appSlug,
-  version: "1.0.0",
+  version: env.version,
   orientation: "portrait",
   icon: "./src/assets/images/icon.png",
   scheme: env.scheme,
