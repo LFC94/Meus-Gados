@@ -1,6 +1,6 @@
 import imgGoogle from "@/assets/images/google.png";
 import { ScreenContainer } from "@/components/screen-container";
-import { useAuth, useColors } from "@/hooks";
+import { useAuth, useColors, useScreenHeader } from "@/hooks";
 import React, { useState } from "react";
 import { ActivityIndicator, Alert, Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
 
@@ -8,6 +8,8 @@ export default function SyncSetupScreen() {
   const colors = useColors();
   const { user, loading, signInWithGoogle, signOut } = useAuth();
   const [authLoading, setAuthLoading] = useState(false);
+
+  useScreenHeader("Sincronização", "Acesse seus dados em outro dispositivo");
 
   const handleGoogleSignIn = async () => {
     setAuthLoading(true);
@@ -34,9 +36,6 @@ export default function SyncSetupScreen() {
       <ScreenContainer className="p-4">
         <View className="flex-1 gap-6">
           <View className="bg-surface p-6 rounded-2xl border border-border items-center gap-4">
-            <View className="w-16 h-16 bg-success/20 rounded-full items-center justify-center">
-              <Text className="text-2xl">✅</Text>
-            </View>
             <View className="items-center">
               <Text className="text-xl font-bold text-foreground">Sincronização Ativa</Text>
               <Text className="text-muted text-center mt-1">
@@ -61,7 +60,7 @@ export default function SyncSetupScreen() {
       <ScrollView contentContainerStyle={{ flexGrow: 1, padding: 24 }} className="flex-1">
         <View className="gap-8">
           <View className="items-center gap-4">
-            <View className="w-20 h-20 bg-primary/10 rounded-full items-center justify-center">
+            <View className="w-20 h-20 rounded-full items-center justify-center border border-primary">
               <Text className="text-3xl">☁️</Text>
             </View>
             <View className="items-center">
@@ -77,7 +76,7 @@ export default function SyncSetupScreen() {
               onPress={handleGoogleSignIn}
               disabled={authLoading}
               activeOpacity={0.7}
-              className="bg-white border border-border p-4 rounded-2xl flex-row items-center justify-center gap-3 shadow-sm active:bg-gray-50"
+              className="border border-border p-4 rounded-2xl flex-row items-center justify-center gap-3 shadow-sm active:bg-gray-50"
             >
               {authLoading ? (
                 <ActivityIndicator color={colors.primary} />
