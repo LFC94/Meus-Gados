@@ -12,12 +12,26 @@ const firebaseConfig = {
   appId: process.env.EXPO_PUBLIC_FIREBASE_APP_ID,
 };
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
+// Check if Firebase config is complete
+const isFirebaseConfigured = Object.values(firebaseConfig).every((value) => value && value !== "");
 
-// Initialize Firebase Auth with persistence
-const auth = initializeAuth(app, {
-  persistence: getReactNativePersistence(ReactNativeAsyncStorage),
-});
+let app: any = null;
+let auth: any = null;
+
+if (isFirebaseConfigured) {
+  try {
+    // Initialize Firebase
+    app = initializeApp(firebaseConfig);
+
+    // Initialize Firebase Auth with persistence
+    auth = initializeAuth(app, {
+      persistence: getReactNativePersistence(ReactNativeAsyncStorage),
+    });
+  } catch (error) {
+    console.warn("Firebase initialization failed:", error);
+  }
+} else {
+  console.warn("Firebase configuration incomplete. Authentication features will be disabled.");
+}
 
 export { app, auth };

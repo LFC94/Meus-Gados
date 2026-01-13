@@ -62,6 +62,6 @@ jobs:
 
       - name: 📋 Display Build Version
         run: |
-          VERSION=$(node -e "const config = require('./app.config.ts'); console.log(config.default.version);")
+          VERSION=$(npx tsx -e "import config from './app.config.ts'; console.log(config.version);")
           echo "📦 Build Version: $VERSION"
           echo "::notice title=Build Version::$VERSION"

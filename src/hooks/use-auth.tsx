@@ -41,6 +41,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [request]);
 
   useEffect(() => {
+    if (!auth) {
+      setLoading(false);
+      return;
+    }
+
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setUser(user);
       setLoading(false);
@@ -50,7 +55,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   useEffect(() => {
-    if (response?.type === "success") {
+    if (response?.type === "success" && auth) {
       const { id_token } = response.params;
       const credential = GoogleAuthProvider.credential(id_token);
       signInWithCredential(auth, credential);
@@ -61,7 +66,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     await promptAsync();
   };
 
-  const signOut = () => firebaseSignOut(auth);
+  const signOut = () => {
+    if (auth) {
+      return firebaseSignOut(auth);
+    }
+    return Promise.resolve();
+  };
 
   const value = {
     user,

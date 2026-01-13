@@ -24,6 +24,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 // Screens
 import { RootStackParamList } from "@/types";
 
+import { initLogRocket } from "@/lib/logrocket";
 import {
   CattleCadScreen,
   CattleDetailScreen,
@@ -263,6 +264,11 @@ export default function RootLayout() {
     const unsubscribe = subscribeSafeAreaInsets(handleSafeAreaUpdate);
     return () => unsubscribe();
   }, [handleSafeAreaUpdate]);
+
+  // Initialize LogRocket for session recording and error tracking
+  useEffect(() => {
+    initLogRocket();
+  }, []);
 
   const providerInitialMetrics = useMemo(() => {
     const metrics = initialWindowMetrics ?? { insets: initialInsets, frame: initialFrame };
