@@ -59,3 +59,9 @@ jobs:
         run: |
           # EAS will automatically use the .env file during the build process
           eas build --platform ${{ github.event.inputs.platform }} --profile ${{ github.event.inputs.profile }} --non-interactive
+
+      - name: 📋 Display Build Version
+        run: |
+          VERSION=$(node -e "const config = require('./app.config.ts'); console.log(config.default.version);")
+          echo "📦 Build Version: $VERSION"
+          echo "::notice title=Build Version::$VERSION"
