@@ -22,6 +22,7 @@ const env = {
   iosBundleId: bundleId,
   androidPackage: bundleId,
   version: dynamicVersion,
+  minSdkVersion: 25, // Android 7.1 (Nougat)
 };
 
 const config: ExpoConfig = {
@@ -94,6 +95,7 @@ const config: ExpoConfig = {
       "expo-build-properties",
       {
         android: {
+          minSdkVersion: env.minSdkVersion,
           buildArchs: ["armeabi-v7a", "arm64-v8a"],
         },
       },
