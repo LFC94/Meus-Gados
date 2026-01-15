@@ -54,6 +54,7 @@ const config: ExpoConfig = {
     edgeToEdgeEnabled: true,
     predictiveBackGestureEnabled: false,
     package: env.androidPackage,
+    googleServicesFile: "./google-services.json",
     permissions: ["POST_NOTIFICATIONS"],
     intentFilters: [
       {
@@ -79,6 +80,7 @@ const config: ExpoConfig = {
     "expo-font",
     "expo-router",
     "@logrocket/react-native",
+    "@react-native-google-signin/google-signin",
     [
       "expo-splash-screen",
       {

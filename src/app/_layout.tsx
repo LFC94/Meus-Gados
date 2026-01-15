@@ -14,8 +14,7 @@ import {
   initialWindowMetrics,
 } from "react-native-safe-area-context";
 
-import { useColors, useScreenOptions } from "@/hooks/";
-import { AuthProvider } from "@/hooks/use-auth";
+import { AuthProvider, useColors, useScreenOptions } from "@/hooks/";
 
 import { initManusRuntime, subscribeSafeAreaInsets } from "@/lib/_core/manus-runtime";
 import { createDrawerNavigator } from "@react-navigation/drawer";
@@ -24,7 +23,6 @@ import { createStackNavigator } from "@react-navigation/stack";
 // Screens
 import { RootStackParamList } from "@/types";
 
-import { initLogRocket } from "@/lib/logrocket";
 import {
   CattleCadScreen,
   CattleDetailScreen,
@@ -266,9 +264,9 @@ export default function RootLayout() {
   }, [handleSafeAreaUpdate]);
 
   // Initialize LogRocket for session recording and error tracking
-  useEffect(() => {
-    initLogRocket();
-  }, []);
+  // useEffect(() => {
+  //   initLogRocket();
+  // }, []);
 
   const providerInitialMetrics = useMemo(() => {
     const metrics = initialWindowMetrics ?? { insets: initialInsets, frame: initialFrame };

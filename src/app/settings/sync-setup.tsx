@@ -1,11 +1,13 @@
-import imgGoogle from "@/assets/images/google.png";
 import { ScreenContainer } from "@/components/screen-container";
 import { useAuth, useColors, useScreenHeader } from "@/hooks";
+import { useColorScheme } from "@/hooks/use-color-scheme";
+import { GoogleSigninButton } from "@react-native-google-signin/google-signin";
 import React, { useState } from "react";
 import { ActivityIndicator, Alert, Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
 
 export default function SyncSetupScreen() {
   const colors = useColors();
+  const colorSchema = useColorScheme();
   const { user, loading, signInWithGoogle, signOut } = useAuth();
   const [authLoading, setAuthLoading] = useState(false);
 
@@ -38,6 +40,7 @@ export default function SyncSetupScreen() {
           <View className="bg-surface p-6 rounded-2xl border border-border items-center gap-4">
             <View className="items-center">
               <Text className="text-xl font-bold text-foreground">Sincronização Ativa</Text>
+              <Image width={100} height={100} source={{ uri: user.photoURL || "" }} />
               <Text className="text-muted text-center mt-1">
                 Seus dados estão sendo salvos na nuvem como {user.email}
               </Text>
@@ -71,22 +74,17 @@ export default function SyncSetupScreen() {
             </View>
           </View>
 
-          <View className="gap-4">
-            <TouchableOpacity
-              onPress={handleGoogleSignIn}
-              disabled={authLoading}
-              activeOpacity={0.7}
-              className="border border-border p-4 rounded-2xl flex-row items-center justify-center gap-3 shadow-sm active:bg-gray-50"
-            >
-              {authLoading ? (
-                <ActivityIndicator color={colors.primary} />
-              ) : (
-                <>
-                  <Image source={imgGoogle} style={{ width: 24, height: 24 }} resizeMode="contain" />
-                  <Text className="text-foreground font-bold text-lg">Entrar com Google</Text>
-                </>
-              )}
-            </TouchableOpacity>
+          <View className="items-center gap-4">
+            {authLoading ? (
+              <ActivityIndicator color={colors.primary} />
+            ) : (
+              <GoogleSigninButton
+                size={GoogleSigninButton.Size.Wide}
+                color={GoogleSigninButton.Color[colorSchema === "dark" ? "Dark" : "Light"]}
+                onPress={handleGoogleSignIn}
+                disabled={authLoading}
+              />
+            )}
           </View>
 
           <View className="bg-surface/50 p-4 rounded-xl border border-border mt-4">

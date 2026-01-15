@@ -1,83 +1,71 @@
-import { auth } from "@/lib/firebase";
-import * as AuthSession from "expo-auth-session";
-import * as Google from "expo-auth-session/providers/google";
 import * as WebBrowser from "expo-web-browser";
+
 import {
+  FirebaseAuthTypes,
   GoogleAuthProvider,
-  User,
-  signOut as firebaseSignOut,
+  getAuth,
   onAuthStateChanged,
   signInWithCredential,
-} from "firebase/auth";
+  signOut,
+} from "@react-native-firebase/auth";
+import { GoogleSignin } from "@react-native-google-signin/google-signin";
+
 import React, { createContext, useContext, useEffect, useState } from "react";
 
 WebBrowser.maybeCompleteAuthSession();
 
 interface AuthContextType {
-  user: User | null;
+  user: FirebaseAuthTypes.User | null;
   loading: boolean;
-  signInWithGoogle: () => Promise<void>;
-  signOut: () => Promise<void>;
+  signInWithGoogle: () => Promise<FirebaseAuthTypes.UserCredential>;
+  signOut: () => Promise<void> | Promise<null>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<FirebaseAuthTypes.User | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const [request, response, promptAsync] = Google.useAuthRequest({
-    iosClientId: process.env.EXPO_PUBLIC_GOOGLE_CLIENT_ID_IOS,
-    androidClientId: process.env.EXPO_PUBLIC_GOOGLE_CLIENT_ID_ANDROID,
+  GoogleSignin.configure({
     webClientId: process.env.EXPO_PUBLIC_GOOGLE_CLIENT_ID_WEB,
-    redirectUri: AuthSession.makeRedirectUri(),
   });
 
-  // Log para ajudar a debugar o Redirect URI se necessário
-  useEffect(() => {
-    if (request) {
-      console.log("Redirect URI Gerado:", request.redirectUri);
-    }
-  }, [request]);
+  function handleAuthStateChanged(user: any) {
+    setUser(user);
+    setLoading(false);
+  }
 
   useEffect(() => {
-    if (!auth) {
-      setLoading(false);
-      return;
-    }
-
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setUser(user);
-      setLoading(false);
-    });
-
-    return unsubscribe;
+    onAuthStateChanged(getAuth(), handleAuthStateChanged);
   }, []);
 
-  useEffect(() => {
-    if (response?.type === "success" && auth) {
-      const { id_token } = response.params;
-      const credential = GoogleAuthProvider.credential(id_token);
-      signInWithCredential(auth, credential);
-    }
-  }, [response]);
-
   const signInWithGoogle = async () => {
-    await promptAsync();
+    await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
+
+    const signInResult = await GoogleSignin.signIn();
+    console.log(signInResult);
+
+    let idToken = signInResult.data?.idToken;
+
+    if (!idToken) {
+      throw new Error("No ID token found");
+    }
+
+    // Create a Google credential with the token
+    const googleCredential = GoogleAuthProvider.credential(idToken);
+    return signInWithCredential(getAuth(), googleCredential);
   };
 
-  const signOut = () => {
-    if (auth) {
-      return firebaseSignOut(auth);
-    }
-    return Promise.resolve();
+  const signOutG = () => {
+    return signOut(getAuth()).then(() => console.log("user signed out"));
   };
 
   const value = {
     user,
     loading,
     signInWithGoogle,
-    signOut,
+    signOut: signOutG,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
