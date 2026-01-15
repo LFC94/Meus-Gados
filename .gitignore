@@ -60,4 +60,9 @@ Thumbs.db
 *.tgz
 *.tar.gz
 .cache/
+# Firebase and Secrets
+google-services.json
+GoogleService-Info.plist
 .env
+.env.local
+.env.*

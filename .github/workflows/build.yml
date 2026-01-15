@@ -55,6 +55,9 @@ jobs:
           echo "Generated .env file keys:"
           cut -d'=' -f1 .env
 
+      - name: 🔑 Setup Firebase Google Services
+        run: echo '${{ secrets.GOOGLE_SERVICES_JSON }}' > google-services.json
+
       - name: 🏗 Run EAS Build
         run: |
           # EAS will automatically use the .env file during the build process
