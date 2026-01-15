@@ -1,5 +1,7 @@
 import * as WebBrowser from "expo-web-browser";
 
+import { STORAGE_KEYS } from "@/constants/const";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
   FirebaseAuthTypes,
   GoogleAuthProvider,
@@ -10,8 +12,9 @@ import {
 } from "@react-native-firebase/auth";
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
 
+import { subscribeToStorageChanges } from "@/lib/storage";
 import { syncService } from "@/lib/sync";
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, { createContext, useContext, useEffect, useRef, useState } from "react";
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -44,6 +47,37 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     onAuthStateChanged(getAuth(), handleAuthStateChanged);
   }, []);
 
+  const initialSyncDone = useRef(false);
+
+  useEffect(() => {
+    if (user && !initialSyncDone.current && !isSyncing) {
+      initialSyncDone.current = true;
+      syncData();
+    }
+    if (!user) {
+      initialSyncDone.current = false;
+    }
+  }, [user, isSyncing]);
+
+  useEffect(() => {
+    if (!user) return;
+
+    let timer: any;
+
+    // Trigger sync when local storage changes (debounced)
+    const unsubscribe = subscribeToStorageChanges(() => {
+      if (timer) clearTimeout(timer);
+      timer = setTimeout(() => {
+        if (!isSyncing) syncData();
+      }, 10000); // 10 second delay for auto-sync after changes
+    });
+
+    return () => {
+      unsubscribe();
+      if (timer) clearTimeout(timer);
+    };
+  }, [user, isSyncing]);
+
   const signInWithGoogle = async () => {
     await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
 
@@ -61,7 +95,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return signInWithCredential(getAuth(), googleCredential);
   };
 
-  const signOutG = () => {
+  const signOutG = async () => {
+    await AsyncStorage.removeItem(STORAGE_KEYS.LAST_SYNC);
     return signOut(getAuth()).then(() => console.log("user signed out"));
   };
 

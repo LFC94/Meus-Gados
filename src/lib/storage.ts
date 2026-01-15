@@ -18,6 +18,24 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { preferencesStorage } from "./preferences";
 
 /**
+ * Sistema de notificação de mudanças para sincronização
+ */
+type StorageListener = () => void;
+const listeners: StorageListener[] = [];
+
+export const subscribeToStorageChanges = (callback: StorageListener) => {
+  listeners.push(callback);
+  return () => {
+    const index = listeners.indexOf(callback);
+    if (index > -1) listeners.splice(index, 1);
+  };
+};
+
+const notifyStorageChanges = () => {
+  listeners.forEach((listener) => listener());
+};
+
+/**
  * Funções genéricas de armazenamento
  */
 
@@ -64,6 +82,7 @@ async function addItem<T extends SyncBase>(key: string, item: T): Promise<T> {
   };
   items.push(newItem);
   await setItems(key, items);
+  notifyStorageChanges();
   return newItem;
 }
 
@@ -82,6 +101,7 @@ async function updateItem<T extends SyncBase>(key: string, id: string, updates: 
   };
 
   await setItems(key, items);
+  notifyStorageChanges();
   return items[index];
 }
 
@@ -103,6 +123,7 @@ async function deleteItem<T extends { id: string; isDeleted?: boolean; updatedAt
   };
 
   await setItems(key, items);
+  notifyStorageChanges();
   return true;
 }
 

@@ -2,7 +2,7 @@ import { ScreenContainer } from "@/components/screen-container";
 import { useAuth, useColors, useScreenHeader } from "@/hooks";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { GoogleSigninButton } from "@react-native-google-signin/google-signin";
-import React, { useState } from "react";
+import { useEffect, useState } from "react";
 import { ActivityIndicator, Alert, Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
 
 export default function SyncSetupScreen() {
@@ -11,6 +11,17 @@ export default function SyncSetupScreen() {
   const { user, loading, signInWithGoogle, signOut, syncData, isSyncing } = useAuth();
   const [authLoading, setAuthLoading] = useState(false);
   const [lastSyncStatus, setLastSyncStatus] = useState<string | null>(null);
+
+  useEffect(() => {
+    const loadLastSync = async () => {
+      const { syncStorage } = await import("@/lib/storage");
+      const lastSync = await syncStorage.getLastSync();
+      if (lastSync) {
+        setLastSyncStatus(`Última sincronização: ${new Date(lastSync).toLocaleString()}`);
+      }
+    };
+    loadLastSync();
+  }, [isSyncing]);
 
   useScreenHeader("Sincronização", "Acesse seus dados em outro dispositivo");
 
