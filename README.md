@@ -58,6 +58,14 @@ O aplicativo foi construído utilizando as melhores práticas de desenvolvimento
 - **Horário Configurável**: Escolha o horário preferencial para receber notificações
 - **Lista de Agendadas**: Visualize todas as notificações agendadas
 
+### ☁️ Sincronização e Nuvem
+
+- **Sincronização Offline-First**: O aplicativo utiliza `AsyncStorage` como fonte local e sincroniza automaticamente com o Firebase Firestore quando há conexão.
+- **Isolamento de Dados**: Cada usuário possui seu próprio espaço seguro na nuvem (`/users/{uid}`), garantindo total privacidade.
+- **Merge Inteligente**: Uso de lógica de "Última Escrita Vence" (_Last Write Wins_) baseada em timestamps para resolver conflitos entre múltiplos dispositivos.
+- **Sincronização Automática**: Os dados são sincronizados ao abrir o app e alguns segundos após qualquer modificação local.
+- **Soft Delete**: Itens deletados localmente são marcados para posterior sincronização com a nuvem, garantindo consistência total.
+
 ## 🚀 Instalação
 
 ### Pré-requisitos
@@ -122,18 +130,20 @@ npm run build:prod
 
 O projeto utiliza as seguintes tecnologias e bibliotecas:
 
-| Categoria     | Tecnologia              |
-| ------------- | ----------------------- |
-| Framework     | React Native            |
-| Platform      | Expo                    |
-| Language      | TypeScript              |
-| Styling       | NativeWind (Tailwind)   |
-| Navigation    | React Navigation        |
-| Storage       | AsyncStorage            |
-| Icons         | Expo Vector Icons       |
-| Notifications | Expo Notifications      |
-| Haptics       | Expo Haptics            |
-| Reanimated    | React Native Reanimated |
+| Categoria     | Tecnologia                  |
+| ------------- | --------------------------- |
+| Framework     | React Native                |
+| Platform      | Expo                        |
+| Language      | TypeScript                  |
+| Styling       | NativeWind (Tailwind)       |
+| Navigation    | React Navigation            |
+| Storage       | AsyncStorage                |
+| Icons         | Expo Vector Icons           |
+| Backend       | Firebase (Auth & Firestore) |
+| Google Login  | Google Sign-In SDK          |
+| Notifications | Expo Notifications          |
+| Haptics       | Expo Haptics                |
+| Reanimated    | React Native Reanimated     |
 
 ### Principais Dependências
 
@@ -158,6 +168,9 @@ EXPO_NOTIFICATIONS_ANDROID_COLOR=#2563EB
 # Expo Application Services (Obrigatório para Build)
 # Encontrado no dashboard do EAS
 EXPO_PUBLIC_EAS_PROJECT_ID=seu_project_id
+
+# Google Web Client ID (Para Firebase Auth)
+EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID=seu_client_id.apps.googleusercontent.com
 ```
 
 ### Temas
