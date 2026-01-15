@@ -10,6 +10,7 @@ import {
 } from "@react-native-firebase/auth";
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
 
+import { syncService } from "@/lib/sync";
 import React, { createContext, useContext, useEffect, useState } from "react";
 
 WebBrowser.maybeCompleteAuthSession();
@@ -19,6 +20,8 @@ interface AuthContextType {
   loading: boolean;
   signInWithGoogle: () => Promise<FirebaseAuthTypes.UserCredential>;
   signOut: () => Promise<void> | Promise<null>;
+  syncData: () => Promise<{ success: boolean; error?: string }>;
+  isSyncing: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -26,6 +29,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<FirebaseAuthTypes.User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isSyncing, setIsSyncing] = useState(false);
 
   GoogleSignin.configure({
     webClientId: process.env.EXPO_PUBLIC_GOOGLE_CLIENT_ID_WEB,
@@ -61,11 +65,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return signOut(getAuth()).then(() => console.log("user signed out"));
   };
 
+  const syncData = async () => {
+    setIsSyncing(true);
+    try {
+      return await syncService.syncAll();
+    } finally {
+      setIsSyncing(false);
+    }
+  };
+
   const value = {
     user,
     loading,
     signInWithGoogle,
     signOut: signOutG,
+    syncData,
+    isSyncing,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

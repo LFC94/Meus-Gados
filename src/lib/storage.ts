@@ -8,6 +8,7 @@ import {
   Disease,
   MilkProductionRecord,
   Pregnancy,
+  SyncBase,
   VaccinationRecord,
   VaccinationRecordWithDetails,
   VaccineModel,
@@ -20,12 +21,26 @@ import { preferencesStorage } from "./preferences";
  * Funções genéricas de armazenamento
  */
 
-async function getItems<T>(key: string): Promise<T[]> {
+async function getItems<T extends { isDeleted?: boolean }>(key: string): Promise<T[]> {
+  try {
+    const data = await AsyncStorage.getItem(key);
+    const items: T[] = data ? JSON.parse(data) : [];
+    return items.filter((item) => !item.isDeleted);
+  } catch (error) {
+    console.error(`Error getting items from ${key}:`, error);
+    return [];
+  }
+}
+
+/**
+ * Retorna todos os itens incluindo os marcados como deletado (usado para sync)
+ */
+export async function getAllItemsIncludingDeleted<T>(key: string): Promise<T[]> {
   try {
     const data = await AsyncStorage.getItem(key);
     return data ? JSON.parse(data) : [];
   } catch (error) {
-    console.error(`Error getting items from ${key}:`, error);
+    console.error(`Error getting all items from ${key}:`, error);
     return [];
   }
 }
@@ -39,20 +54,21 @@ async function setItems<T>(key: string, items: T[]): Promise<void> {
   }
 }
 
-async function addItem<T extends { id: string }>(key: string, item: T): Promise<T> {
-  const items = await getItems<T>(key);
+async function addItem<T extends SyncBase>(key: string, item: T): Promise<T> {
+  const items = await getAllItemsIncludingDeleted<T>(key);
   const newItem = {
     ...item,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
+    isDeleted: false,
   };
   items.push(newItem);
   await setItems(key, items);
   return newItem;
 }
 
-async function updateItem<T extends { id: string }>(key: string, id: string, updates: Partial<T>): Promise<T | null> {
-  const items = await getItems<T>(key);
+async function updateItem<T extends SyncBase>(key: string, id: string, updates: Partial<T>): Promise<T | null> {
+  const items = await getAllItemsIncludingDeleted<T>(key);
   const index = items.findIndex((item) => item.id === id);
 
   if (index === -1) {
@@ -69,19 +85,28 @@ async function updateItem<T extends { id: string }>(key: string, id: string, upd
   return items[index];
 }
 
-async function deleteItem<T extends { id: string }>(key: string, id: string): Promise<boolean> {
-  const items = await getItems<T>(key);
-  const filteredItems = items.filter((item) => item.id !== id);
+async function deleteItem<T extends { id: string; isDeleted?: boolean; updatedAt: string }>(
+  key: string,
+  id: string
+): Promise<boolean> {
+  const items = await getAllItemsIncludingDeleted<T>(key);
+  const index = items.findIndex((item) => item.id === id);
 
-  if (filteredItems.length === items.length) {
+  if (index === -1) {
     return false;
   }
 
-  await setItems(key, filteredItems);
+  items[index] = {
+    ...items[index],
+    isDeleted: true,
+    updatedAt: new Date().toISOString(),
+  };
+
+  await setItems(key, items);
   return true;
 }
 
-async function getItemById<T extends { id: string }>(key: string, id: string): Promise<T | null> {
+async function getItemById<T extends SyncBase>(key: string, id: string): Promise<T | null> {
   const items = await getItems<T>(key);
   return items.find((item) => item.id === id) || null;
 }
@@ -438,6 +463,15 @@ export const exportAllData = async (): Promise<string> => {
     null,
     2
   );
+};
+
+export const syncStorage = {
+  getLastSync: async (): Promise<string | null> => {
+    return AsyncStorage.getItem(STORAGE_KEYS.LAST_SYNC);
+  },
+  setLastSync: async (timestamp: string): Promise<void> => {
+    await AsyncStorage.setItem(STORAGE_KEYS.LAST_SYNC, timestamp);
+  },
 };
 
 /**

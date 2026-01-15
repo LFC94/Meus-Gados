@@ -3,16 +3,20 @@
  */
 
 // Tipos existentes mantidos para compatibilidade
-export interface Cattle {
+export interface SyncBase {
   id: string;
+  createdAt: string;
+  updatedAt: string;
+  isDeleted?: boolean;
+}
+
+export interface Cattle extends SyncBase {
   number: string;
   name?: string;
   breed: string;
   birthDate: string;
   weight: number;
   motherId?: string;
-  createdAt: string;
-  updatedAt: string;
 }
 
 export type CattleResult = "in_treatment" | "healthy" | "death" | "overdue_pregnancy" | "pregnancy" | "pending_vaccine";
@@ -21,8 +25,7 @@ export type CattleResult = "in_treatment" | "healthy" | "death" | "overdue_pregn
  * Catálogo de Vacinas (Cadastro de Imunizantes)
  * Representa o produto físico/medicamento disponível no mercado
  */
-export interface VaccineModel {
-  id: string;
+export interface VaccineModel extends SyncBase {
   name: string; // Ex: Febre Aftosa
   manufacturer?: string; // Ex: Ourofino, MSD, Boehringer
   batchNumber?: string; // Lote padrão do catálogo
@@ -30,16 +33,13 @@ export interface VaccineModel {
   description?: string; // Descrição/tratamento que previne
   daysBetweenDoses?: number; // Intervalo para próxima dose (0 = dose única)
   isActive: boolean; // Se está ativa no catálogo
-  createdAt: string;
-  updatedAt: string;
 }
 
 /**
  * Registro de Vacinação (Histórico de Aplicações)
  * Representa o fato de um animal ter sido vacinado
  */
-export interface VaccinationRecord {
-  id: string;
+export interface VaccinationRecord extends SyncBase {
   cattleId: string; // ID do animal
   vaccineId: string; // ID da vaccine do catálogo
   dateApplied: string; // Data da aplicação (ISO)
@@ -47,12 +47,9 @@ export interface VaccinationRecord {
   isNextDoseApplied?: boolean; // Se a próxima dose já foi aplicada
   batchUsed?: string; // Lote usado nesta aplicação específica
   notes?: string; // Observações (reações, etc)
-  createdAt: string;
-  updatedAt: string;
 }
 
-export interface Pregnancy {
-  id: string;
+export interface Pregnancy extends SyncBase {
   cattleId: string;
   coverageDate: string;
   expectedBirthDate: string;
@@ -60,35 +57,27 @@ export interface Pregnancy {
   result?: PregnancyResult;
   complications?: string;
   calfId?: string;
-  createdAt: string;
-  updatedAt: string;
 }
 
 export type PregnancyResult = "pending" | "success" | "complications" | "failed";
 
-export interface Disease {
-  id: string;
+export interface Disease extends SyncBase {
   cattleId: string;
   type: string;
   diagnosisDate: string;
   symptoms: string;
   treatment: string;
   result: DiseaseResult;
-  createdAt: string;
-  updatedAt: string;
 }
 
 export type DiseaseResult = "in_treatment" | "cured" | "death";
 
-export interface MilkProductionRecord {
-  id: string;
+export interface MilkProductionRecord extends SyncBase {
   cattleId: string;
   date: string; // ISO Date string
   period: "morning" | "afternoon" | "full_day";
   quantity: number; // in Liters
   notes?: string;
-  createdAt: string;
-  updatedAt: string;
 }
 
 /**

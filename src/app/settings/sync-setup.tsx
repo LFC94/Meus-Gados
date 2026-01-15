@@ -8,8 +8,9 @@ import { ActivityIndicator, Alert, Image, ScrollView, Text, TouchableOpacity, Vi
 export default function SyncSetupScreen() {
   const colors = useColors();
   const colorSchema = useColorScheme();
-  const { user, loading, signInWithGoogle, signOut } = useAuth();
+  const { user, loading, signInWithGoogle, signOut, syncData, isSyncing } = useAuth();
   const [authLoading, setAuthLoading] = useState(false);
+  const [lastSyncStatus, setLastSyncStatus] = useState<string | null>(null);
 
   useScreenHeader("Sincronização", "Acesse seus dados em outro dispositivo");
 
@@ -17,11 +18,23 @@ export default function SyncSetupScreen() {
     setAuthLoading(true);
     try {
       await signInWithGoogle();
+      // Sync immediately after login
+      await syncData();
     } catch (error: any) {
       console.error("Google Sign-In Error:", error);
       Alert.alert("Erro de Autenticação", "Não foi possível realizar o login com o Google.");
     } finally {
       setAuthLoading(false);
+    }
+  };
+
+  const handleManualSync = async () => {
+    const result = await syncData();
+    if (result.success) {
+      setLastSyncStatus(`Última sincronização: ${new Date().toLocaleTimeString()}`);
+      Alert.alert("Sucesso", "Dados sincronizados com sucesso!");
+    } else {
+      Alert.alert("Erro", result.error || "Erro ao sincronizar dados.");
     }
   };
 
@@ -46,6 +59,22 @@ export default function SyncSetupScreen() {
               </Text>
             </View>
           </View>
+
+          <TouchableOpacity
+            onPress={handleManualSync}
+            disabled={isSyncing}
+            className="bg-primary p-4 rounded-xl items-center flex-row justify-center gap-2"
+          >
+            {isSyncing ? (
+              <ActivityIndicator color="white" />
+            ) : (
+              <>
+                <Text className="text-white font-bold">☁️ Sincronizar Agora</Text>
+              </>
+            )}
+          </TouchableOpacity>
+
+          {lastSyncStatus && <Text className="text-muted text-center text-sm">{lastSyncStatus}</Text>}
 
           <TouchableOpacity
             onPress={() => signOut()}
