@@ -10,7 +10,7 @@ import { VaccineWithRecords } from "@/types";
 import { useFocusEffect } from "@react-navigation/native";
 import * as Haptics from "expo-haptics";
 import React, { useState } from "react";
-import { ActivityIndicator, Platform, RefreshControl, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, RefreshControl, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function VaccineCatalogScreen() {
@@ -24,13 +24,13 @@ export default function VaccineCatalogScreen() {
 
   useScreenHeader(
     "Catálogo de Vacinas",
-    `${vaccines.length} ${vaccines.length === 1 ? "vacina" : "vacinas"} cadastradas`
+    `${vaccines.length} ${vaccines.length === 1 ? "vacina" : "vacinas"} cadastradas`,
   );
 
   useFocusEffect(
     React.useCallback(() => {
       loadVaccines();
-    }, [])
+    }, []),
   );
 
   const loadVaccines = async () => {
@@ -63,9 +63,7 @@ export default function VaccineCatalogScreen() {
     try {
       await vaccineCatalogStorage.delete(vaccineToDelete.id);
 
-      if (Platform.OS !== "web") {
-        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-      }
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
 
       loadVaccines();
     } catch (error) {

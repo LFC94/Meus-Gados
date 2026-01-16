@@ -9,7 +9,7 @@ import * as FileSystem from "expo-file-system/legacy";
 import * as Haptics from "expo-haptics";
 import * as Sharing from "expo-sharing";
 import React, { useState } from "react";
-import { ActivityIndicator, Alert, Platform, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, Alert, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function SettingsScreen() {
@@ -23,7 +23,7 @@ export default function SettingsScreen() {
   useFocusEffect(
     React.useCallback(() => {
       loadSettings();
-    }, [])
+    }, []),
   );
 
   const loadSettings = async () => {
@@ -31,11 +31,11 @@ export default function SettingsScreen() {
       setLoading(true);
       const backupList = await backupService.getBackupList();
       setBackups(
-        backupList.sort((a, b) => new Date(b.backup.timestamp).getTime() - new Date(a.backup.timestamp).getTime())
+        backupList.sort((a, b) => new Date(b.backup.timestamp).getTime() - new Date(a.backup.timestamp).getTime()),
       );
 
       setBackups(
-        backupList.sort((a, b) => new Date(b.backup.timestamp).getTime() - new Date(a.backup.timestamp).getTime())
+        backupList.sort((a, b) => new Date(b.backup.timestamp).getTime() - new Date(a.backup.timestamp).getTime()),
       );
     } catch (error) {
       console.error("Error loading settings:", error);
@@ -47,9 +47,7 @@ export default function SettingsScreen() {
   const handleThemeChange = async (newTheme: "dark" | "light" | "system") => {
     try {
       setTheme(newTheme);
-      if (Platform.OS !== "web") {
-        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-      }
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     } catch (error) {
       console.error("Error setting theme:", error);
       Alert.alert("Erro", "Não foi possível atualizar o tema");
@@ -58,16 +56,12 @@ export default function SettingsScreen() {
 
   const handleCreateBackup = async () => {
     try {
-      if (Platform.OS !== "web") {
-        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-      }
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
 
       const backup = await backupService.createBackup();
       await backupService.saveBackup(backup);
 
-      if (Platform.OS !== "web") {
-        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-      }
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
 
       Alert.alert("Sucesso", "Backup criado com sucesso!");
       loadSettings();
@@ -112,9 +106,7 @@ export default function SettingsScreen() {
           onPress: async () => {
             try {
               await backupService.restoreBackup(backup);
-              if (Platform.OS !== "web") {
-                Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-              }
+              Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
               Alert.alert("Sucesso", "Backup restaurado com sucesso!");
               loadSettings();
             } catch (error) {
@@ -124,7 +116,7 @@ export default function SettingsScreen() {
           },
           style: "destructive",
         },
-      ]
+      ],
     );
   };
 

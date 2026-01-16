@@ -11,7 +11,7 @@ import { Cattle, RootStackParamList, VaccineModel } from "@/types";
 import { RouteProp, useRoute } from "@react-navigation/native";
 import * as Haptics from "expo-haptics";
 import { useCallback, useEffect, useState } from "react";
-import { ActivityIndicator, Alert, Platform, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, Alert, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function VaccineCadScreen() {
@@ -124,9 +124,7 @@ export default function VaccineCadScreen() {
     try {
       setLoading(true);
 
-      if (Platform.OS !== "web") {
-        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-      }
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
 
       const selectedVaccine = vaccineCatalog.find((v) => v.id === formData.vaccineId);
       const data = {
@@ -166,9 +164,7 @@ export default function VaccineCadScreen() {
         }
       }
 
-      if (Platform.OS !== "web") {
-        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-      }
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
 
       Alert.alert("Sucesso", "Vacina registrada com sucesso!", [
         {

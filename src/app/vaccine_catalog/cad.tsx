@@ -8,7 +8,7 @@ import { RootStackParamList } from "@/types";
 import { RouteProp, useRoute } from "@react-navigation/native";
 import * as Haptics from "expo-haptics";
 import React, { useCallback, useEffect, useState } from "react";
-import { ActivityIndicator, Alert, Platform, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, Alert, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function VaccineCatalogCadScreen() {
@@ -23,7 +23,7 @@ export default function VaccineCatalogCadScreen() {
 
   useScreenHeader(
     id ? "Editar Vacina" : "Nova Vacina",
-    id ? "Atualize as informações da vaccine no catálogo" : "Cadastre uma vaccine no catálogo para uso futuro"
+    id ? "Atualize as informações da vaccine no catálogo" : "Cadastre uma vaccine no catálogo para uso futuro",
   );
 
   const [formData, setFormData] = useState({
@@ -72,9 +72,7 @@ export default function VaccineCatalogCadScreen() {
     try {
       setSaving(true);
 
-      if (Platform.OS !== "web") {
-        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-      }
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
 
       const data = {
         name: formData.name.trim(),
@@ -91,9 +89,7 @@ export default function VaccineCatalogCadScreen() {
         await vaccineCatalogStorage.add(data);
       }
 
-      if (Platform.OS !== "web") {
-        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-      }
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
 
       Alert.alert("Sucesso", id ? "Vaccine atualizada com sucesso!" : "Vaccine cadastrada com sucesso!", [
         { text: "OK", onPress: () => navigation.goBack() },

@@ -1,5 +1,4 @@
 import * as Linking from "expo-linking";
-import * as ReactNative from "react-native";
 
 const bundleId = "com.lfcapp.meus.gados.t20260102074808";
 const timestamp = bundleId.split(".").pop()?.replace(/^t/, "") ?? "";
@@ -33,16 +32,6 @@ export function getApiBaseUrl(): string {
     return API_BASE_URL.replace(/\/$/, "");
   }
 
-  // On web, derive from current hostname by replacing port 8081 with 3000
-  if (ReactNative.Platform.OS === "web" && typeof window !== "undefined" && window.location) {
-    const { protocol, hostname } = window.location;
-    // Pattern: 8081-sandboxid.region.domain -> 3000-sandboxid.region.domain
-    const apiHostname = hostname.replace(/^8081-/, "3000-");
-    if (apiHostname !== hostname) {
-      return `${protocol}//${apiHostname}`;
-    }
-  }
-
   // Fallback to empty (will use relative URL)
   return "";
 }
@@ -64,17 +53,11 @@ const encodeState = (value: string) => {
 export const getLoginUrl = () => {
   let redirectUri: string;
 
-  if (ReactNative.Platform.OS === "web") {
-    // Web platform: redirect to API server callback (not Metro bundler)
-    // The API server will then redirect back to the frontend with the session token
-    redirectUri = `${getApiBaseUrl()}/api/oauth/callback`;
-  } else {
-    // Native platform: use deep link scheme for mobile OAuth callback
-    // This allows the OS to redirect back to the app after authentication
-    redirectUri = Linking.createURL("/oauth/callback", {
-      scheme: env.deepLinkScheme,
-    });
-  }
+  // Native platform: use deep link scheme for mobile OAuth callback
+  // This allows the OS to redirect back to the app after authentication
+  redirectUri = Linking.createURL("/oauth/callback", {
+    scheme: env.deepLinkScheme,
+  });
 
   const state = encodeState(redirectUri);
 

@@ -7,12 +7,26 @@ import { VaccineItem } from "@/components/vaccine-item";
 import { STATUS_CATTLE } from "@/constants/const";
 import { useColors, useNavigation, useScreenHeader } from "@/hooks";
 import { formatDate, formatWeight } from "@/lib/helpers";
-import { cattleStorage, diseaseStorage, milkProductionStorage, pregnancyStorage, vaccinationRecordStorage } from "@/lib/storage";
-import { Cattle, CattleResult, Disease, MilkProductionRecord, Pregnancy, RootStackParamList, VaccinationRecordWithDetails } from "@/types";
+import {
+  cattleStorage,
+  diseaseStorage,
+  milkProductionStorage,
+  pregnancyStorage,
+  vaccinationRecordStorage,
+} from "@/lib/storage";
+import {
+  Cattle,
+  CattleResult,
+  Disease,
+  MilkProductionRecord,
+  Pregnancy,
+  RootStackParamList,
+  VaccinationRecordWithDetails,
+} from "@/types";
 import { RouteProp, useFocusEffect, useRoute } from "@react-navigation/native";
 import * as Haptics from "expo-haptics";
 import React, { useState } from "react";
-import { ActivityIndicator, Alert, Platform, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, Alert, ScrollView, Text, TouchableOpacity, View } from "react-native";
 
 type Tab = "info" | "vaccines" | "pregnancy" | "diseases" | "production";
 
@@ -40,15 +54,7 @@ export default function CattleDetailScreen() {
     </TouchableOpacity>
   ));
 
-  useFocusEffect(
-    React.useCallback(() => {
-      if (id) {
-        loadData();
-      }
-    }, [id])
-  );
-
-  const loadData = async () => {
+  const loadData = React.useCallback(async () => {
     try {
       setLoading(true);
       const results = await Promise.all([
@@ -58,7 +64,7 @@ export default function CattleDetailScreen() {
         diseaseStorage.getByCattleId(id),
         milkProductionStorage.getByCattleId(id),
       ]);
-      
+
       const cattleData = results[0];
       const vaccinesData = results[1];
       const pregnanciesData = results[2];
@@ -75,14 +81,20 @@ export default function CattleDetailScreen() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [id]);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      if (id) {
+        loadData();
+      }
+    }, [id, loadData]),
+  );
 
   const handleDelete = async () => {
     try {
       await cattleStorage.delete(id);
-      if (Platform.OS !== "web") {
-        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-      }
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       Alert.alert("Sucesso", "Animal excluído com sucesso", [{ text: "OK", onPress: () => navigation.goBack() }]);
     } catch (error) {
       Alert.alert("Erro", "Não foi possível excluir o animal");
@@ -102,7 +114,7 @@ export default function CattleDetailScreen() {
           try {
             await vaccinationRecordStorage.delete(vaccineId);
             loadData();
-          } catch (error) {
+          } catch {
             Alert.alert("Erro", "Não foi possível excluir a vacina");
           }
         },
@@ -120,7 +132,7 @@ export default function CattleDetailScreen() {
           try {
             await pregnancyStorage.delete(pregnancyId);
             loadData();
-          } catch (error) {
+          } catch {
             Alert.alert("Erro", "Não foi possível excluir a gestação");
           }
         },
@@ -138,7 +150,7 @@ export default function CattleDetailScreen() {
           try {
             await diseaseStorage.delete(diseaseId);
             loadData();
-          } catch (error) {
+          } catch {
             Alert.alert("Erro", "Não foi possível excluir a doença");
           }
         },
@@ -242,7 +254,6 @@ export default function CattleDetailScreen() {
 
           {/* Tabs */}
 
-          
           <ScrollView horizontal showsHorizontalScrollIndicator={false} className="flex-row gap-2 mt-2 pb-2">
             <TouchableOpacity
               onPress={() => setActiveTab("info")}
@@ -494,8 +505,8 @@ export default function CattleDetailScreen() {
                             {record.period === "morning"
                               ? "Manhã"
                               : record.period === "afternoon"
-                              ? "Tarde"
-                              : "Dia Todo"}
+                                ? "Tarde"
+                                : "Dia Todo"}
                           </Text>
                         </View>
                         <View className="items-end">

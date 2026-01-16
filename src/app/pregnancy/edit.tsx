@@ -8,7 +8,7 @@ import { Cattle, PregnancyResult, RootStackParamList } from "@/types";
 import { RouteProp, useRoute } from "@react-navigation/native";
 import * as Haptics from "expo-haptics";
 import { useCallback, useEffect, useState } from "react";
-import { ActivityIndicator, Alert, Platform, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, Alert, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function EditPregnancyScreen() {
@@ -83,9 +83,7 @@ export default function EditPregnancyScreen() {
     try {
       setSaving(true);
 
-      if (Platform.OS !== "web") {
-        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-      }
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
 
       await pregnancyStorage.update(id!, {
         coverageDate: formData.coverageDate.toISOString(),
@@ -95,9 +93,7 @@ export default function EditPregnancyScreen() {
         complications: formData.complications,
       });
 
-      if (Platform.OS !== "web") {
-        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-      }
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
 
       Alert.alert("Sucesso", "Gestação atualizada com sucesso!", [
         {
@@ -128,9 +124,7 @@ export default function EditPregnancyScreen() {
             try {
               setCreatingCalf(true);
 
-              if (Platform.OS !== "web") {
-                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-              }
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
 
               // Create new calf
               const calfNumber = `${cattle.number}-${Date.now().toString().slice(-3)}`;
@@ -148,9 +142,7 @@ export default function EditPregnancyScreen() {
                 calfId: calf.id,
               });
 
-              if (Platform.OS !== "web") {
-                Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-              }
+              Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
 
               Alert.alert("Sucesso", `Bezerro cadastrado com sucesso! Número: ${calfNumber}`, [
                 {
@@ -170,7 +162,7 @@ export default function EditPregnancyScreen() {
             }
           },
         },
-      ]
+      ],
     );
   };
 

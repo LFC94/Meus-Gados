@@ -1,5 +1,3 @@
-import * as WebBrowser from "expo-web-browser";
-
 import { STORAGE_KEYS } from "@/constants/const";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
@@ -15,8 +13,6 @@ import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import { subscribeToStorageChanges } from "@/lib/storage";
 import { syncService } from "@/lib/sync";
 import React, { createContext, useContext, useEffect, useRef, useState } from "react";
-
-WebBrowser.maybeCompleteAuthSession();
 
 interface AuthContextType {
   user: FirebaseAuthTypes.User | null;

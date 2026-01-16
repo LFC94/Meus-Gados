@@ -202,7 +202,6 @@ eas login
 npm run build:dev      # APK de Desenvolvimento
 npm run build:preview  # APK de Preview (Teste)
 npm run build:prod     # AAB de Produção (Loja)
-npm run build:web      # Exportação Estática para Web
 ```
 
 Para iOS, utilize os comandos `eas build --platform ios` com o perfil desejado (`--profile production`).

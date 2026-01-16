@@ -1,22 +1,12 @@
-import "@/global.css";
-import "@/lib/_core/nativewind-pressable";
 import { requestNotificationPermission } from "@/lib/notifications";
 import { ThemeProvider } from "@/lib/theme-provider";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { Platform, Text } from "react-native";
+import { useEffect, useMemo } from "react";
+import { Text } from "react-native";
 import "react-native-reanimated";
-import type { EdgeInsets, Metrics, Rect } from "react-native-safe-area-context";
-import {
-  SafeAreaFrameContext,
-  SafeAreaInsetsContext,
-  SafeAreaProvider,
-  initialWindowMetrics,
-} from "react-native-safe-area-context";
+import { SafeAreaProvider, initialWindowMetrics } from "react-native-safe-area-context";
 
 import { AuthProvider, useColors, useScreenOptions } from "@/hooks/";
-
-import { initManusRuntime, subscribeSafeAreaInsets } from "@/lib/_core/manus-runtime";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import { createStackNavigator } from "@react-navigation/stack";
 
@@ -42,9 +32,6 @@ import {
   VaccineCatalogScreen,
   VaccinePendingScreen,
 } from "./_screens";
-
-const DEFAULT_WEB_INSETS: EdgeInsets = { top: 0, right: 0, bottom: 0, left: 0 };
-const DEFAULT_WEB_FRAME: Rect = { x: 0, y: 0, width: 0, height: 0 };
 
 // Create navigators
 const Drawer = createDrawerNavigator();
@@ -76,7 +63,7 @@ function DrawerNavigator() {
           color: colors.text,
         },
         swipeEnabled: true,
-        drawerType: Platform.OS === "web" ? "permanent" : "front",
+        drawerType: "front",
       }}
     >
       <Drawer.Screen
@@ -237,34 +224,15 @@ function MainStackNavigator() {
 }
 
 export default function RootLayout() {
-  const initialInsets = initialWindowMetrics?.insets ?? DEFAULT_WEB_INSETS;
-  const initialFrame = initialWindowMetrics?.frame ?? DEFAULT_WEB_FRAME;
-
-  const [insets, setInsets] = useState<EdgeInsets>(initialInsets);
-  const [frame, setFrame] = useState<Rect>(initialFrame);
-
   useEffect(() => {
-    initManusRuntime();
-
     // Request notification permissions on app startup
-    if (Platform.OS !== "web") {
-      requestNotificationPermission();
-    }
+    requestNotificationPermission();
   }, []);
-
-  const handleSafeAreaUpdate = useCallback((metrics: Metrics) => {
-    setInsets(metrics.insets);
-    setFrame(metrics.frame);
-  }, []);
-
-  useEffect(() => {
-    if (Platform.OS !== "web") return;
-    const unsubscribe = subscribeSafeAreaInsets(handleSafeAreaUpdate);
-    return () => unsubscribe();
-  }, [handleSafeAreaUpdate]);
 
   const providerInitialMetrics = useMemo(() => {
-    const metrics = initialWindowMetrics ?? { insets: initialInsets, frame: initialFrame };
+    const metrics = initialWindowMetrics;
+    if (!metrics) return undefined;
+
     return {
       ...metrics,
       insets: {
@@ -273,30 +241,14 @@ export default function RootLayout() {
         bottom: Math.max(metrics.insets.bottom, 12),
       },
     };
-  }, [initialInsets, initialFrame]);
-
-  const content = <MainStackNavigator />;
-
-  const shouldOverrideSafeArea = Platform.OS === "web";
-
-  if (shouldOverrideSafeArea) {
-    return (
-      <ThemeProvider>
-        <AuthProvider>
-          <SafeAreaProvider initialMetrics={providerInitialMetrics}>
-            <SafeAreaFrameContext.Provider value={frame}>
-              <SafeAreaInsetsContext.Provider value={insets}>{content}</SafeAreaInsetsContext.Provider>
-            </SafeAreaFrameContext.Provider>
-          </SafeAreaProvider>
-        </AuthProvider>
-      </ThemeProvider>
-    );
-  }
+  }, []);
 
   return (
     <ThemeProvider>
       <AuthProvider>
-        <SafeAreaProvider initialMetrics={providerInitialMetrics}>{content}</SafeAreaProvider>
+        <SafeAreaProvider initialMetrics={providerInitialMetrics}>
+          <MainStackNavigator />
+        </SafeAreaProvider>
       </AuthProvider>
     </ThemeProvider>
   );

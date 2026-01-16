@@ -9,7 +9,7 @@ import { RootStackParamList } from "@/types";
 import { RouteProp, useRoute } from "@react-navigation/native";
 import * as Haptics from "expo-haptics";
 import { useCallback, useEffect, useState } from "react";
-import { ActivityIndicator, Alert, Platform, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, Alert, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function CattleCadScreen() {
@@ -85,9 +85,7 @@ export default function CattleCadScreen() {
     try {
       setSaving(true);
 
-      if (Platform.OS !== "web") {
-        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-      }
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
       const data = {
         number: formData.number.trim(),
         name: formData.name.trim(),
@@ -102,9 +100,7 @@ export default function CattleCadScreen() {
         await cattleStorage.add(data);
       }
 
-      if (Platform.OS !== "web") {
-        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-      }
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
 
       Alert.alert("Sucesso", id ? "Animal atualizado com sucesso!" : "Animal cadastrado com sucesso!", [
         {

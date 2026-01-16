@@ -9,17 +9,7 @@ import {
 } from "@/lib/notifications";
 import * as Haptics from "expo-haptics";
 import { useEffect, useState } from "react";
-import {
-  ActivityIndicator,
-  Alert,
-  Platform,
-  ScrollView,
-  Switch,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { ActivityIndicator, Alert, ScrollView, Switch, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function NotificationSettingsScreen() {
@@ -44,12 +34,8 @@ export default function NotificationSettingsScreen() {
       setSettings(data);
 
       // Verificar permissão
-      if (Platform.OS !== "web") {
-        const hasPermission = await requestNotificationPermission();
-        setPermissionGranted(hasPermission);
-      } else {
-        setPermissionGranted(true);
-      }
+      const hasPermission = await requestNotificationPermission();
+      setPermissionGranted(hasPermission);
     } catch (error) {
       console.error("Error loading settings:", error);
     } finally {
@@ -62,16 +48,11 @@ export default function NotificationSettingsScreen() {
 
     try {
       setSaving(true);
-
-      if (Platform.OS !== "web") {
-        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-      }
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
 
       await saveNotificationSettings(settings);
 
-      if (Platform.OS !== "web") {
-        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-      }
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
 
       Alert.alert("Sucesso", "Configurações salvas com sucesso!", [
         {

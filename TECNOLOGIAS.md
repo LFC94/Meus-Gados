@@ -8,7 +8,7 @@
 
 ### Por que foi escolhido?
 
-- **Desenvolvimento multiplataforma**: Um único código funciona em iOS, Android e Web
+- **Desenvolvimento multiplataforma**: Um único código funciona em iOS e Android
 - **Prototipagem rápida**: Expo permite testar o app sem compilar código nativo
 - **Comunidade ativa**: Amplo suporte e muitas bibliotecas disponíveis
 - **Custo reduzido**: Não precisa de máquinas Mac para compilar para iOS
@@ -248,7 +248,6 @@ function adicionarAnimal(animal: Animal): Promise<void> {
 - **Otimizado para mobile**: Compilação rápida
 - **Padrão**: Vem com React Native
 - **HMR**: Hot Module Replacement para desenvolvimento rápido
-- **Suporte a Web**: Funciona também para web via Expo
 
 ---
 
@@ -321,7 +320,7 @@ const { cattle } = useContext(CattleContext);
 
 - Prototipagem rápida (MVP)
 - Equipe com experiência em JavaScript
-- Necessidade de Web também
+- Necessidade de performance nativa
 - Custo-benefício
 
 ---
@@ -353,12 +352,12 @@ const { cattle } = useContext(CattleContext);
 
 ## 📱 Suporte a Plataformas
 
-| Plataforma  | Status       | Notas                       |
-| ----------- | ------------ | --------------------------- |
-| **iOS**     | ✅ Suportado | Requer Xcode para compilar  |
-| **Android** | ✅ Suportado | Requer Android Studio       |
-| **Web**     | ✅ Suportado | Funciona em navegadores     |
-| **Expo Go** | ✅ Suportado | Teste rápido no dispositivo |
+| Plataforma  | Status           | Notas                       |
+| ----------- | ---------------- | --------------------------- |
+| **iOS**     | ✅ Suportado     | Requer Xcode para compilar  |
+| **Android** | ✅ Suportado     | Requer Android Studio       |
+| **Web**     | ❌ Não Suportado | Foco em experiência nativa  |
+| **Expo Go** | ✅ Suportado     | Teste rápido no dispositivo |
 
 ---
 
@@ -382,17 +381,17 @@ Se o app crescer, considere adicionar:
 
 ## 📚 Recursos Úteis
 
-- **Documentação Expo**: https://docs.expo.dev
-- **React Native Docs**: https://reactnative.dev
-- **Tailwind CSS**: https://tailwindcss.com
-- **TypeScript**: https://www.typescriptlang.org
-- **Vitest**: https://vitest.dev
+- **Documentação Expo**: <https://docs.expo.dev>
+- **React Native Docs**: <https://reactnative.dev>
+- **Tailwind CSS**: <https://tailwindcss.com>
+- **TypeScript**: <https://www.typescriptlang.org>
+- **Vitest**: <https://vitest.dev>
 
 ---
 
 ## ✅ Resumo
 
-O Meus Gados foi construído com tecnologias **modernas, escaláveis e focadas em desenvolvimento rápido**. A escolha de Expo + React Native permite que o app funcione em múltiplas plataformas com um único código, enquanto AsyncStorage garante que os dados do usuário permaneçam privados e locais. O uso de TypeScript e testes automatizados garante qualidade e manutenibilidade do código.
+O Meus Gados foi construído com tecnologias **modernas, escaláveis e focadas em desenvolvimento rápido**. A escolha de Expo + React Native permite que o app funcione de forma fluida em Android e iOS com um único código, enquanto AsyncStorage garante que os dados do usuário permaneçam privados e locais. O uso de TypeScript e testes automatizados garante qualidade e manutenibilidade do código.
 
 **Stack escolhido:**
 

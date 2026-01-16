@@ -70,16 +70,11 @@ const config: ExpoConfig = {
       },
     ],
   },
-  web: {
-    bundler: "metro",
-    output: "static",
-    favicon: "./src/assets/images/favicon.png",
-  },
+
   plugins: [
     "@react-native-community/datetimepicker",
     "expo-font",
     "expo-router",
-    "@logrocket/react-native",
     "@react-native-google-signin/google-signin",
     [
       "expo-splash-screen",
