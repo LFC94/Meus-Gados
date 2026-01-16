@@ -1,3 +1,5 @@
+import "@/global.css";
+import "@/lib/_core/nativewind-pressable";
 import { requestNotificationPermission } from "@/lib/notifications";
 import { ThemeProvider } from "@/lib/theme-provider";
 
