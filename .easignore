@@ -1,0 +1,10 @@
+# EAS Ignore
+# Previne que o EAS ignore arquivos que estão no .gitignore mas que podem ser necessários durante o build,
+# ou simplesmente desacopla o comportamento do EAS do git.
+
+node_modules/
+.expo/
+dist/
+web-build/
+/ios
+/android

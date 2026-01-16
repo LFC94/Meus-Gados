@@ -1,10 +1,10 @@
-name: Manual Build
+name: Build
 
 on:
   workflow_dispatch:
     inputs:
       platform:
-        description: "Platform to build for"
+        description: "Plataforma"
         required: true
         default: "android"
         type: choice
@@ -13,9 +13,9 @@ on:
           - ios
           - all
       profile:
-        description: "EAS build profile"
+        description: "Profile do EAS"
         required: true
-        default: "development"
+        default: "preview"
         type: choice
         options:
           - development
@@ -40,31 +40,16 @@ jobs:
         with:
           expo-version: latest
           eas-version: latest
-          token: ${{secrets.EXPO_TOKEN}}
+          token: ${{ secrets.EXPO_TOKEN }}
 
       - name: 📦 Install dependencies
-        run: npm install
-
-      - name: 📝 Create .env file
-        run: |
-          # Pull dynamic variables from GitHub Repository Variables (vars)
-          # IMPORTANT: Use Settings -> Secrets and variables -> Actions -> Variables
-          # Do NOT use SECRETS for variables starting with EXPO_PUBLIC_ as they get masked with ***
-          echo '${{ toJSON(vars) }}' | jq -r 'to_entries[]? | select(.key | startswith("EXPO_PUBLIC_")) | "\(.key)=\(.value)"' > .env
-
-          echo "Generated .env file keys:"
-          cut -d'=' -f1 .env
-
-      - name: 🔑 Setup Firebase Google Services
-        run: echo '${{ secrets.GOOGLE_SERVICES_JSON }}' > google-services.json
+        run: npm ci
 
       - name: 🏗 Run EAS Build
-        run: |
-          # EAS will automatically use the .env file during the build process
-          eas build --platform ${{ github.event.inputs.platform }} --profile ${{ github.event.inputs.profile }} --non-interactive
+        run: eas build --platform ${{ github.event.inputs.platform }} --profile ${{ github.event.inputs.profile }} --non-interactive
 
-      - name: 📋 Display Build Version
+      - name: 📋 Display Version
         run: |
-          VERSION=$(npx tsx -e "import config from './app.config.ts'; console.log(config.version);")
-          echo "📦 Build Version: $VERSION"
-          echo "::notice title=Build Version::$VERSION"
+          VERSION=$(jq -r .version package.json)
+          echo "📦 Build disparado para a versão: $VERSION"
+          echo "::notice title=Build disparado::$VERSION"
