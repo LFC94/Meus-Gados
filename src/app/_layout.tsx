@@ -263,11 +263,6 @@ export default function RootLayout() {
     return () => unsubscribe();
   }, [handleSafeAreaUpdate]);
 
-  // Initialize LogRocket for session recording and error tracking
-  // useEffect(() => {
-  //   initLogRocket();
-  // }, []);
-
   const providerInitialMetrics = useMemo(() => {
     const metrics = initialWindowMetrics ?? { insets: initialInsets, frame: initialFrame };
     return {
