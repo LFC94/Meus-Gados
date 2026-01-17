@@ -1,9 +1,6 @@
 import * as BackgroundFetch from "expo-background-fetch";
 import * as TaskManager from "expo-task-manager";
 
-import { backupService } from "./backup";
-import { preferencesStorage } from "./preferences";
-
 const BACKUP_TASK_NAME = "BACKGROUND_BACKUP_TASK";
 
 // Types derived from Preferences but tailored for this logic if needed

@@ -1,5 +1,6 @@
 // https://docs.expo.dev/guides/using-eslint/
 import expoConfig from "eslint-config-expo/flat.js";
+import eslintConfigPrettier from "eslint-config-prettier";
 import simpleImportSort from "eslint-plugin-simple-import-sort";
 import { defineConfig } from "eslint/config";
 
@@ -16,6 +17,7 @@ export default defineConfig([
     },
   },
   {
-    ignores: ["dist/*", "node_modules/*", "ios/*", "android/*", "eslint.config.js"],
+    ignores: ["dist/*", "node_modules/*", "ios/*", "android/*"],
   },
+  eslintConfigPrettier,
 ]);

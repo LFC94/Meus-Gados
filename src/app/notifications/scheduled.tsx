@@ -4,7 +4,7 @@ import { ActivityIndicator, Alert, ScrollView, Text, TouchableOpacity, View } fr
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { ScreenContainer } from "@/components/screen-container";
-import { useColors, useNavigation, useScreenHeader } from "@/hooks";
+import { useColors, useScreenHeader } from "@/hooks";
 import { formatDate } from "@/lib/helpers";
 import {
   cancelNotification,
@@ -14,7 +14,6 @@ import {
 } from "@/lib/notifications";
 
 export default function ScheduledNotificationsScreen() {
-  const navigation = useNavigation();
   const colors = useColors();
   const [loading, setLoading] = useState(true);
   const [notifications, setNotifications] = useState<ScheduledNotification[]>([]);
@@ -22,21 +21,12 @@ export default function ScheduledNotificationsScreen() {
   useScreenHeader(
     "Notificações Agendadas",
     `${notifications.length} ${notifications.length === 1 ? "alerta" : "alertas"} ativo${notifications.length !== 1 ? "s" : ""}`,
-    () => (
-      <TouchableOpacity
-        onPress={() => navigation.navigate("NotificationsSettings" as never)}
-        className="bg-transparent rounded-full p-4 items-center"
-        style={{ opacity: 1 }}
-      >
-        <Text className="text-foreground font-semibold text-base">⚙️</Text>
-      </TouchableOpacity>
-    )
   );
 
   useFocusEffect(
     useCallback(() => {
       loadNotifications();
-    }, [])
+    }, []),
   );
 
   const loadNotifications = async () => {
@@ -65,7 +55,7 @@ export default function ScheduledNotificationsScreen() {
             await removeScheduledNotification(notification.id, notification.type);
             loadNotifications();
           } catch (error) {
-            Alert.alert("Erro", "Não foi possível remover a notificação");
+            Alert.alert("Erro", "Não foi possível remover a notificação" + error);
           }
         },
       },

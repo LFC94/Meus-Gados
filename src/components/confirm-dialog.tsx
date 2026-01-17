@@ -2,8 +2,6 @@ import * as Haptics from "expo-haptics";
 import React, { useEffect, useState } from "react";
 import { Animated, Modal, Text, TouchableOpacity, View } from "react-native";
 
-import { useColors } from "@/hooks/use-colors";
-
 interface ConfirmDialogProps {
   visible: boolean;
   title: string;
@@ -25,7 +23,6 @@ export function ConfirmDialog({
   onConfirm,
   onCancel,
 }: ConfirmDialogProps) {
-  const colors = useColors();
   const [animation] = useState(new Animated.Value(0));
 
   useEffect(() => {
@@ -119,7 +116,6 @@ interface AlertDialogProps {
 }
 
 export function AlertDialog({ visible, title, message, buttonText = "OK", onButtonPress }: AlertDialogProps) {
-  const colors = useColors();
   const [animation] = useState(new Animated.Value(0));
 
   useEffect(() => {

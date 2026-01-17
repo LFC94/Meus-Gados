@@ -310,6 +310,24 @@ export default function SettingsScreen() {
               </View>
             </View>
 
+            {/* 3. Tema */}
+            <View className="gap-3">
+              <Text className="text-lg font-semibold text-foreground">Aparência</Text>
+              <View className="bg-surface rounded-2xl p-2 border border-border flex-row">
+                {(["light", "dark", "system"] as const).map((t) => (
+                  <TouchableOpacity
+                    key={t}
+                    onPress={() => handleThemeChange(t)}
+                    className={`flex-1 py-3 px-1 rounded-xl items-center ${theme === t ? "bg-primary" : "bg-transparent"}`}
+                  >
+                    <Text className={`font-bold text-xs ${theme === t ? "text-white" : "text-muted"}`}>
+                      {t === "light" ? "Claro" : t === "dark" ? "Escuro" : "Sistema"}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            </View>
+
             {/* 2. Configurações de Notificações */}
             {notifSettings && (
               <View className="gap-3 ">
@@ -417,24 +435,6 @@ export default function SettingsScreen() {
               </View>
             )}
 
-            {/* 3. Tema */}
-            <View className="gap-3">
-              <Text className="text-lg font-semibold text-foreground">Aparência</Text>
-              <View className="bg-surface rounded-2xl p-2 border border-border flex-row">
-                {(["light", "dark", "system"] as const).map((t) => (
-                  <TouchableOpacity
-                    key={t}
-                    onPress={() => handleThemeChange(t)}
-                    className={`flex-1 py-3 px-1 rounded-xl items-center ${theme === t ? "bg-primary" : "bg-transparent"}`}
-                  >
-                    <Text className={`font-bold text-xs ${theme === t ? "text-white" : "text-muted"}`}>
-                      {t === "light" ? "Claro" : t === "dark" ? "Escuro" : "Sistema"}
-                    </Text>
-                  </TouchableOpacity>
-                ))}
-              </View>
-            </View>
-
             {/* 4. Backup Local */}
             <View className="gap-3">
               <Text className="text-lg font-semibold text-foreground">Backup Local</Text>
@@ -442,14 +442,14 @@ export default function SettingsScreen() {
                 <View className="flex-row gap-2">
                   <TouchableOpacity
                     onPress={handleCreateBackup}
-                    className="flex-1 bg-secondary border border-secondary p-4 rounded-xl items-center"
+                    className="flex-1 bg-border border border-secondary p-4 rounded-xl items-center"
                   >
                     <Text className="text-secondary font-bold">Criar Backup</Text>
                   </TouchableOpacity>
 
                   <TouchableOpacity
                     onPress={handleExportBackup}
-                    className="flex-1 bg-secondary border border-secondary p-4 rounded-xl items-center"
+                    className="flex-1 bg-border border border-secondary p-4 rounded-xl items-center"
                   >
                     <Text className="text-secondary font-bold">Exportar JSON</Text>
                   </TouchableOpacity>
@@ -461,7 +461,7 @@ export default function SettingsScreen() {
                     {backups.slice(0, 3).map((item) => (
                       <View
                         key={item.id}
-                        className="bg-background/50 p-3 rounded-xl border border-border flex-row items-center gap-3"
+                        className="bg-background p-3 rounded-xl border border-border flex-row items-center gap-3"
                       >
                         <View className="flex-1">
                           <Text className="text-xs font-bold text-foreground">
@@ -478,7 +478,7 @@ export default function SettingsScreen() {
                         </View>
                         <TouchableOpacity
                           onPress={() => handleRestoreBackup(item.backup)}
-                          className="bg-primary/10 px-3 py-1.5 rounded-lg"
+                          className="bg-surface px-3 py-1.5 rounded-lg"
                         >
                           <Text className="text-primary text-[10px] font-bold">Restaurar</Text>
                         </TouchableOpacity>
@@ -494,8 +494,8 @@ export default function SettingsScreen() {
 
             {/* 5. Sobre */}
             <View className="items-center mt-4">
-              <Text className="text-xs text-muted">Meus Gados • Versão {Constants.expoConfig?.version ?? "1.0.0"}</Text>
-              <Text className="text-[10px] text-muted/50 mt-1">Desenvolvido por Lucas Felipe Costa</Text>
+              <Text className="text-muted">Meus Gados • Versão {Constants.expoConfig?.version ?? "1.0.0"}</Text>
+              <Text className="text-xs text-muted mt-1">Desenvolvido por Lucas Felipe Costa</Text>
             </View>
           </View>
         </ScrollView>

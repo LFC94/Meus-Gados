@@ -110,9 +110,7 @@ export type RootStackParamList = {
   PregnancyAdd: { cattleId: string };
   PregnancyEdit: { id: string };
   DiseasesCad: { id?: string; cattleId?: string };
-  NotificationsSettings: undefined;
   ScheduledNotifications: undefined;
   MilkProductionList: undefined;
   MilkProductionCad: { id?: string; cattleId?: string };
-  SyncSetup: undefined;
 };
