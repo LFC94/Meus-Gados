@@ -50,6 +50,6 @@ jobs:
 
       - name: 📋 Display Version
         run: |
-          VERSION=$(jq -r .version package.json)
-          echo "📦 Build disparado para a versão: $VERSION"
-          echo "::notice title=Build disparado::$VERSION"
+          VERSION=$(npx tsx -e "import config from './app.config.ts'; console.log(config.version);")
+          echo "📦 Build Version: $VERSION"
+          echo "::notice title=Build Version::$VERSION"
