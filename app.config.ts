@@ -39,6 +39,12 @@ const config: ExpoConfig = {
     eas: {
       projectId: "fe4dc638-7548-439f-b5f2-11bce15ac37f",
     },
+    updates: {
+      url: "https://u.expo.dev/fe4dc638-7548-439f-b5f2-11bce15ac37f",
+    },
+    runtimeVersion: {
+      policy: "appVersion",
+    },
   },
   owner: "luc4scost4",
   ios: {
@@ -76,6 +82,7 @@ const config: ExpoConfig = {
     "@react-native-community/datetimepicker",
     "expo-font",
     "expo-router",
+    "expo-updates",
     "@react-native-google-signin/google-signin",
     [
       "expo-splash-screen",

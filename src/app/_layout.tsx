@@ -6,30 +6,31 @@ import { createDrawerNavigator } from "@react-navigation/drawer";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useEffect, useMemo } from "react";
 import { Text } from "react-native";
-import { initialWindowMetrics,SafeAreaProvider } from "react-native-safe-area-context";
+import { initialWindowMetrics, SafeAreaProvider } from "react-native-safe-area-context";
 
 import { AuthProvider, useColors, useScreenOptions } from "@/hooks/";
+import { useUpdates } from "@/hooks/use-updates";
 import { requestNotificationPermission } from "@/lib/notifications";
 import { ThemeProvider } from "@/lib/theme-provider";
 // Screens
 import { RootStackParamList } from "@/types";
 
 import {
-  CattleCadScreen,
-  CattleDetailScreen,
-  CattleListScreen,
-  DiseasesCadScreen,
-  HomeScreen,
-  MilkProductionCadScreen,
-  MilkProductionListScreen,
-  PregnancyAddScreen,
-  PregnancyEditScreen,
-  ScheduledNotificationsScreen,
-  SettingsScreen,
-  VaccineCadScreen,
-  VaccineCatalogCadScreen,
-  VaccineCatalogScreen,
-  VaccinePendingScreen,
+    CattleCadScreen,
+    CattleDetailScreen,
+    CattleListScreen,
+    DiseasesCadScreen,
+    HomeScreen,
+    MilkProductionCadScreen,
+    MilkProductionListScreen,
+    PregnancyAddScreen,
+    PregnancyEditScreen,
+    ScheduledNotificationsScreen,
+    SettingsScreen,
+    VaccineCadScreen,
+    VaccineCatalogCadScreen,
+    VaccineCatalogScreen,
+    VaccinePendingScreen,
 } from "./_screens";
 
 // Create navigators
@@ -209,6 +210,8 @@ function MainStackNavigator() {
 }
 
 export default function RootLayout() {
+  useUpdates();
+
   useEffect(() => {
     // Request notification permissions on app startup
     requestNotificationPermission();
