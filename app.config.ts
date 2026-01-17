@@ -37,7 +37,7 @@ const config: ExpoConfig = {
   newArchEnabled: true,
   extra: {
     eas: {
-      projectId: process.env.EXPO_PUBLIC_EAS_PROJECT_ID,
+      projectId: "fe4dc638-7548-439f-b5f2-11bce15ac37f",
     },
   },
   owner: "luc4scost4",
