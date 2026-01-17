@@ -8,7 +8,7 @@ import React, { useEffect, useState } from "react";
 import { ActivityIndicator, Alert, Image, ScrollView, Switch, Text, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { FormInput } from "@/components";
+import { FormInput, FormTimePicker } from "@/components";
 import { ScreenContainer } from "@/components/screen-container";
 import { useAuth, useColors, useScreenHeader } from "@/hooks";
 import { type BackupData, backupService } from "@/lib/backup";
@@ -405,17 +405,18 @@ export default function SettingsScreen() {
                   {/* Horário */}
                   <View className="gap-3 border-t border-border/50 py-4">
                     <View className="bg-background px-4 py-3 rounded-xl border border-border flex-row items-center">
-                      <FormInput
+                      <FormTimePicker
                         label="⏰ Horário dos Alertas"
                         horizontal={true}
                         value={notifSettings.notificationTime}
-                        onChangeText={(t) => {
-                          if (/^\d{0,2}:?\d{0,2}$/.test(t)) {
-                            setNotifSettings({ ...notifSettings, notificationTime: t });
-                          }
+                        onChange={(date) => {
+                          const timeStr = date.toLocaleTimeString([], {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                            hour12: false,
+                          });
+                          setNotifSettings({ ...notifSettings, notificationTime: timeStr });
                         }}
-                        inputStyle={{ width: 80, flex: 0 }}
-                        maxLength={5}
                       />
                     </View>
                   </View>

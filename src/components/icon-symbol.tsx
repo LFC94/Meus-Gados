@@ -26,6 +26,7 @@ const MAPPING = {
   "xmark.circle.fill": "cancel",
   "slider.horizontal.3": "tune",
   magnifyingglass: "search",
+  clock: "timer",
 } as IconMapping;
 
 /**
