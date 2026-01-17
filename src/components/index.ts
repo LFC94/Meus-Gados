@@ -7,6 +7,5 @@ export { FormSelect } from "./form-select";
 export { FormTimePicker } from "./form-time-picker";
 export { IconSymbol } from "./icon-symbol";
 export { PregnancyBadge, PregnancyTimeline } from "./pregnancy-timeline";
-export { SegmentedControl } from "./segmented-control";
 export { StatusChip } from "./status-chip";
 export { VaccineBadge, VaccineItem } from "./vaccine-item";

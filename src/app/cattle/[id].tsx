@@ -255,99 +255,29 @@ export default function CattleDetailScreen() {
 
           {/* Tabs */}
 
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} className="flex-row gap-2 mt-2 pb-2">
-            <TouchableOpacity
-              onPress={() => setActiveTab("info")}
-              className="px-6 py-3 rounded-xl items-center border"
-              style={{
-                backgroundColor: activeTab === "info" ? colors.primary : colors.surface,
-                borderColor: activeTab === "info" ? colors.primary : colors.border,
-                opacity: 1,
-              }}
-            >
-              <Text
-                className="font-semibold text-sm"
-                style={{ color: activeTab === "info" ? colors.background : colors.foreground }}
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            className="rounded-md bg-surface border border-border flex-row"
+          >
+            {[
+              { label: "Info", value: "info" },
+              { label: "Produção", value: "production" },
+              { label: "Vacinas", value: "vaccines" },
+              { label: "Gestação", value: "pregnancy" },
+              { label: "Doenças", value: "diseases" },
+            ].map((tab) => (
+              <TouchableOpacity
+                key={tab.value}
+                onPress={() => setActiveTab(tab.value as Tab)}
+                className={`flex py-3 items-center ${activeTab === tab.value ? "bg-primary" : "bg-transparent"} border border-border`}
+                style={{ width: 100 }}
               >
-                Infos
-              </Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              onPress={() => setActiveTab("production")}
-              className="px-6 py-3 rounded-xl items-center border"
-              style={{
-                backgroundColor: activeTab === "production" ? colors.primary : colors.surface,
-                borderColor: activeTab === "production" ? colors.primary : colors.border,
-                opacity: 1,
-              }}
-            >
-              <Text
-                className="font-semibold text-sm"
-                style={{
-                  color: activeTab === "production" ? colors.background : colors.foreground,
-                }}
-              >
-                Produção
-              </Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              onPress={() => setActiveTab("vaccines")}
-              className="px-6 py-3 rounded-xl items-center border"
-              style={{
-                backgroundColor: activeTab === "vaccines" ? colors.primary : colors.surface,
-                borderColor: activeTab === "vaccines" ? colors.primary : colors.border,
-                opacity: 1,
-              }}
-            >
-              <Text
-                className="font-semibold text-sm"
-                style={{
-                  color: activeTab === "vaccines" ? colors.background : colors.foreground,
-                }}
-              >
-                Vacinas
-              </Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              onPress={() => setActiveTab("pregnancy")}
-              className="px-6 py-3 rounded-xl items-center border"
-              style={{
-                backgroundColor: activeTab === "pregnancy" ? colors.primary : colors.surface,
-                borderColor: activeTab === "pregnancy" ? colors.primary : colors.border,
-                opacity: 1,
-              }}
-            >
-              <Text
-                className="font-semibold text-sm"
-                style={{
-                  color: activeTab === "pregnancy" ? colors.background : colors.foreground,
-                }}
-              >
-                Gestação
-              </Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              onPress={() => setActiveTab("diseases")}
-              className="px-6 py-3 rounded-xl items-center border"
-              style={{
-                backgroundColor: activeTab === "diseases" ? colors.primary : colors.surface,
-                borderColor: activeTab === "diseases" ? colors.primary : colors.border,
-                opacity: 1,
-              }}
-            >
-              <Text
-                className="font-semibold text-sm"
-                style={{
-                  color: activeTab === "diseases" ? colors.background : colors.foreground,
-                }}
-              >
-                Doenças
-              </Text>
-            </TouchableOpacity>
+                <Text className={`font-bold text-xs ${activeTab === tab.value ? "text-white" : "text-muted"}`}>
+                  {tab.label}
+                </Text>
+              </TouchableOpacity>
+            ))}
           </ScrollView>
 
           {/* Tab Content */}
