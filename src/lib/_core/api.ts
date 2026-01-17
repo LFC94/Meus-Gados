@@ -1,4 +1,5 @@
 import { getApiBaseUrl } from "@/constants/oauth";
+
 import * as Auth from "./auth";
 
 export async function apiCall<T>(endpoint: string, options: RequestInit = {}): Promise<T> {

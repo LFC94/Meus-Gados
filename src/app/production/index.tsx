@@ -1,3 +1,8 @@
+import { useFocusEffect } from "@react-navigation/native";
+import React, { useState } from "react";
+import { ActivityIndicator, RefreshControl, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+
 import { ScreenContainer } from "@/components/screen-container";
 import { useNavigation } from "@/hooks";
 import { useColors } from "@/hooks/use-colors";
@@ -5,10 +10,6 @@ import useScreenHeader from "@/hooks/use-screen-header";
 import { formatDate } from "@/lib/helpers";
 import { milkProductionStorage } from "@/lib/storage";
 import { Cattle, MilkProductionRecord } from "@/types";
-import { useFocusEffect } from "@react-navigation/native";
-import React, { useState } from "react";
-import { ActivityIndicator, RefreshControl, ScrollView, Text, TouchableOpacity, View } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const PERIOD_LABELS = {
   morning: "Manhã",

@@ -1,10 +1,11 @@
+import React, { useState } from "react";
+import { Animated, Text, TouchableOpacity, View } from "react-native";
+
 import { IconSymbol } from "@/components/icon-symbol";
 import { DISEASE_RESULT_LABELS } from "@/constants/const";
 import { useColors } from "@/hooks/use-colors";
 import { formatDate } from "@/lib/helpers";
 import { Disease } from "@/types";
-import React, { useState } from "react";
-import { Animated, Text, TouchableOpacity, View } from "react-native";
 
 interface DiseaseRecordProps {
   disease: Disease;

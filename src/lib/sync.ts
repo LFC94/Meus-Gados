@@ -1,8 +1,10 @@
-import { STORAGE_KEYS } from "@/constants/const";
-import { SyncBase } from "@/types";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import auth from "@react-native-firebase/auth";
 import firestore, { FirebaseFirestoreTypes } from "@react-native-firebase/firestore";
+
+import { STORAGE_KEYS } from "@/constants/const";
+import { SyncBase } from "@/types";
+
 import { getAllItemsIncludingDeleted, syncStorage } from "./storage";
 
 type SyncCollection = keyof typeof STORAGE_KEYS;

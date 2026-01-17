@@ -1,3 +1,9 @@
+import { RouteProp, useRoute } from "@react-navigation/native";
+import * as Haptics from "expo-haptics";
+import { useCallback, useEffect, useState } from "react";
+import { ActivityIndicator, Alert, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+
 import { FormInput, FormSelect } from "@/components";
 import { CustomDatePicker } from "@/components/date-picker";
 import { ScreenContainer } from "@/components/screen-container";
@@ -6,11 +12,6 @@ import { useColors } from "@/hooks/use-colors";
 import useScreenHeader from "@/hooks/use-screen-header";
 import { cattleStorage, milkProductionStorage } from "@/lib/storage";
 import { Cattle, RootStackParamList } from "@/types";
-import { RouteProp, useRoute } from "@react-navigation/native";
-import * as Haptics from "expo-haptics";
-import { useCallback, useEffect, useState } from "react";
-import { ActivityIndicator, Alert, ScrollView, Text, TouchableOpacity, View } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function MilkProductionCadScreen() {
   const navigation = useNavigation();

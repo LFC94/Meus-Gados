@@ -1,6 +1,8 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
 import { STORAGE_KEYS } from "@/constants/const";
 import { Cattle, Disease, MilkProductionRecord, Pregnancy, VaccinationRecord, VaccineModel } from "@/types";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+
 import { AppPreferences, preferencesStorage } from "./preferences";
 import {
   cattleStorage,

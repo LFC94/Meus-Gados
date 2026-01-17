@@ -1,3 +1,8 @@
+import * as Haptics from "expo-haptics";
+import { useEffect, useState } from "react";
+import { ActivityIndicator, Alert, ScrollView, Switch, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+
 import { ScreenContainer } from "@/components/screen-container";
 import { useNavigation, useScreenHeader } from "@/hooks";
 import { useColors } from "@/hooks/use-colors";
@@ -7,10 +12,6 @@ import {
   requestNotificationPermission,
   saveNotificationSettings,
 } from "@/lib/notifications";
-import * as Haptics from "expo-haptics";
-import { useEffect, useState } from "react";
-import { ActivityIndicator, Alert, ScrollView, Switch, Text, TextInput, TouchableOpacity, View } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function NotificationSettingsScreen() {
   const navigation = useNavigation();

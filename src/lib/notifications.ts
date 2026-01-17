@@ -2,9 +2,11 @@
  * Serviço de notificações locais usando expo-notifications
  */
 
-import { Pregnancy, VaccinationRecordWithDetails } from "@/types";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Notifications from "expo-notifications";
+
+import { Pregnancy, VaccinationRecordWithDetails } from "@/types";
+
 import { daysUntil, formatDate } from "./helpers";
 
 // Configurar comportamento das notificações

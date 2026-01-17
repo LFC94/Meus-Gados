@@ -1,17 +1,16 @@
 import "@/global.css";
 import "@/lib/_core/nativewind-pressable";
-import { requestNotificationPermission } from "@/lib/notifications";
-import { ThemeProvider } from "@/lib/theme-provider";
-
-import { useEffect, useMemo } from "react";
-import { Text } from "react-native";
 import "react-native-reanimated";
-import { SafeAreaProvider, initialWindowMetrics } from "react-native-safe-area-context";
 
-import { AuthProvider, useColors, useScreenOptions } from "@/hooks/";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import { createStackNavigator } from "@react-navigation/stack";
+import { useEffect, useMemo } from "react";
+import { Text } from "react-native";
+import { initialWindowMetrics,SafeAreaProvider } from "react-native-safe-area-context";
 
+import { AuthProvider, useColors, useScreenOptions } from "@/hooks/";
+import { requestNotificationPermission } from "@/lib/notifications";
+import { ThemeProvider } from "@/lib/theme-provider";
 // Screens
 import { RootStackParamList } from "@/types";
 
@@ -23,12 +22,10 @@ import {
   HomeScreen,
   MilkProductionCadScreen,
   MilkProductionListScreen,
-  NotificationsSettingsScreen,
   PregnancyAddScreen,
   PregnancyEditScreen,
   ScheduledNotificationsScreen,
   SettingsScreen,
-  SyncSetupScreen,
   VaccineCadScreen,
   VaccineCatalogCadScreen,
   VaccineCatalogScreen,
@@ -201,24 +198,10 @@ function MainStackNavigator() {
         }}
       />
       <Stack.Screen
-        name="NotificationsSettings"
-        component={NotificationsSettingsScreen}
-        options={{
-          title: "Configurar Notificações",
-        }}
-      />
-      <Stack.Screen
         name="MilkProductionCad"
         component={MilkProductionCadScreen}
         options={{
           title: "Registrar Produção",
-        }}
-      />
-      <Stack.Screen
-        name="SyncSetup"
-        component={SyncSetupScreen}
-        options={{
-          title: "Sincronização em Nuvem",
         }}
       />
     </Stack.Navigator>

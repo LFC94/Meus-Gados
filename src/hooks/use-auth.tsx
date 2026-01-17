@@ -1,18 +1,18 @@
-import { STORAGE_KEYS } from "@/constants/const";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
   FirebaseAuthTypes,
-  GoogleAuthProvider,
   getAuth,
+  GoogleAuthProvider,
   onAuthStateChanged,
   signInWithCredential,
   signOut,
 } from "@react-native-firebase/auth";
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
+import React, { createContext, useContext, useEffect, useRef, useState } from "react";
 
+import { STORAGE_KEYS } from "@/constants/const";
 import { subscribeToStorageChanges } from "@/lib/storage";
 import { syncService } from "@/lib/sync";
-import React, { createContext, useContext, useEffect, useRef, useState } from "react";
 
 interface AuthContextType {
   user: FirebaseAuthTypes.User | null;

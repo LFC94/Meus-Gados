@@ -1,7 +1,8 @@
+import React, { useState } from "react";
+import { ScrollView, StyleProp, Text, TextInput, TextStyle, TouchableOpacity, View, ViewStyle } from "react-native";
+
 import { IconSymbol } from "@/components/icon-symbol";
 import { useColors } from "@/hooks/use-colors";
-import React, { useState } from "react";
-import { ScrollView, Text, TextInput, TouchableOpacity, View } from "react-native";
 
 interface FormInputProps {
   label: string;
@@ -17,6 +18,10 @@ interface FormInputProps {
   disabled?: boolean;
   onSubmitEditing?: () => void;
   returnKeyType?: "done" | "next" | "go";
+  horizontal?: boolean;
+  containerStyle?: StyleProp<ViewStyle>;
+  labelStyle?: StyleProp<TextStyle>;
+  inputStyle?: StyleProp<TextStyle>;
 }
 
 export function FormInput({
@@ -33,14 +38,61 @@ export function FormInput({
   disabled = false,
   onSubmitEditing,
   returnKeyType = "done",
+  horizontal = false,
+  containerStyle,
+  labelStyle,
+  inputStyle,
 }: FormInputProps) {
   const colors = useColors();
   const [isFocused, setIsFocused] = useState(false);
 
+  if (horizontal) {
+    return (
+      <View className="flex-1" style={containerStyle}>
+        <View className="flex-row items-center justify-between">
+          <View className="flex-row items-center gap-1">
+            <Text className="text-sm font-medium text-foreground" style={labelStyle}>
+              {label}
+            </Text>
+            {required && <Text className="text-error">*</Text>}
+          </View>
+          <TextInput
+            value={value}
+            onChangeText={onChangeText}
+            placeholder={placeholder}
+            placeholderTextColor={colors.muted}
+            keyboardType={keyboardType}
+            maxLength={maxLength}
+            multiline={multiline}
+            numberOfLines={numberOfLines}
+            editable={!disabled}
+            onFocus={() => setIsFocused(true)}
+            onBlur={() => setIsFocused(false)}
+            onSubmitEditing={onSubmitEditing}
+            returnKeyType={returnKeyType}
+            className="text-base text-foreground p-0 ml-4 font-semibold bg-surface rounded-xl"
+            style={[
+              {
+                flex: 1,
+                minHeight: multiline ? numberOfLines * 20 : 40,
+                textAlignVertical: multiline ? "top" : "center",
+                textAlign: multiline ? "left" : "center",
+              },
+              inputStyle,
+            ]}
+          />
+        </View>
+        {error && <Text className="text-error text-xs mt-1">{error}</Text>}
+      </View>
+    );
+  }
+
   return (
-    <View className="gap-1.5">
+    <View className="gap-1.5" style={containerStyle}>
       <View className="flex-row items-center gap-1">
-        <Text className="text-sm font-medium text-foreground">{label}</Text>
+        <Text className="text-sm font-medium text-foreground" style={labelStyle}>
+          {label}
+        </Text>
         {required && <Text className="text-error">*</Text>}
       </View>
       <View
@@ -62,11 +114,14 @@ export function FormInput({
           onBlur={() => setIsFocused(false)}
           onSubmitEditing={onSubmitEditing}
           returnKeyType={returnKeyType}
-          className="text-base text-foreground m-0 p-0"
-          style={{
-            minHeight: multiline ? numberOfLines * 20 : undefined,
-            textAlignVertical: multiline ? "top" : "center",
-          }}
+          className="text-base text-foreground m-0 p-0 "
+          style={[
+            {
+              minHeight: multiline ? numberOfLines * 20 : undefined,
+              textAlignVertical: multiline ? "top" : "center",
+            },
+            inputStyle,
+          ]}
         />
       </View>
       {error && <Text className="text-error text-xs">{error}</Text>}

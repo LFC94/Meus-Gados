@@ -1,9 +1,10 @@
-import { ScreenContainer } from "@/components/screen-container";
-import { useAuth, useColors, useScreenHeader } from "@/hooks";
-import { useColorScheme } from "@/hooks/use-color-scheme";
 import { GoogleSigninButton } from "@react-native-google-signin/google-signin";
 import { useEffect, useState } from "react";
 import { ActivityIndicator, Alert, Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
+
+import { ScreenContainer } from "@/components/screen-container";
+import { useAuth, useColors, useScreenHeader } from "@/hooks";
+import { useColorScheme } from "@/hooks/use-color-scheme";
 
 export default function SyncSetupScreen() {
   const colors = useColors();

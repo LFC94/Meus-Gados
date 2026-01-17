@@ -1,8 +1,10 @@
+import React from "react";
+import { Text, TouchableOpacity, View } from "react-native";
+
 import { useColors } from "@/hooks/use-colors";
 import { calculateDaysPregnant, formatDate } from "@/lib/helpers";
 import { Pregnancy } from "@/types";
-import React from "react";
-import { Text, TouchableOpacity, View } from "react-native";
+
 import { IconSymbol } from "./icon-symbol";
 
 interface PregnancyTimelineProps {

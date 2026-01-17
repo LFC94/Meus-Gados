@@ -1,5 +1,6 @@
 import * as BackgroundFetch from "expo-background-fetch";
 import * as TaskManager from "expo-task-manager";
+
 import { backupService } from "./backup";
 import { preferencesStorage } from "./preferences";
 

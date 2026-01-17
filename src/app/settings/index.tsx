@@ -1,28 +1,65 @@
-import { ScreenContainer } from "@/components/screen-container";
-import { useColors, useNavigation } from "@/hooks";
-
-import { backupService, type BackupData } from "@/lib/backup";
-import { useThemeContext } from "@/lib/theme-provider";
+import { GoogleSigninButton } from "@react-native-google-signin/google-signin";
 import { useFocusEffect } from "@react-navigation/native";
 import Constants from "expo-constants";
-import * as FileSystem from "expo-file-system/legacy";
-import * as Haptics from "expo-haptics";
-import * as Sharing from "expo-sharing";
-import React, { useState } from "react";
-import { ActivityIndicator, Alert, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { documentDirectory, writeAsStringAsync } from "expo-file-system/legacy";
+import { impactAsync, ImpactFeedbackStyle, notificationAsync, NotificationFeedbackType } from "expo-haptics";
+import { isAvailableAsync, shareAsync } from "expo-sharing";
+import React, { useEffect, useState } from "react";
+import { ActivityIndicator, Alert, Image, ScrollView, Switch, Text, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+
+import { FormInput } from "@/components";
+import { ScreenContainer } from "@/components/screen-container";
+import { useAuth, useColors, useScreenHeader } from "@/hooks";
+import { type BackupData, backupService } from "@/lib/backup";
+import {
+  getNotificationSettings,
+  NotificationSettings,
+  requestNotificationPermission,
+  saveNotificationSettings,
+} from "@/lib/notifications";
+import { useThemeContext } from "@/lib/theme-provider";
 
 export default function SettingsScreen() {
   const { theme, setTheme } = useThemeContext();
   const colors = useColors();
-  const navigation = useNavigation();
+  const { user, signInWithGoogle, signOut, syncData, isSyncing } = useAuth();
+
   const [loading, setLoading] = useState(true);
   const [backups, setBackups] = useState<{ id: string; backup: BackupData }[]>([]);
 
+  // Notification states
+  const [notifSaving, setNotifSaving] = useState(false);
+  const [permissionGranted, setPermissionGranted] = useState(false);
+  const [notifSettings, setNotifSettings] = useState<NotificationSettings | null>(null);
+
+  // Sync states
+  const [authLoading, setAuthLoading] = useState(false);
+  const [lastSyncStatus, setLastSyncStatus] = useState<string | null>(null);
+
   const insets = useSafeAreaInsets();
+  useScreenHeader("Configurações");
+
+  useEffect(() => {
+    loadSettings();
+    loadNotificationSettings();
+  }, []);
+
+  useEffect(() => {
+    const loadLastSync = async () => {
+      const { syncStorage } = await import("@/lib/storage");
+      const lastSync = await syncStorage.getLastSync();
+      if (lastSync) {
+        setLastSyncStatus(`Última sincronização: ${new Date(lastSync).toLocaleString()}`);
+      }
+    };
+    if (user) loadLastSync();
+  }, [user, isSyncing]);
+
   useFocusEffect(
     React.useCallback(() => {
       loadSettings();
+      loadNotificationSettings();
     }, []),
   );
 
@@ -44,10 +81,60 @@ export default function SettingsScreen() {
     }
   };
 
+  const loadNotificationSettings = async () => {
+    try {
+      const data = await getNotificationSettings();
+      setNotifSettings(data);
+      const hasPermission = await requestNotificationPermission();
+      setPermissionGranted(hasPermission);
+    } catch (error) {
+      console.error("Error loading notif settings:", error);
+    }
+  };
+
+  const handleNotifSave = async () => {
+    if (!notifSettings) return;
+    try {
+      setNotifSaving(true);
+      impactAsync(ImpactFeedbackStyle.Light);
+      await saveNotificationSettings(notifSettings);
+      notificationAsync(NotificationFeedbackType.Success);
+      Alert.alert("Sucesso", "Configurações de notificações salvas!");
+    } catch (error) {
+      console.error("Error saving notif settings:", error);
+      Alert.alert("Erro", "Não foi possível salvar as notificações");
+    } finally {
+      setNotifSaving(false);
+    }
+  };
+
+  const handleGoogleSignIn = async () => {
+    setAuthLoading(true);
+    try {
+      await signInWithGoogle();
+      await syncData();
+    } catch (error: any) {
+      console.error("Google Sign-In Error:", error);
+      Alert.alert("Erro de Autenticação", "Não foi possível realizar o login.");
+    } finally {
+      setAuthLoading(false);
+    }
+  };
+
+  const handleManualSync = async () => {
+    const result = await syncData();
+    if (result.success) {
+      setLastSyncStatus(`Última sincronização: ${new Date().toLocaleTimeString()}`);
+      Alert.alert("Sucesso", "Dados sincronizados com sucesso!");
+    } else {
+      Alert.alert("Erro", result.error || "Erro ao sincronizar dados.");
+    }
+  };
+
   const handleThemeChange = async (newTheme: "dark" | "light" | "system") => {
     try {
       setTheme(newTheme);
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+      impactAsync(ImpactFeedbackStyle.Light);
     } catch (error) {
       console.error("Error setting theme:", error);
       Alert.alert("Erro", "Não foi possível atualizar o tema");
@@ -56,12 +143,12 @@ export default function SettingsScreen() {
 
   const handleCreateBackup = async () => {
     try {
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+      impactAsync(ImpactFeedbackStyle.Light);
 
       const backup = await backupService.createBackup();
       await backupService.saveBackup(backup);
 
-      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      notificationAsync(NotificationFeedbackType.Success);
 
       Alert.alert("Sucesso", "Backup criado com sucesso!");
       loadSettings();
@@ -77,12 +164,12 @@ export default function SettingsScreen() {
       const jsonString = await backupService.exportBackupAsJSON(backup);
 
       const fileName = `meus-gados-backup-${new Date().toISOString().split("T")[0]}.json`;
-      const fileUri = `${FileSystem.documentDirectory}${fileName}`;
+      const fileUri = `${documentDirectory}${fileName}`;
 
-      await FileSystem.writeAsStringAsync(fileUri, jsonString);
+      await writeAsStringAsync(fileUri, jsonString);
 
-      if (await Sharing.isAvailableAsync()) {
-        await Sharing.shareAsync(fileUri, {
+      if (await isAvailableAsync()) {
+        await shareAsync(fileUri, {
           mimeType: "application/json",
           dialogTitle: "Compartilhar Backup",
         });
@@ -106,7 +193,7 @@ export default function SettingsScreen() {
           onPress: async () => {
             try {
               await backupService.restoreBackup(backup);
-              Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+              notificationAsync(NotificationFeedbackType.Success);
               Alert.alert("Sucesso", "Backup restaurado com sucesso!");
               loadSettings();
             } catch (error) {
@@ -150,154 +237,268 @@ export default function SettingsScreen() {
 
   return (
     <ScreenContainer className="p-0">
-      <View className="flex-1 gap-4" style={{ paddingBottom: insets.bottom }}>
+      <View className="flex-1" style={{ paddingBottom: insets.bottom }}>
         <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
-          <View className="gap-6 p-4 pb-6">
-            {/* Tema */}
-            {/* Tema */}
+          <View className="gap-6 p-4 pb-10">
+            {/* 1. Perfil e Sincronização */}
             <View className="gap-3">
-              <Text className="text-lg font-semibold text-foreground">Tema</Text>
-              <View className="bg-surface rounded-lg p-4 gap-3">
-                <TouchableOpacity
-                  onPress={() => handleThemeChange("light")}
-                  className={`p-3 rounded-lg border-2 ${
-                    theme === "light" ? "border-primary bg-primary/10" : "border-border bg-transparent"
-                  }`}
-                >
-                  <Text className={`font-semibold ${theme === "light" ? "text-primary" : "text-foreground"}`}>
-                    Claro (Light)
-                  </Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                  onPress={() => handleThemeChange("dark")}
-                  className={`p-3 rounded-lg border-2 ${
-                    theme === "dark" ? "border-primary bg-primary/10" : "border-border bg-transparent"
-                  }`}
-                >
-                  <Text className={`font-semibold ${theme === "dark" ? "text-primary" : "text-foreground"}`}>
-                    Escuro (Dark)
-                  </Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                  onPress={() => handleThemeChange("system")}
-                  className={`p-3 rounded-lg border-2 ${
-                    theme === "system" ? "border-primary bg-primary/10" : "border-border bg-transparent"
-                  }`}
-                >
-                  <Text className={`font-semibold ${theme === "system" ? "text-primary" : "text-foreground"}`}>
-                    Do Sistema
-                  </Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-
-            {/* Sincronização em Nuvem */}
-            <View className="gap-3">
-              <Text className="text-lg font-semibold text-foreground">Backup em Nuvem</Text>
-              <TouchableOpacity
-                onPress={() => navigation.navigate("SyncSetup" as never)}
-                className="bg-surface rounded-lg p-4 flex-row items-center justify-between border border-border"
-              >
-                <View className="flex-row items-center gap-3">
-                  <Text className="text-xl">☁️</Text>
-                  <View>
-                    <Text className="font-semibold text-foreground">Sincronização</Text>
-                    <Text className="text-xs text-muted">Acesse seus dados em outros aparelhos</Text>
-                  </View>
-                </View>
-                <Text className="text-muted text-xl">›</Text>
-              </TouchableOpacity>
-            </View>
-
-            {/* Backup e Restauração Local */}
-            <View className="gap-3">
-              <Text className="text-lg font-semibold text-foreground">Backup de Dados</Text>
-              <View className="bg-surface rounded-lg p-4 gap-3">
-                <TouchableOpacity onPress={handleCreateBackup} className="bg-primary rounded-lg p-4 items-center">
-                  <Text className="text-white font-semibold">Criar Backup</Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                  onPress={handleExportBackup}
-                  className="border border-primary rounded-lg p-4 items-center"
-                >
-                  <Text className="text-primary font-semibold">Exportar Backup (JSON)</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-
-            {/* Lista de Backups */}
-            {backups.length > 0 && (
-              <View className="gap-3">
-                <View className="flex-row items-center justify-between">
-                  <Text className="text-lg font-semibold text-foreground">Backups Salvos</Text>
-                  <Text className="text-sm text-muted">{backups.length}</Text>
-                </View>
-
-                <View className="gap-2">
-                  {backups.map((item) => (
-                    <View key={item.id} className="bg-surface rounded-lg p-4 border border-border">
-                      <View className="gap-2 mb-3">
-                        <Text className="text-sm font-semibold text-foreground">
-                          {new Date(item.backup.timestamp).toLocaleDateString("pt-BR", {
-                            year: "numeric",
-                            month: "long",
-                            day: "numeric",
-                            hour: "2-digit",
-                            minute: "2-digit",
-                          })}
+              <Text className="text-lg font-semibold text-foreground">Sincronização em Nuvem</Text>
+              <View className="bg-surface rounded-2xl p-6 border border-border gap-4">
+                {user ? (
+                  <>
+                    <View className="flex-row items-center gap-4">
+                      <Image
+                        source={{ uri: user.photoURL || "" }}
+                        className="w-14 h-14 rounded-full border border-border"
+                      />
+                      <View className="flex-1">
+                        <Text className="font-bold text-foreground text-lg" numberOfLines={1}>
+                          {user.displayName || "Usuário"}
                         </Text>
-                        <Text className="text-xs text-muted">
-                          {item.backup.cattle.length} animais • {item.backup.vaccineCatalog.length} vacinas
+                        <Text className="text-muted text-sm" numberOfLines={1}>
+                          {user.email}
                         </Text>
-                      </View>
-
-                      <View className="flex-row gap-2">
-                        <TouchableOpacity
-                          onPress={() => handleRestoreBackup(item.backup)}
-                          className="flex-1 bg-primary/20 rounded-lg p-2 items-center"
-                        >
-                          <Text className="text-primary font-semibold text-sm">Restaurar</Text>
-                        </TouchableOpacity>
-
-                        <TouchableOpacity
-                          onPress={() => handleDeleteBackup(item.id)}
-                          className="flex-1 bg-error/20 rounded-lg p-2 items-center"
-                        >
-                          <Text className="text-error font-semibold text-sm">Deletar</Text>
-                        </TouchableOpacity>
                       </View>
                     </View>
-                  ))}
+
+                    <View className="bg-background/50 p-3 rounded-lg">
+                      <Text className="text-xs text-muted text-center italic">
+                        {lastSyncStatus || "Aguardando sincronização..."}
+                      </Text>
+                    </View>
+
+                    <View className="flex-row gap-2">
+                      <TouchableOpacity
+                        onPress={handleManualSync}
+                        disabled={isSyncing}
+                        className="flex-1 bg-primary/10 border border-primary/20 py-3 rounded-xl flex-row justify-center items-center gap-2"
+                      >
+                        {isSyncing ? (
+                          <ActivityIndicator size="small" color={colors.primary} />
+                        ) : (
+                          <Text className="text-primary font-bold">☁️ Sincronizar Agora</Text>
+                        )}
+                      </TouchableOpacity>
+
+                      <TouchableOpacity
+                        onPress={() => signOut()}
+                        className="bg-error/10 border border-error/20 px-4 py-3 rounded-xl justify-center items-center"
+                      >
+                        <Text className="text-error font-semibold">Sair</Text>
+                      </TouchableOpacity>
+                    </View>
+                  </>
+                ) : (
+                  <View className="items-center gap-4">
+                    <Text className="text-muted text-center text-sm">
+                      Faça login com sua conta Google para salvar seus dados na nuvem e acessar de outros aparelhos.
+                    </Text>
+                    {authLoading ? (
+                      <ActivityIndicator color={colors.primary} />
+                    ) : (
+                      <>
+                        <GoogleSigninButton
+                          size={GoogleSigninButton.Size.Wide}
+                          color={GoogleSigninButton.Color.Dark}
+                          onPress={handleGoogleSignIn}
+                          disabled={authLoading}
+                        />
+                      </>
+                    )}
+                  </View>
+                )}
+              </View>
+            </View>
+
+            {/* 2. Configurações de Notificações */}
+            {notifSettings && (
+              <View className="gap-3 ">
+                <Text className="text-lg font-semibold text-foreground">Notificações</Text>
+
+                <View className="bg-surface rounded-2xl p-4 border border-border gap-6">
+                  {!permissionGranted && (
+                    <View className="bg-warning/10 p-3 rounded-xl border border-warning/20">
+                      <Text className="text-xs text-warning text-center">
+                        ⚠️ Permissão de notificações desativada no sistema.
+                      </Text>
+                    </View>
+                  )}
+
+                  {/* Vacinas */}
+                  <View className="gap-3 py-4">
+                    <View className="flex-row items-center justify-between">
+                      <View className="flex-row items-center gap-2">
+                        <Text className="text-lg">💉</Text>
+                        <Text className="font-semibold text-foreground">Vacinas</Text>
+                      </View>
+                      <Switch
+                        value={notifSettings.vaccinesEnabled}
+                        onValueChange={(v) => setNotifSettings({ ...notifSettings, vaccinesEnabled: v })}
+                        trackColor={{ false: colors.border, true: colors.primary }}
+                        thumbColor={colors.background}
+                      />
+                    </View>
+                    {notifSettings.vaccinesEnabled && (
+                      <View className="bg-background px-4 py-3 rounded-xl border border-border flex-row items-center">
+                        <FormInput
+                          label="Alertar antes (dias):"
+                          keyboardType="numeric"
+                          horizontal={true}
+                          inputStyle={{ width: 40, flex: 0 }}
+                          value={String(notifSettings.vaccineAlertDaysBefore)}
+                          onChangeText={(t) =>
+                            setNotifSettings({ ...notifSettings, vaccineAlertDaysBefore: parseInt(t) || 0 })
+                          }
+                        />
+                      </View>
+                    )}
+                  </View>
+
+                  {/* Gestação */}
+                  <View className="gap-3 border-t border-border/50 py-4">
+                    <View className="flex-row items-center justify-between">
+                      <View className="flex-row items-center gap-2">
+                        <Text className="text-lg">🐄</Text>
+                        <Text className="font-semibold text-foreground">Gestação/Parto</Text>
+                      </View>
+                      <Switch
+                        value={notifSettings.pregnancyEnabled}
+                        onValueChange={(v) => setNotifSettings({ ...notifSettings, pregnancyEnabled: v })}
+                        trackColor={{ false: colors.border, true: colors.primary }}
+                        thumbColor={colors.background}
+                      />
+                    </View>
+                    {notifSettings.pregnancyEnabled && (
+                      <View className="bg-background px-4 py-3 rounded-xl border border-border flex-row items-center">
+                        <FormInput
+                          label="Alertar antes (dias):"
+                          keyboardType="numeric"
+                          horizontal={true}
+                          inputStyle={{ width: 40, flex: 0 }}
+                          value={String(notifSettings.pregnancyAlertDaysBefore)}
+                          onChangeText={(t) =>
+                            setNotifSettings({ ...notifSettings, pregnancyAlertDaysBefore: parseInt(t) || 0 })
+                          }
+                        />
+                      </View>
+                    )}
+                  </View>
+
+                  {/* Horário */}
+                  <View className="gap-3 border-t border-border/50 py-4">
+                    <View className="bg-background px-4 py-3 rounded-xl border border-border flex-row items-center">
+                      <FormInput
+                        label="⏰ Horário dos Alertas"
+                        horizontal={true}
+                        value={notifSettings.notificationTime}
+                        onChangeText={(t) => {
+                          if (/^\d{0,2}:?\d{0,2}$/.test(t)) {
+                            setNotifSettings({ ...notifSettings, notificationTime: t });
+                          }
+                        }}
+                        inputStyle={{ width: 80, flex: 0 }}
+                        maxLength={5}
+                      />
+                    </View>
+                  </View>
+
+                  <TouchableOpacity
+                    onPress={handleNotifSave}
+                    disabled={notifSaving}
+                    className="bg-primary p-4 m-2 rounded-xl items-center"
+                  >
+                    {notifSaving ? (
+                      <ActivityIndicator size="small" color="white" />
+                    ) : (
+                      <Text className="text-white font-bold">Salvar Preferências</Text>
+                    )}
+                  </TouchableOpacity>
                 </View>
               </View>
             )}
 
-            <TouchableOpacity
-              onPress={() => navigation.navigate("NotificationsSettings" as never)}
-              className="bg-surface rounded-full p-4 items-center border border-border"
-              style={{ opacity: 1 }}
-            >
-              <Text className="text-foreground font-semibold text-base">⚙️ Configurar Notificações</Text>
-            </TouchableOpacity>
+            {/* 3. Tema */}
+            <View className="gap-3">
+              <Text className="text-lg font-semibold text-foreground">Aparência</Text>
+              <View className="bg-surface rounded-2xl p-2 border border-border flex-row">
+                {(["light", "dark", "system"] as const).map((t) => (
+                  <TouchableOpacity
+                    key={t}
+                    onPress={() => handleThemeChange(t)}
+                    className={`flex-1 py-3 px-1 rounded-xl items-center ${theme === t ? "bg-primary" : "bg-transparent"}`}
+                  >
+                    <Text className={`font-bold text-xs ${theme === t ? "text-white" : "text-muted"}`}>
+                      {t === "light" ? "Claro" : t === "dark" ? "Escuro" : "Sistema"}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            </View>
+
+            {/* 4. Backup Local */}
+            <View className="gap-3">
+              <Text className="text-lg font-semibold text-foreground">Backup Local</Text>
+              <View className="bg-surface rounded-2xl p-4 border border-border gap-4">
+                <View className="flex-row gap-2">
+                  <TouchableOpacity
+                    onPress={handleCreateBackup}
+                    className="flex-1 bg-secondary border border-secondary p-4 rounded-xl items-center"
+                  >
+                    <Text className="text-secondary font-bold">Criar Backup</Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    onPress={handleExportBackup}
+                    className="flex-1 bg-secondary border border-secondary p-4 rounded-xl items-center"
+                  >
+                    <Text className="text-secondary font-bold">Exportar JSON</Text>
+                  </TouchableOpacity>
+                </View>
+
+                {backups.length > 0 && (
+                  <View className="gap-2 mt-2">
+                    <Text className="text-xs font-bold text-muted uppercase">Backups Recentes</Text>
+                    {backups.slice(0, 3).map((item) => (
+                      <View
+                        key={item.id}
+                        className="bg-background/50 p-3 rounded-xl border border-border flex-row items-center gap-3"
+                      >
+                        <View className="flex-1">
+                          <Text className="text-xs font-bold text-foreground">
+                            {new Date(item.backup.timestamp).toLocaleDateString("pt-BR", {
+                              day: "2-digit",
+                              month: "short",
+                              hour: "2-digit",
+                              minute: "2-digit",
+                            })}
+                          </Text>
+                          <Text className="text-[10px] text-muted">
+                            {item.backup.cattle.length} animais cadastrados
+                          </Text>
+                        </View>
+                        <TouchableOpacity
+                          onPress={() => handleRestoreBackup(item.backup)}
+                          className="bg-primary/10 px-3 py-1.5 rounded-lg"
+                        >
+                          <Text className="text-primary text-[10px] font-bold">Restaurar</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={() => handleDeleteBackup(item.id)} className="p-1.5">
+                          <Text className="text-error text-sm">🗑️</Text>
+                        </TouchableOpacity>
+                      </View>
+                    ))}
+                  </View>
+                )}
+              </View>
+            </View>
+
+            {/* 5. Sobre */}
+            <View className="items-center mt-4">
+              <Text className="text-xs text-muted">Meus Gados • Versão {Constants.expoConfig?.version ?? "1.0.0"}</Text>
+              <Text className="text-[10px] text-muted/50 mt-1">Desenvolvido por Lucas Felipe Costa</Text>
+            </View>
           </View>
         </ScrollView>
-        {/* Informações do App */}
-        <View className="gap-3 border-t border-border p-4">
-          <Text className="text-lg font-semibold text-foreground">Sobre</Text>
-          <View className="bg-surface rounded-lg p-4 gap-2">
-            <View className="flex-row justify-between">
-              <Text className="text-muted">App</Text>
-              <Text className="font-semibold text-foreground">Meus Gados</Text>
-            </View>
-            <View className="flex-row justify-between">
-              <Text className="text-muted">Versão</Text>
-              <Text className="font-semibold text-foreground">{Constants.expoConfig?.version ?? "1.0.0"}</Text>
-            </View>
-          </View>
-        </View>
       </View>
     </ScreenContainer>
   );

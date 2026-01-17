@@ -1,5 +1,6 @@
-import { SESSION_TOKEN_KEY, USER_INFO_KEY } from "@/constants/oauth";
 import * as SecureStore from "expo-secure-store";
+
+import { SESSION_TOKEN_KEY, USER_INFO_KEY } from "@/constants/oauth";
 
 export type User = {
   id: number;

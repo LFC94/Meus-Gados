@@ -4,9 +4,9 @@
  */
 export {
   Colors,
+  type ColorScheme,
   Fonts,
   SchemeColors,
-  ThemeColors,
-  type ColorScheme,
   type ThemeColorPalette,
+  ThemeColors,
 } from "@/lib/_core/theme";

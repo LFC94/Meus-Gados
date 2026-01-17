@@ -1,5 +1,7 @@
-import { ScreenHeader } from "@/components/screen-header";
 import { useEffect } from "react";
+
+import { ScreenHeader } from "@/components/screen-header";
+
 import useNavigation from "./use-navigation";
 
 export default function useScreenHeader(title: string, subtitle?: string, right?: any) {

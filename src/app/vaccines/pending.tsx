@@ -1,14 +1,14 @@
+import { useFocusEffect } from "@react-navigation/native";
+import React, { useState } from "react";
+import { ActivityIndicator, RefreshControl, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+
 import { ScreenContainer } from "@/components/screen-container";
 import { useNavigation } from "@/hooks";
 import { useColors } from "@/hooks/use-colors";
 import { daysUntil, formatDate, getVaccineStatus, getVaccineStatusColor } from "@/lib/helpers";
 import { vaccinationRecordStorage } from "@/lib/storage";
-
 import { Cattle, VaccinationRecordWithDetails } from "@/types";
-import { useFocusEffect } from "@react-navigation/native";
-import React, { useState } from "react";
-import { ActivityIndicator, RefreshControl, ScrollView, Text, TouchableOpacity, View } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function PendingVaccinesScreen() {
   const navigation = useNavigation();

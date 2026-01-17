@@ -2,6 +2,8 @@
  * Serviço de armazenamento local usando AsyncStorage
  */
 
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
 import { STORAGE_KEYS } from "@/constants/const";
 import {
   Cattle,
@@ -14,7 +16,7 @@ import {
   VaccineModel,
   VaccineWithRecords,
 } from "@/types";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+
 import { preferencesStorage } from "./preferences";
 
 /**

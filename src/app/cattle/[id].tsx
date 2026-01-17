@@ -1,3 +1,8 @@
+import { RouteProp, useFocusEffect, useRoute } from "@react-navigation/native";
+import * as Haptics from "expo-haptics";
+import React, { useState } from "react";
+import { ActivityIndicator, Alert, ScrollView, Text, TouchableOpacity, View } from "react-native";
+
 import { ConfirmDialog } from "@/components/confirm-dialog";
 import { DiseaseRecord } from "@/components/disease-record";
 import { IconSymbol } from "@/components/icon-symbol";
@@ -23,10 +28,6 @@ import {
   RootStackParamList,
   VaccinationRecordWithDetails,
 } from "@/types";
-import { RouteProp, useFocusEffect, useRoute } from "@react-navigation/native";
-import * as Haptics from "expo-haptics";
-import React, { useState } from "react";
-import { ActivityIndicator, Alert, ScrollView, Text, TouchableOpacity, View } from "react-native";
 
 type Tab = "info" | "vaccines" | "pregnancy" | "diseases" | "production";
 

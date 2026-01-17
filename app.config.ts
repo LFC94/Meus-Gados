@@ -1,6 +1,7 @@
 // Load environment variables with proper priority (system > .env)
-import type { ExpoConfig } from "expo/config";
 import "./src/scripts/load-env.js";
+
+import type { ExpoConfig } from "expo/config";
 
 const bundleId = "com.lfcapp.meus.gados.t20260102074808";
 const timestamp = bundleId.split(".").pop()?.replace(/^t/, "") ?? "";

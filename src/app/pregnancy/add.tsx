@@ -1,3 +1,9 @@
+import { RouteProp, useRoute } from "@react-navigation/native";
+import * as Haptics from "expo-haptics";
+import { useCallback, useEffect, useState } from "react";
+import { ActivityIndicator, Alert, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+
 import { FormSelect } from "@/components";
 import { CustomDatePicker } from "@/components/date-picker";
 import { ScreenContainer } from "@/components/screen-container";
@@ -6,11 +12,6 @@ import { calculateExpectedBirthDateAsDate } from "@/lib/helpers";
 import { schedulePregnancyNotification } from "@/lib/notifications";
 import { cattleStorage, pregnancyStorage } from "@/lib/storage";
 import { Cattle, RootStackParamList } from "@/types";
-import { RouteProp, useRoute } from "@react-navigation/native";
-import * as Haptics from "expo-haptics";
-import { useCallback, useEffect, useState } from "react";
-import { ActivityIndicator, Alert, ScrollView, Text, TouchableOpacity, View } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function AddPregnancyScreen() {
   const navigation = useNavigation();

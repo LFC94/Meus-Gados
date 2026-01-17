@@ -1,9 +1,10 @@
+import React from "react";
+import { Text, TouchableOpacity, View } from "react-native";
+
 import { IconSymbol } from "@/components/icon-symbol";
 import { useColors } from "@/hooks/use-colors";
 import { formatDate } from "@/lib/helpers";
 import { VaccinationRecordWithDetails } from "@/types";
-import React from "react";
-import { Text, TouchableOpacity, View } from "react-native";
 
 interface VaccineItemProps {
   vaccine: VaccinationRecordWithDetails;

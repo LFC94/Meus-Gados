@@ -1,11 +1,12 @@
+import { useRouter } from "expo-router";
+import React from "react";
+import { Text, TouchableOpacity, View } from "react-native";
+
 import { IconSymbol } from "@/components/icon-symbol";
 import { STATUS_CATTLE } from "@/constants/const";
 import { useColors } from "@/hooks/use-colors";
 import { formatAge } from "@/lib/helpers";
 import { Cattle, CattleResult } from "@/types";
-import { useRouter } from "expo-router";
-import React from "react";
-import { Text, TouchableOpacity, View } from "react-native";
 
 interface CattleCardProps {
   cattle: Cattle;

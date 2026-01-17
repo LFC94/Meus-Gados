@@ -1,6 +1,7 @@
+import { TouchableOpacity } from "react-native";
+
 import { IconSymbol } from "@/components/icon-symbol";
 import { useColors } from "@/hooks/use-colors";
-import { TouchableOpacity } from "react-native";
 
 export default function useScreenOptions() {
   const colors = useColors();

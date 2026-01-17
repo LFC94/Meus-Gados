@@ -1,7 +1,8 @@
-import { useColors } from "@/hooks/use-colors";
 import * as Haptics from "expo-haptics";
 import React, { useEffect, useState } from "react";
 import { Animated, Modal, Text, TouchableOpacity, View } from "react-native";
+
+import { useColors } from "@/hooks/use-colors";
 
 interface ConfirmDialogProps {
   visible: boolean;

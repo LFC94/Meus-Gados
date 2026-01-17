@@ -1,3 +1,9 @@
+import { RouteProp, useRoute } from "@react-navigation/native";
+import * as Haptics from "expo-haptics";
+import { useCallback, useEffect, useState } from "react";
+import { ActivityIndicator, Alert, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+
 import { FormInput, FormSelect } from "@/components";
 import { CustomDatePicker } from "@/components/date-picker";
 import { ScreenContainer } from "@/components/screen-container";
@@ -8,11 +14,6 @@ import { addDaysToDate } from "@/lib/helpers";
 import { scheduleVaccineNotification } from "@/lib/notifications";
 import { cattleStorage, vaccinationRecordStorage, vaccineCatalogStorage } from "@/lib/storage";
 import { Cattle, RootStackParamList, VaccineModel } from "@/types";
-import { RouteProp, useRoute } from "@react-navigation/native";
-import * as Haptics from "expo-haptics";
-import { useCallback, useEffect, useState } from "react";
-import { ActivityIndicator, Alert, ScrollView, Text, TouchableOpacity, View } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function VaccineCadScreen() {
   const navigation = useNavigation();

@@ -1,3 +1,9 @@
+import { useFocusEffect } from "@react-navigation/native";
+import * as Haptics from "expo-haptics";
+import React, { useState } from "react";
+import { ActivityIndicator, RefreshControl, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+
 import { ConfirmDialog } from "@/components/confirm-dialog";
 import { IconSymbol } from "@/components/icon-symbol";
 import { ScreenContainer } from "@/components/screen-container";
@@ -7,11 +13,6 @@ import useScreenHeader from "@/hooks/use-screen-header";
 import { formatDate } from "@/lib/helpers";
 import { vaccineCatalogStorage } from "@/lib/storage";
 import { VaccineWithRecords } from "@/types";
-import { useFocusEffect } from "@react-navigation/native";
-import * as Haptics from "expo-haptics";
-import React, { useState } from "react";
-import { ActivityIndicator, RefreshControl, ScrollView, Text, TouchableOpacity, View } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function VaccineCatalogScreen() {
   const navigation = useNavigation();

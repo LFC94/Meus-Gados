@@ -1,9 +1,9 @@
 import { StatusBar } from "expo-status-bar";
 import { colorScheme as nativewindColorScheme, vars } from "nativewind";
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
-import { Appearance, View, useColorScheme as useSystemColorScheme } from "react-native";
+import { Appearance, useColorScheme as useSystemColorScheme,View } from "react-native";
 
-import { SchemeColors, type ColorScheme } from "@/constants/theme";
+import { type ColorScheme,SchemeColors } from "@/constants/theme";
 import { preferencesStorage, type Theme } from "@/lib/preferences";
 
 type ThemeContextValue = {

@@ -1,7 +1,9 @@
-import { useColors } from "@/hooks/use-colors";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import React, { useState } from "react";
 import { Platform, Text, TouchableOpacity, View } from "react-native";
+
+import { useColors } from "@/hooks/use-colors";
+
 import { IconSymbol } from "./icon-symbol";
 
 interface DatePickerProps {
