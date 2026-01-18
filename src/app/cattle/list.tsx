@@ -51,7 +51,7 @@ export default function CattleListScreen() {
   useFocusEffect(
     React.useCallback(() => {
       loadData();
-    }, [])
+    }, []),
   );
 
   const getStatus = useCallback(
@@ -92,7 +92,7 @@ export default function CattleListScreen() {
 
       return "healthy"; // Healthy - green
     },
-    [diseases, pregnancies, vaccines]
+    [diseases, pregnancies, vaccines],
   );
 
   const breeds = useMemo(() => {
@@ -177,7 +177,7 @@ export default function CattleListScreen() {
         contentContainerStyle={{ flexGrow: 1 }}
         className="pt-4"
       >
-        <View className="p-6 gap-4 flex-1" style={{ paddingBottom: insets.bottom }}>
+        <View className="p-6 gap-4 flex-1" style={{ marginBottom: insets.bottom }}>
           {/* Search and Filters Toggle */}
           <View className="flex-row gap-2">
             <View className="flex-1 bg-surface rounded-xl px-4 border border-border flex-row items-center">

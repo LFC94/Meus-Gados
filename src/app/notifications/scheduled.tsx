@@ -75,14 +75,14 @@ export default function ScheduledNotificationsScreen() {
 
   return (
     <ScreenContainer className="p-6">
-      <View className="flex-1 gap-4" style={{ paddingBottom: insets.bottom }}>
+      <View className="flex-1 gap-4">
         <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
           {notifications.length === 0 ? (
             <View className="flex-1 items-center justify-center py-12">
               <Text className="text-muted text-center text-base">Nenhuma notificação agendada no momento</Text>
             </View>
           ) : (
-            <View className="gap-4 pb-6">
+            <View className="gap-4 pb-6" style={{ paddingBottom: insets.bottom }}>
               {/* Vacinas */}
               {vaccineNotifications.length > 0 && (
                 <View className="gap-3">

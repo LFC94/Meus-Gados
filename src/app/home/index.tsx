@@ -110,7 +110,7 @@ export default function HomeScreen() {
   useFocusEffect(
     React.useCallback(() => {
       loadData();
-    }, [loadData])
+    }, [loadData]),
   );
 
   if (loading) {
@@ -126,9 +126,8 @@ export default function HomeScreen() {
       <ScrollView
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={loadData} tintColor={colors.primary} />}
         contentContainerStyle={{ flexGrow: 1 }}
-        style={{ paddingBottom: insets.bottom }}
       >
-        <View className="p-6 gap-6 flex-1">
+        <View className="p-6 gap-6 flex-1" style={{ paddingBottom: insets.bottom }}>
           {/* Status Cards */}
           <View className="gap-3">
             <View className="flex-row gap-3">

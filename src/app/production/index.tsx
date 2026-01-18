@@ -30,7 +30,7 @@ export default function MilkProductionListScreen() {
   useFocusEffect(
     React.useCallback(() => {
       loadData();
-    }, [])
+    }, []),
   );
 
   const loadData = async () => {
@@ -120,7 +120,7 @@ export default function MilkProductionListScreen() {
           {/* Add Button */}
           {records.length > 0 && (
             <TouchableOpacity
-              onPress={() => navigation.navigate("MilkProductionCad")}
+              onPress={() => navigation.navigate("MilkProductionCad", {})}
               className="bg-primary rounded-full p-4 items-center mt-2"
               style={{ opacity: 1 }}
             >
