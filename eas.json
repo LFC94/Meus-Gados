@@ -12,6 +12,12 @@
         "buildType": "apk"
       }
     },
+    "local-apk": {
+      "extends": "preview",
+      "android": {
+        "buildType": "apk"
+      }
+    },
     "preview": {
       "environment": "preview",
       "distribution": "internal",

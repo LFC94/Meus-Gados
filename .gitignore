@@ -66,3 +66,7 @@ GoogleService-Info.plist
 .env
 .env.local
 .env.*
+credentials.json
+credentials/
+release.keystore
+android/keystore.properties
