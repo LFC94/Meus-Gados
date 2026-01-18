@@ -1,8 +1,9 @@
 import React, { useState } from "react";
-import { ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { Modal, ScrollView, Text, TouchableOpacity, View } from "react-native";
 
 import { useColors } from "@/hooks/use-colors";
 
+import { FormInput } from "./form-input";
 import { IconSymbol } from "./icon-symbol";
 
 interface FormSelectProps {
@@ -28,9 +29,18 @@ export function FormSelect({
 }: FormSelectProps) {
   const colors = useColors();
   const [showOptions, setShowOptions] = useState(false);
+  const [search, setSearch] = useState(""); // Added search state
 
   const selectedOption = options.find((opt) => opt.value === value);
   const displayText = selectedOption?.label || placeholder;
+
+  const filteredOptions = options.filter((opt) => opt.label.toLowerCase().includes(search.toLowerCase())); // Added filtering logic
+
+  const handleClose = () => {
+    // Added handleClose function
+    setShowOptions(false);
+    setSearch("");
+  };
 
   return (
     <View className="gap-1.5">
@@ -39,7 +49,7 @@ export function FormSelect({
         {required && <Text className="text-error">*</Text>}
       </View>
       <TouchableOpacity
-        onPress={() => !disabled && setShowOptions(!showOptions)}
+        onPress={() => !disabled && setShowOptions(true)}
         className={`rounded-xl px-4 py-3 border ${
           error ? "border-error" : showOptions ? "border-primary" : "border-border"
         } ${disabled ? "bg-surface/50" : "bg-surface"}`}
@@ -51,37 +61,70 @@ export function FormSelect({
           <Text className="text-base" style={{ color: selectedOption ? colors.foreground : colors.muted }}>
             {displayText}
           </Text>
-          <IconSymbol name={showOptions ? "chevron.up" : "chevron.down"} size={20} color={colors.muted} />
+          <IconSymbol name="chevron.down" size={20} color={colors.muted} />
         </View>
       </TouchableOpacity>
       {error && <Text className="text-error text-xs">{error}</Text>}
-      {showOptions && !disabled && (
-        <View className="mt-1 bg-surface rounded-xl border border-border overflow-hidden">
-          <ScrollView style={{ maxHeight: 200 }}>
-            {options.map((option) => (
-              <TouchableOpacity
-                key={option.value}
-                onPress={() => {
-                  onValueChange(option.value);
-                  setShowOptions(false);
-                }}
-                className={`px-4 py-3 border-b border-border ${value === option.value ? "bg-primary/10" : ""}`}
-                style={{ opacity: 1 }}
-              >
-                <Text
-                  className="text-base"
-                  style={{
-                    color: value === option.value ? colors.primary : colors.foreground,
-                    fontWeight: value === option.value ? "600" : "400",
-                  }}
-                >
-                  {option.label}
-                </Text>
+
+      <Modal visible={showOptions} transparent animationType="fade" onRequestClose={handleClose}>
+        <TouchableOpacity
+          style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.5)", justifyContent: "center", padding: 24 }}
+          activeOpacity={1}
+          onPress={handleClose}
+        >
+          <View
+            className="bg-surface rounded-2xl overflow-hidden shadow-lg border border-border"
+            style={{ maxHeight: "80%" }}
+          >
+            <View className="p-4 border-b border-border flex-row justify-between items-center bg-muted/10">
+              <Text className="font-bold text-lg text-foreground">{label}</Text>
+              <TouchableOpacity onPress={handleClose} className="p-1">
+                <IconSymbol name="xmark.circle.fill" size={24} color={colors.muted} />
               </TouchableOpacity>
-            ))}
-          </ScrollView>
-        </View>
-      )}
+            </View>
+
+            <View className="px-4 py-2 border-b border-border bg-surface">
+              <FormInput
+                label=""
+                value={search}
+                onChangeText={setSearch}
+                placeholder="Pesquisar..."
+                containerStyle={{ margin: 0 }}
+                inputStyle={{ backgroundColor: colors.background }}
+              />
+            </View>
+
+            <ScrollView>
+              {filteredOptions.length === 0 ? (
+                <View className="p-4 items-center">
+                  <Text className="text-muted">Nenhuma opção encontrada</Text>
+                </View>
+              ) : (
+                filteredOptions.map((option) => (
+                  <TouchableOpacity
+                    key={option.value}
+                    onPress={() => {
+                      onValueChange(option.value);
+                      handleClose();
+                    }}
+                    className={`px-4 py-4 border-b border-border ${value === option.value ? "bg-primary/10" : ""}`}
+                  >
+                    <Text
+                      className="text-base"
+                      style={{
+                        color: value === option.value ? colors.primary : colors.foreground,
+                        fontWeight: value === option.value ? "600" : "400",
+                      }}
+                    >
+                      {option.label}
+                    </Text>
+                  </TouchableOpacity>
+                ))
+              )}
+            </ScrollView>
+          </View>
+        </TouchableOpacity>
+      </Modal>
     </View>
   );
 }
