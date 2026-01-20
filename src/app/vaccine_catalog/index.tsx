@@ -120,9 +120,8 @@ export default function VaccineCatalogScreen() {
           ) : (
             <View className="gap-3">
               {vaccines.map((vaccine) => (
-                <TouchableOpacity
+                <View
                   key={vaccine.id}
-                  onPress={() => navigation.navigate("VaccineCatalogCad", { id: vaccine.id })}
                   className="bg-surface rounded-2xl p-4 border border-border"
                   style={{ opacity: 1 }}
                 >
@@ -182,7 +181,7 @@ export default function VaccineCatalogScreen() {
                       </TouchableOpacity>
                     </View>
                   </View>
-                </TouchableOpacity>
+                </View>
               ))}
             </View>
           )}

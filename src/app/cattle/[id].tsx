@@ -3,6 +3,7 @@ import * as Haptics from "expo-haptics";
 import React, { useState } from "react";
 import { ActivityIndicator, Alert, ScrollView, Text, TouchableOpacity, View } from "react-native";
 
+import { ProductionCardCompact } from "@/components";
 import { ConfirmDialog } from "@/components/confirm-dialog";
 import { DiseaseRecord } from "@/components/disease-record";
 import { IconSymbol } from "@/components/icon-symbol";
@@ -153,6 +154,28 @@ export default function CattleDetailScreen() {
             loadData();
           } catch {
             Alert.alert("Erro", "Não foi possível excluir a doença");
+          }
+        },
+      },
+    ]);
+  };
+
+  const handleDeleteMilkProduction = async (id: string) => {
+    Alert.alert("Confirmar Exclusão", "Tem certeza que deseja excluir este registro de produção?", [
+      {
+        text: "Cancelar",
+        style: "cancel",
+      },
+      {
+        text: "Excluir",
+        style: "destructive",
+        onPress: async () => {
+          try {
+            await milkProductionStorage.delete(id);
+            loadData();
+          } catch (error) {
+            console.error("Erro ao excluir registro:", error);
+            Alert.alert("Erro", "Não foi possível excluir o registro");
           }
         },
       },
@@ -423,29 +446,13 @@ export default function CattleDetailScreen() {
               ) : (
                 <>
                   {milkRecords.map((record) => (
-                    <TouchableOpacity
+                    <ProductionCardCompact
                       key={record.id}
-                      onPress={() => navigation.navigate("MilkProductionCad" as never, { id: record.id } as never)}
-                      className="bg-surface rounded-2xl p-4 border border-border"
-                      style={{ opacity: 1 }}
-                    >
-                      <View className="flex-row items-center justify-between">
-                        <View>
-                          <Text className="text-base font-semibold text-foreground">{formatDate(record.date)}</Text>
-                          <Text className="text-sm text-muted uppercase">
-                            {record.period === "morning"
-                              ? "Manhã"
-                              : record.period === "afternoon"
-                                ? "Tarde"
-                                : "Dia Todo"}
-                          </Text>
-                        </View>
-                        <View className="items-end">
-                          <Text className="text-2xl font-bold text-primary">{record.quantity.toFixed(1)}</Text>
-                          <Text className="text-xs text-muted">Litros</Text>
-                        </View>
-                      </View>
-                    </TouchableOpacity>
+                      milkProduction={record}
+                      handleDelete={() => {
+                        handleDeleteMilkProduction(record.id);
+                      }}
+                    />
                   ))}
                   <TouchableOpacity
                     onPress={() => navigation.navigate("MilkProductionCad" as never, { cattleId: id } as never)}

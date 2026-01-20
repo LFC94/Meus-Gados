@@ -92,3 +92,9 @@ export const STATUS_CATTLE: Record<CattleResult, { color: string; text: string; 
   overdue_pregnancy: { color: "#EF4444", text: "Gestação Atrasada", icon: "🤰" },
   pending_vaccine: { color: "#F59E0B", text: "Vacina Pendente", icon: "💉" },
 };
+
+export const PERIOD_LABELS = {
+  morning: "Manhã",
+  afternoon: "Tarde",
+  full_day: "Dia Todo",
+};
