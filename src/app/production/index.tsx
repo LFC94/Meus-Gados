@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { ActivityIndicator, Alert, RefreshControl, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { ProductionCard } from "@/components";
+import { IconSymbol, ProductionCard } from "@/components";
 import { ScreenContainer } from "@/components/screen-container";
 import { useNavigation } from "@/hooks";
 import { useColors } from "@/hooks/use-colors";
@@ -89,15 +89,25 @@ export default function MilkProductionListScreen() {
       >
         <View className="p-6 gap-4 flex-1" style={{ paddingBottom: insets.bottom }}>
           {/* Reports Navigation - Add this at the top */}
-          <View className="flex-row gap-3 mb-2">
-            <TouchableOpacity
-              onPress={() => navigation.navigate("MilkProductionReports")}
-              className="flex-1 bg-surface border border-border p-4 rounded-xl flex-row items-center justify-center gap-2"
-            >
-              <Text className="text-xl">📊</Text>
-              <Text className="font-semibold text-foreground">Ver Relatórios</Text>
-            </TouchableOpacity>
-          </View>
+          {records.length > 0 && (
+            <View className="flex-row gap-3 mb-2">
+              <TouchableOpacity
+                onPress={() => navigation.navigate("MilkProductionReports")}
+                className="flex-1 bg-surface border border-border p-4 rounded-xl flex-row items-center justify-center gap-2"
+              >
+                <Text className="text-xl">📊</Text>
+                <Text className="font-semibold text-foreground">Ver Relatórios</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => navigation.navigate("MilkProductionCad", {})}
+                className="bg-primary rounded-xl p-4 items-center mt-2 flex-row"
+                style={{ opacity: 1 }}
+              >
+                <IconSymbol name="plus" color={"white"} />
+                <Text className="px-1 text-white font-semibold text-base">Cadastrar Ordenha</Text>
+              </TouchableOpacity>
+            </View>
+          )}
 
           {records.length === 0 ? (
             <View className="flex-1 items-center justify-center py-12">
@@ -123,17 +133,6 @@ export default function MilkProductionListScreen() {
                 />
               ))}
             </View>
-          )}
-
-          {/* Add Button */}
-          {records.length > 0 && (
-            <TouchableOpacity
-              onPress={() => navigation.navigate("MilkProductionCad", {})}
-              className="bg-primary rounded-full p-4 items-center mt-2"
-              style={{ opacity: 1 }}
-            >
-              <Text className="text-white font-semibold text-base">+ Cadastrar Nova Ordenha</Text>
-            </TouchableOpacity>
           )}
         </View>
       </ScrollView>

@@ -22,7 +22,7 @@ const MAPPING = {
   pencil: "edit",
   "gearshape.fill": "settings",
   trash: "delete",
-  plus: "plus-one",
+  plus: "add",
   "xmark.circle.fill": "cancel",
   "slider.horizontal.3": "tune",
   magnifyingglass: "search",
