@@ -112,5 +112,6 @@ export type RootStackParamList = {
   DiseasesCad: { id?: string; cattleId?: string };
   ScheduledNotifications: undefined;
   MilkProductionList: undefined;
+  MilkProductionReports: undefined;
   MilkProductionCad: { id?: string; cattleId?: string };
 };

@@ -16,21 +16,22 @@ import { ThemeProvider } from "@/lib/theme-provider";
 import { RootStackParamList } from "@/types";
 
 import {
-    CattleCadScreen,
-    CattleDetailScreen,
-    CattleListScreen,
-    DiseasesCadScreen,
-    HomeScreen,
-    MilkProductionCadScreen,
-    MilkProductionListScreen,
-    PregnancyAddScreen,
-    PregnancyEditScreen,
-    ScheduledNotificationsScreen,
-    SettingsScreen,
-    VaccineCadScreen,
-    VaccineCatalogCadScreen,
-    VaccineCatalogScreen,
-    VaccinePendingScreen,
+  CattleCadScreen,
+  CattleDetailScreen,
+  CattleListScreen,
+  DiseasesCadScreen,
+  HomeScreen,
+  MilkProductionCadScreen,
+  MilkProductionListScreen,
+  MilkProductionReportsScreen,
+  PregnancyAddScreen,
+  PregnancyEditScreen,
+  ScheduledNotificationsScreen,
+  SettingsScreen,
+  VaccineCadScreen,
+  VaccineCatalogCadScreen,
+  VaccineCatalogScreen,
+  VaccinePendingScreen,
 } from "./_screens";
 
 // Create navigators
@@ -203,6 +204,13 @@ function MainStackNavigator() {
         component={MilkProductionCadScreen}
         options={{
           title: "Registrar Produção",
+        }}
+      />
+      <Stack.Screen
+        name="MilkProductionReports"
+        component={MilkProductionReportsScreen}
+        options={{
+          title: "Relatórios de Produção",
         }}
       />
     </Stack.Navigator>
