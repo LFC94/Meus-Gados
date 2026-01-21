@@ -232,7 +232,7 @@ export default function CattleDetailScreen() {
         <Text className="text-muted text-center">Animal não encontrado</Text>
         <TouchableOpacity
           onPress={() => navigation.goBack()}
-          className="mt-4 bg-primary rounded-full px-6 py-3"
+          className="mt-4 bg-primary rounded-xl px-6 py-3"
           style={{ opacity: 1 }}
         >
           <Text className="text-background font-semibold">Voltar</Text>
@@ -359,7 +359,7 @@ export default function CattleDetailScreen() {
                   <Text className="text-muted text-center mb-4">Nenhuma vacina registrada</Text>
                   <TouchableOpacity
                     onPress={() => navigation.navigate("VaccineCad" as never, { cattleId: id } as never)}
-                    className="bg-primary rounded-full px-6 py-3"
+                    className="bg-primary rounded-xl px-6 py-3"
                     style={{ opacity: 1 }}
                   >
                     <Text className="text-background font-semibold">+ Adicionar Vacina</Text>
@@ -377,7 +377,7 @@ export default function CattleDetailScreen() {
                   ))}
                   <TouchableOpacity
                     onPress={() => navigation.navigate("VaccineCad" as never, { cattleId: id } as never)}
-                    className="bg-primary rounded-full p-4 items-center mt-2"
+                    className="bg-primary rounded-xl p-4 items-center mt-2"
                     style={{ opacity: 1 }}
                   >
                     <Text className="text-background font-semibold">+ Adicionar Vacina</Text>
@@ -394,7 +394,7 @@ export default function CattleDetailScreen() {
                   <Text className="text-muted text-center mb-4">Nenhuma gestação registrada</Text>
                   <TouchableOpacity
                     onPress={() => navigation.navigate("PregnancyAdd" as never, { cattleId: id } as never)}
-                    className="bg-primary rounded-full px-6 py-3"
+                    className="bg-primary rounded-xl px-6 py-3"
                     style={{ opacity: 1 }}
                   >
                     <Text className="text-background font-semibold">+ Registrar Gestação</Text>
@@ -420,7 +420,7 @@ export default function CattleDetailScreen() {
                   ))}
                   <TouchableOpacity
                     onPress={() => navigation.navigate("PregnancyAdd" as never, { cattleId: id } as never)}
-                    className="bg-primary rounded-full p-4 items-center mt-2"
+                    className="bg-primary rounded-xl p-4 items-center mt-2"
                     style={{ opacity: 1 }}
                   >
                     <Text className="text-background font-semibold">+ Registrar Gestação</Text>
@@ -437,7 +437,7 @@ export default function CattleDetailScreen() {
                   <Text className="text-muted text-center mb-4">Nenhuma produção registrada</Text>
                   <TouchableOpacity
                     onPress={() => navigation.navigate("MilkProductionCad" as never, { cattleId: id } as never)}
-                    className="bg-primary rounded-full px-6 py-3"
+                    className="bg-primary rounded-xl px-6 py-3"
                     style={{ opacity: 1 }}
                   >
                     <Text className="text-background font-semibold">+ Registrar Produção</Text>
@@ -456,7 +456,7 @@ export default function CattleDetailScreen() {
                   ))}
                   <TouchableOpacity
                     onPress={() => navigation.navigate("MilkProductionCad" as never, { cattleId: id } as never)}
-                    className="bg-primary rounded-full p-4 items-center mt-2"
+                    className="bg-primary rounded-xl p-4 items-center mt-2"
                     style={{ opacity: 1 }}
                   >
                     <Text className="text-background font-semibold">+ Registrar Produção</Text>
@@ -473,7 +473,7 @@ export default function CattleDetailScreen() {
                   <Text className="text-muted text-center mb-4">Nenhuma doença registrada</Text>
                   <TouchableOpacity
                     onPress={() => navigation.navigate("DiseasesCad" as never, { cattleId: id } as never)}
-                    className="bg-primary rounded-full px-6 py-3"
+                    className="bg-primary rounded-xl px-6 py-3"
                     style={{ opacity: 1 }}
                   >
                     <Text className="text-background font-semibold">+ Registrar Doença</Text>
@@ -491,7 +491,7 @@ export default function CattleDetailScreen() {
                   ))}
                   <TouchableOpacity
                     onPress={() => navigation.navigate("DiseasesCad" as never, { cattleId: id } as never)}
-                    className="bg-primary rounded-full p-4 items-center mt-2"
+                    className="bg-primary rounded-xl p-4 items-center mt-2"
                     style={{ opacity: 1 }}
                   >
                     <Text className="text-background font-semibold">+ Registrar Doença</Text>

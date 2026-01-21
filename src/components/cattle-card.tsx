@@ -91,8 +91,11 @@ export function CattleCardCompact({ cattle, onPress }: CattleCardCompactProps) {
       accessibilityLabel={`Animal ${cattle.number}${cattle.name ? `, ${cattle.name}` : ""}`}
       accessibilityRole="button"
     >
-      <View className="w-8 h-8 rounded-full bg-primary/20 items-center justify-center">
-        <Text className="text-sm">🐄</Text>
+      <View
+        className="w-8 h-8 rounded-full items-center justify-center"
+        style={{ backgroundColor: `${colors.primary}40` }}
+      >
+        <Text className="text-md">🐄</Text>
       </View>
       <View className="flex-1">
         <Text className="text-sm font-semibold text-foreground" numberOfLines={1}>

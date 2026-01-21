@@ -184,7 +184,7 @@ export default function HomeScreen() {
 
             {/* Atrasadas */}
             {stats.overduePregnancies > 0 && (
-              <View className="bg-error/10 rounded-2xl p-4 border border-error">
+              <View className="rounded-2xl p-4 border border-error" style={{ backgroundColor: `${colors.error}20` }}>
                 <Text className="text-error font-semibold">
                   ⚠️ {stats.overduePregnancies} gestação{stats.overduePregnancies > 1 ? "ões" : ""} atrasada
                   {stats.overduePregnancies > 1 ? "s" : ""} - Verificar!
@@ -201,7 +201,10 @@ export default function HomeScreen() {
               style={{ opacity: 1 }}
             >
               <View className="flex-row items-center gap-3">
-                <View className="w-10 h-10 rounded-full bg-primary/20 items-center justify-center">
+                <View
+                  className="w-10 h-10 rounded-full bg-primary items-center justify-center"
+                  style={{ backgroundColor: `${colors.primary}20` }}
+                >
                   <Text className="text-lg">🐄</Text>
                 </View>
                 <Text className="text-foreground font-semibold">Ver Todos os Animais</Text>
@@ -215,7 +218,10 @@ export default function HomeScreen() {
               style={{ opacity: 1 }}
             >
               <View className="flex-row items-center gap-3">
-                <View className="w-10 h-10 rounded-full bg-warning/20 items-center justify-center">
+                <View
+                  className="w-10 h-10 rounded-full items-center justify-center"
+                  style={{ backgroundColor: `${colors.warning}20` }}
+                >
                   <Text className="text-lg">💉</Text>
                 </View>
                 <Text className="text-foreground font-semibold">Vacinas Pendentes</Text>
@@ -229,7 +235,10 @@ export default function HomeScreen() {
               style={{ opacity: 1 }}
             >
               <View className="flex-row items-center gap-3">
-                <View className="w-10 h-10 rounded-full bg-primary/20 items-center justify-center">
+                <View
+                  className="w-10 h-10 rounded-full items-center justify-center"
+                  style={{ backgroundColor: `${colors.primary}20` }}
+                >
                   <Text className="text-lg">🔔</Text>
                 </View>
                 <Text className="text-foreground font-semibold">Notificações Agendadas</Text>

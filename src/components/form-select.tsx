@@ -107,7 +107,8 @@ export function FormSelect({
                       onValueChange(option.value);
                       handleClose();
                     }}
-                    className={`px-4 py-4 border-b border-border ${value === option.value ? "bg-primary/10" : ""}`}
+                    className="px-4 py-4 border-b border-border"
+                    style={{ backgroundColor: value === option.value ? `${colors.primary}20` : "" }}
                   >
                     <Text
                       className="text-base"

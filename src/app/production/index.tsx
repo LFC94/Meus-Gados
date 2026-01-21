@@ -100,7 +100,7 @@ export default function MilkProductionListScreen() {
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={() => navigation.navigate("MilkProductionCad", {})}
-                className="bg-primary rounded-xl p-4 items-center mt-2 flex-row"
+                className="flex-1 bg-primary rounded-xl p-4 items-center flex-row  justify-center gap-2"
                 style={{ opacity: 1 }}
               >
                 <IconSymbol name="plus" color={"white"} />
@@ -115,7 +115,7 @@ export default function MilkProductionListScreen() {
               <Text className="text-muted text-center text-base">Nenhum registro encontrado Ordenha</Text>
               <TouchableOpacity
                 onPress={() => navigation.navigate("MilkProductionCad", {})}
-                className="mt-4 bg-primary rounded-full px-6 py-3"
+                className="mt-4 bg-primary rounded-xl px-6 py-3"
                 style={{ opacity: 1 }}
               >
                 <Text className="text-white font-semibold">+ Cadastrar Primeira Ordenha</Text>

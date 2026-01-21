@@ -30,6 +30,9 @@ export const syncService = {
       const userId = user.uid;
       const currentSyncTime = new Date().toISOString();
 
+      // Sync user info first
+      await this.syncUserInfo(userId, user);
+
       for (const collectionKey of COLLECTIONS_TO_SYNC) {
         await this.syncCollection(userId, collectionKey);
       }
@@ -39,6 +42,28 @@ export const syncService = {
     } catch (error: any) {
       console.error("Sync Error:", error);
       return { success: false, error: error.message };
+    }
+  },
+
+  /**
+   * Syncs user information to Firestore
+   */
+  async syncUserInfo(userId: string, user: any) {
+    try {
+      const userDocRef = firestore().collection("users").doc(userId);
+      const docSnapshot = await userDocRef.get();
+
+      if (!docSnapshot.data()?.nome) {
+        await userDocRef.set(
+          {
+            nome: user.displayName,
+            email: user.email,
+          },
+          { merge: true },
+        );
+      }
+    } catch (error) {
+      console.error("Error syncing user info:", error);
     }
   },
 

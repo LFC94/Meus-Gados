@@ -96,7 +96,7 @@ export default function ScheduledNotificationsScreen() {
                         </View>
                         <TouchableOpacity
                           onPress={() => handleRemove(notification)}
-                          className="px-3 py-1 rounded-full"
+                          className="px-3 py-1 rounded-xl"
                           style={{ backgroundColor: colors.error + "20", opacity: 1 }}
                         >
                           <Text className="text-xs font-semibold" style={{ color: colors.error }}>
@@ -125,7 +125,7 @@ export default function ScheduledNotificationsScreen() {
                         </View>
                         <TouchableOpacity
                           onPress={() => handleRemove(notification)}
-                          className="px-3 py-1 rounded-full"
+                          className="px-3 py-1 rounded-xl"
                           style={{ backgroundColor: colors.error + "20", opacity: 1 }}
                         >
                           <Text className="text-xs font-semibold" style={{ color: colors.error }}>

@@ -20,7 +20,7 @@ export default function PendingVaccinesScreen() {
   useFocusEffect(
     React.useCallback(() => {
       loadPendingVaccines();
-    }, [])
+    }, []),
   );
 
   const loadPendingVaccines = async () => {
@@ -109,7 +109,8 @@ export default function PendingVaccinesScreen() {
                             previousRecordId: item.id,
                           })
                         }
-                        className="flex-1 bg-primary/10 rounded-lg p-2 items-center mr-2"
+                        className="flex-1  rounded-lg p-2 items-center mr-2"
+                        style={{ backgroundColor: `${colors.primary}10` }}
                       >
                         <Text className="text-primary font-semibold text-sm">Aplicar Dose</Text>
                       </TouchableOpacity>

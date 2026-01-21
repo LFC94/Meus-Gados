@@ -271,7 +271,8 @@ export default function SettingsScreen() {
                       <TouchableOpacity
                         onPress={handleManualSync}
                         disabled={isSyncing}
-                        className="flex-1 bg-primary/10 border border-primary/20 py-3 rounded-xl flex-row justify-center items-center gap-2"
+                        className="flex-1 border border-primary py-3 rounded-xl flex-row justify-center items-center gap-2"
+                        style={{ backgroundColor: `${colors.primary}10` }}
                       >
                         {isSyncing ? (
                           <ActivityIndicator size="small" color={colors.primary} />

@@ -200,7 +200,7 @@ export default function MilkProductionCadScreen() {
         <TouchableOpacity
           onPress={handleSave}
           disabled={loading}
-          className="bg-primary rounded-full p-4 items-center"
+          className="bg-primary rounded-xl p-4 items-center"
           style={{ opacity: loading ? 0.6 : 1 }}
         >
           {loading ? (

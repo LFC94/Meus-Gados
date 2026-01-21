@@ -111,7 +111,7 @@ export default function VaccineCatalogScreen() {
               <Text className="text-muted text-center text-base">Nenhuma vaccine cadastrada no catálogo</Text>
               <TouchableOpacity
                 onPress={() => navigation.navigate("VaccineCatalogCad")}
-                className="mt-4 bg-primary rounded-full px-6 py-3"
+                className="mt-4 bg-primary rounded-xl px-6 py-3"
                 style={{ opacity: 1 }}
               >
                 <Text className="text-white font-semibold">+ Cadastrar Primeira Vacina</Text>
@@ -190,7 +190,7 @@ export default function VaccineCatalogScreen() {
           {vaccines.length > 0 && (
             <TouchableOpacity
               onPress={() => navigation.navigate("VaccineCatalogCad")}
-              className="bg-primary rounded-full p-4 items-center mt-2"
+              className="bg-primary rounded-xl p-4 items-center mt-2"
               style={{ opacity: 1 }}
             >
               <Text className="text-white font-semibold text-base">+ Cadastrar Nova Vacina</Text>

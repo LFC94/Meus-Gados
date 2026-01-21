@@ -285,7 +285,7 @@ export default function CattleListScreen() {
               {!searchQuery && (
                 <TouchableOpacity
                   onPress={() => navigation.navigate("CattleCad")}
-                  className="mt-4 bg-primary rounded-full px-6 py-3"
+                  className="mt-4 bg-primary rounded-xl px-6 py-3"
                   style={{ opacity: 1 }}
                 >
                   <Text className="text-white font-semibold">+ Cadastrar Primeiro Animal</Text>
@@ -308,7 +308,7 @@ export default function CattleListScreen() {
               {/* Add Button */}
               <TouchableOpacity
                 onPress={() => navigation.navigate("CattleCad")}
-                className="bg-primary rounded-full p-4 items-center mt-4"
+                className="bg-primary rounded-xl p-4 items-center mt-4"
                 style={{ opacity: 1 }}
               >
                 <Text className="text-background font-semibold text-base">+ Cadastrar Novo Animal</Text>

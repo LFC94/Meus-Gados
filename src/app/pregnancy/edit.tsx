@@ -249,9 +249,9 @@ export default function EditPregnancyScreen() {
                   <TouchableOpacity
                     onPress={() => handleResultChange("pending")}
                     className={`p-3 rounded-lg border-2 ${
-                      formData.result === "pending" ? "border-primary bg-primary/10" : "border-border"
+                      formData.result === "pending" ? "border-primary" : "border-border"
                     }`}
-                    style={{ opacity: 1 }}
+                    style={{ backgroundColor: `${colors.primary}10` }}
                   >
                     <Text
                       className={`font-semibold ${formData.result === "pending" ? "text-primary" : "text-foreground"}`}
