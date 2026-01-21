@@ -122,29 +122,27 @@ export default function VaccineCatalogCadScreen() {
 
   return (
     <ScreenContainer className="p-0">
+      {/* Templates Rápidos */}
+      {formData.name === "" && (
+        <View className="gap-2 p-4">
+          <Text className="text-sm font-semibold text-foreground">Usar Modelo Rápido</Text>
+          <View className="flex-row gap-2 border border-border rounded-lg p-2 bg-surface" style={{ flexWrap: "wrap" }}>
+            {COMMON_VACCINES.map((template, index) => (
+              <TouchableOpacity
+                key={index}
+                onPress={() => handleUseTemplate(template)}
+                className="bg-muted border border-border rounded-lg px-3 py-2"
+                style={{ opacity: 1 }}
+              >
+                <Text className="text-sm text-foreground">{template.name}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        </View>
+      )}
+
       <ScrollView contentContainerStyle={{ flexGrow: 1 }} className="p-4" style={{ paddingBottom: insets.bottom }}>
         <View className="gap-6">
-          {/* Templates Rápidos */}
-          {formData.name === "" && (
-            <View className="gap-2">
-              <Text className="text-sm font-semibold text-foreground">Usar Modelo Rápido</Text>
-              <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                <View className="flex-row gap-2">
-                  {COMMON_VACCINES.map((template, index) => (
-                    <TouchableOpacity
-                      key={index}
-                      onPress={() => handleUseTemplate(template)}
-                      className="bg-surface border border-border rounded-lg px-3 py-2"
-                      style={{ opacity: 1 }}
-                    >
-                      <Text className="text-sm text-foreground">{template.name}</Text>
-                    </TouchableOpacity>
-                  ))}
-                </View>
-              </ScrollView>
-            </View>
-          )}
-
           {/* Status Badge */}
           {!formData.isActive && (
             <View className="bg-error/10 rounded-xl p-4 border border-error">

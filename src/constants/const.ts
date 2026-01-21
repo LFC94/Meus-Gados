@@ -10,16 +10,16 @@ export const NOT_ADMIN_ERR_MSG = "You do not have required permission (10002)";
  * Vacinas comuns no Brasil para sugestão
  */
 export const COMMON_VACCINES = [
-  { name: "Febre Aftosa", daysBetweenDoses: 180, description: "Imunização contra Febre Aftosa" },
+  { name: "Anaplasmose", daysBetweenDoses: 180, description: "Prevenção de Anaplasmose" },
   { name: "Brucelose", daysBetweenDoses: 365, description: "Imunização contra Brucelose (B19)" },
   { name: "Carbúnculo Sintomático", daysBetweenDoses: 180, description: "Prevenção de Carbúnculo" },
-  { name: "Raiva", daysBetweenDoses: 365, description: "Imunização contra Raiva" },
   { name: "Clostridioses", daysBetweenDoses: 180, description: "Vacina múltipla contra clostrídios" },
+  { name: "Diarréria Viral Bovina", daysBetweenDoses: 180, description: "Proteção contra DV B" },
+  { name: "Ectima Contagioso", daysBetweenDoses: 365, description: "Vacina contra ectima (caroço)" },
+  { name: "Febre Aftosa", daysBetweenDoses: 180, description: "Imunização contra Febre Aftosa" },
   { name: "IBR/BVD", daysBetweenDoses: 180, description: "Reprodução - Rinotraqueíte e Diarreia" },
   { name: "Leptospirose", daysBetweenDoses: 180, description: "Prevenção de Leptospirose" },
-  { name: "Anaplasmose", daysBetweenDoses: 180, description: "Prevenção de Anaplasmose" },
-  { name: "Ectima Contagioso", daysBetweenDoses: 365, description: "Vacina contra ectima (caroço)" },
-  { name: "Diarréria Viral Bovina", daysBetweenDoses: 180, description: "Proteção contra DV B" },
+  { name: "Raiva", daysBetweenDoses: 365, description: "Imunização contra Raiva" },
 ];
 
 /**
