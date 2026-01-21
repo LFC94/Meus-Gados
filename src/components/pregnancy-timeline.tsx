@@ -62,10 +62,7 @@ export function PregnancyTimeline({
       <View className="flex-row justify-between items-start">
         <View>
           <Text className="text-lg font-semibold text-foreground">Gestação</Text>
-          <View
-            className="px-2 py-0.5 rounded-full mt-1 self-start"
-            style={{ backgroundColor: `${getStatusColor()}20` }}
-          >
+          <View className="px-2 py-0.5 rounded-full mt-1 self-start bg-primary/20">
             <Text className="text-xs font-medium" style={{ color: getStatusColor() }}>
               {getStatusText()}
             </Text>

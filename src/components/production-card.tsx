@@ -56,7 +56,7 @@ export function ProductionCard({ milkProduction, onPress, handleDelete }: Produc
         <View className="flex-1">
           <Text className="text-sm text-muted mt-1">Nº {milkProduction.cattle.number}</Text>
           <View className="flex-row items-center gap-2 mt-2">
-            <View className="px-2 py-1 rounded-md" style={{ backgroundColor: `${colors.primary}30` }}>
+            <View className="px-2 py-1 rounded-md bg-primary/30">
               <Text className="text-xs font-medium text-primary uppercase">{PERIOD_LABELS[milkProduction.period]}</Text>
             </View>
             <Text className="text-sm text-muted">{formatDate(milkProduction.date)}</Text>
@@ -94,7 +94,7 @@ export function ProductionCardCompact({ milkProduction, onPress, handleDelete }:
       <View className="flex-row items-start justify-between">
         <View className=" items-center gap-2">
           <Text className="text-sm text-muted">{formatDate(milkProduction.date)}</Text>
-          <View className="px-2 py-1 rounded-md" style={{ backgroundColor: `${colors.primary}30` }}>
+          <View className="px-2 py-1 rounded-md bg-primary/30">
             <Text className="text-xs font-medium text-primary uppercase">{PERIOD_LABELS[milkProduction.period]}</Text>
           </View>
         </View>

@@ -248,10 +248,9 @@ export default function EditPregnancyScreen() {
                 <View className="gap-2">
                   <TouchableOpacity
                     onPress={() => handleResultChange("pending")}
-                    className={`p-3 rounded-lg border-2 ${
+                    className={`p-3 rounded-lg border-2 bg-primary/10 ${
                       formData.result === "pending" ? "border-primary" : "border-border"
                     }`}
-                    style={{ backgroundColor: `${colors.primary}10` }}
                   >
                     <Text
                       className={`font-semibold ${formData.result === "pending" ? "text-primary" : "text-foreground"}`}
@@ -265,7 +264,6 @@ export default function EditPregnancyScreen() {
                     className={`p-3 rounded-lg border-2 ${
                       formData.result === "success" ? "border-success bg-success/10" : "border-border"
                     }`}
-                    style={{ opacity: 1 }}
                   >
                     <Text
                       className={`font-semibold ${formData.result === "success" ? "text-success" : "text-foreground"}`}

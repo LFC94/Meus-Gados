@@ -106,10 +106,7 @@ export function VaccineBadge({ vaccine }: VaccineBadgeProps) {
   const status = getStatusInfo();
 
   return (
-    <View
-      className="px-2 py-1 rounded-full flex-row items-center gap-1"
-      style={{ backgroundColor: `${status.color}20` }}
-    >
+    <View className="px-2 py-1 rounded-full flex-row items-center gap-1 bg-primary/20">
       <View className="w-2 h-2 rounded-full" style={{ backgroundColor: status.color }} />
       <Text className="text-xs font-medium" style={{ color: status.color }}>
         {status.label}

@@ -78,10 +78,7 @@ export default function ProductionReportsScreen() {
             <>
               {/* Cards Principais */}
               <View className="flex-row gap-4">
-                <View
-                  className="flex-1 p-4 rounded-2xl border border-primary"
-                  style={{ backgroundColor: `${colors.primary}10` }}
-                >
+                <View className="flex-1 p-4 rounded-2xl border border-primary bg-primary/10">
                   <Text className="text-muted text-xs font-medium uppercase mb-1">Total Mês</Text>
                   <Text className="text-2xl font-bold text-foreground">
                     {data.totalProductionMonth.toFixed(1)} <Text className="text-sm font-normal text-muted">L</Text>
