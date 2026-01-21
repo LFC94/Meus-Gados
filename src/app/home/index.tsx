@@ -210,6 +210,23 @@ export default function HomeScreen() {
             </TouchableOpacity>
 
             <TouchableOpacity
+              onPress={() => navigation.navigate("MilkProductionList")}
+              className="bg-surface rounded-2xl p-4 border border-border flex-row items-center justify-between"
+              style={{ opacity: 1 }}
+            >
+              <View className="flex-row items-center gap-3">
+                <View
+                  className="w-10 h-10 rounded-full items-center justify-center"
+                  style={{ backgroundColor: "#ffffff20" }}
+                >
+                  <Text className="text-lg">🥛</Text>
+                </View>
+                <Text className="text-foreground font-semibold">Produção de Leite</Text>
+              </View>
+              <IconSymbol name="chevron.right" size={20} color={colors.muted} />
+            </TouchableOpacity>
+
+            <TouchableOpacity
               onPress={() => navigation.navigate("VaccinePending")}
               className="bg-surface rounded-2xl p-4 border border-border flex-row items-center justify-between"
               style={{ opacity: 1 }}
@@ -229,7 +246,10 @@ export default function HomeScreen() {
               style={{ opacity: 1 }}
             >
               <View className="flex-row items-center gap-3">
-                <View className="w-10 h-10 rounded-full items-center justify-center bg-primary/20">
+                <View
+                  className="w-10 h-10 rounded-full items-center justify-center"
+                  style={{ backgroundColor: "#ffd90020" }}
+                >
                   <Text className="text-lg">🔔</Text>
                 </View>
                 <Text className="text-foreground font-semibold">Notificações Agendadas</Text>
