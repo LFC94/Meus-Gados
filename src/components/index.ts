@@ -1,4 +1,5 @@
 // Export all components
+export { CardEdit } from "./card-edit";
 export { CattleCard, CattleCardCompact } from "./cattle-card";
 export { AlertDialog, ConfirmDialog } from "./confirm-dialog";
 export { DiseaseRecord } from "./disease-record";

@@ -4,8 +4,8 @@ import React, { useState } from "react";
 import { ActivityIndicator, RefreshControl, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+import { CardEdit } from "@/components";
 import { ConfirmDialog } from "@/components/confirm-dialog";
-import { IconSymbol } from "@/components/icon-symbol";
 import { ScreenContainer } from "@/components/screen-container";
 import { useNavigation } from "@/hooks";
 import { useColors } from "@/hooks/use-colors";
@@ -120,68 +120,45 @@ export default function VaccineCatalogScreen() {
           ) : (
             <View className="gap-3">
               {vaccines.map((vaccine) => (
-                <View
+                <CardEdit
                   key={vaccine.id}
-                  className="bg-surface rounded-2xl p-4 border border-border"
-                  style={{ opacity: 1 }}
+                  title={vaccine.name}
+                  icon="💉"
+                  handleDelete={() => setVaccineToDelete(vaccine)}
+                  handleEdit={() => navigation.navigate("VaccineCatalogCad", { id: vaccine.id })}
                 >
-                  <View className="flex-row items-start justify-between">
+                  <View className="flex-row">
                     <View className="flex-1">
-                      <View className="flex-row items-center gap-2">
-                        <Text className="text-xl">💉</Text>
-                        <Text className="text-lg font-semibold text-foreground">{vaccine.name}</Text>
-                        {!vaccine.isActive && (
-                          <Text className="text-xs px-2 py-0.5 bg-error/20 text-error rounded-full">Inativa</Text>
-                        )}
-                      </View>
-
                       {vaccine.manufacturer && (
                         <Text className="text-sm text-muted mt-1">Fabricante: {vaccine.manufacturer}</Text>
                       )}
 
                       <View className="flex-row gap-4 mt-2">
-                        {vaccine.batchNumber && <Text className="text-xs text-muted">Lote: {vaccine.batchNumber}</Text>}
+                        {!vaccine.batchNumber && (
+                          <Text className="text-xs text-muted">Lote: {vaccine.batchNumber}</Text>
+                        )}
                         {vaccine.daysBetweenDoses !== undefined && vaccine.daysBetweenDoses > 0 && (
                           <Text className="text-xs text-muted">Intervalo: {vaccine.daysBetweenDoses} dias</Text>
                         )}
                       </View>
-
                       {vaccine.description && (
                         <Text className="text-sm text-muted mt-2" numberOfLines={2}>
                           {vaccine.description}
                         </Text>
                       )}
-
-                      <View className="flex-row items-center gap-2 mt-3">
-                        <View className="bg-surface border border-border rounded-lg px-3 py-1">
-                          <Text className="text-xs text-muted">
-                            {vaccine.recordCount} aplicação{vaccine.recordCount !== 1 ? "ões" : ""}
-                          </Text>
-                        </View>
-                        {vaccine.lastAppliedDate && (
-                          <Text className="text-xs text-muted">Última: {formatDate(vaccine.lastAppliedDate)}</Text>
-                        )}
-                      </View>
                     </View>
-
-                    <View className="flex-row gap-2">
-                      <TouchableOpacity
-                        onPress={() => navigation.navigate("VaccineCatalogCad", { id: vaccine.id })}
-                        className="w-8 h-8 items-center justify-center"
-                        style={{ opacity: 1 }}
-                      >
-                        <IconSymbol name="pencil" size={18} color={colors.primary} />
-                      </TouchableOpacity>
-                      <TouchableOpacity
-                        onPress={() => setVaccineToDelete(vaccine)}
-                        className="w-8 h-8 items-center justify-center"
-                        style={{ opacity: 1 }}
-                      >
-                        <IconSymbol name="trash" size={18} color="#EF4444" />
-                      </TouchableOpacity>
+                    <View className="flex items-end gap-2 ">
+                      <View className="bg-surface border border-border rounded-lg px-3 py-1">
+                        <Text className="text-xs text-muted">
+                          {vaccine.recordCount} aplicação{vaccine.recordCount !== 1 ? "ões" : ""}
+                        </Text>
+                      </View>
+                      {vaccine.lastAppliedDate && (
+                        <Text className="text-xs text-muted">Última: {formatDate(vaccine.lastAppliedDate)}</Text>
+                      )}
                     </View>
                   </View>
-                </View>
+                </CardEdit>
               ))}
             </View>
           )}

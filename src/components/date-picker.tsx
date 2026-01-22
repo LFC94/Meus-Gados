@@ -1,5 +1,5 @@
 import DateTimePicker from "@react-native-community/datetimepicker";
-import React, { useState } from "react";
+import { useState } from "react";
 import { Platform, Text, TouchableOpacity, View } from "react-native";
 
 import { useColors } from "@/hooks/use-colors";
@@ -68,19 +68,19 @@ export function CustomDatePicker({
   return (
     <View className="gap-2">
       {label && <Text className="text-sm font-semibold text-foreground">{label}</Text>}
-      <View className="flex-row items-center gap-2">
+      <View className="flex-row items-center gap-1">
         <TouchableOpacity
           onPress={() => !disabled && setShowPicker(true)}
           disabled={disabled}
-          className="flex-1 bg-surface rounded-xl px-4 py-3 border border-border flex-row items-center justify-between"
-          style={{ opacity: disabled ? 0.5 : 1, height: 50 }}
+          className="flex-1 bg-surface rounded-xl px-4 py-2 border border-border flex-row items-center justify-between"
+          style={{ opacity: disabled ? 0.5 : 1, height: 43 }}
         >
           <Text className="text-base" style={{ color: value ? colors.foreground : colors.muted }}>
             {formatDate(value)}
           </Text>
           {value && !disabled && (
             <TouchableOpacity onPress={handleClear} className="p-1 -mr-2">
-              <IconSymbol name="xmark.circle.fill" size={20} color={colors.muted} />
+              <IconSymbol name="xmark.circle.fill" size={18} color={colors.muted} />
             </TouchableOpacity>
           )}
         </TouchableOpacity>

@@ -1,6 +1,6 @@
 import { RouteProp, useRoute } from "@react-navigation/native";
 import * as Haptics from "expo-haptics";
-import React, { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { ActivityIndicator, Alert, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -131,7 +131,7 @@ export default function VaccineCatalogCadScreen() {
               <TouchableOpacity
                 key={index}
                 onPress={() => handleUseTemplate(template)}
-                className="bg-muted border border-border rounded-lg px-3 py-2"
+                className="bg-surface border border-border rounded-lg px-3 py-2"
                 style={{ opacity: 1 }}
               >
                 <Text className="text-sm text-foreground">{template.name}</Text>
