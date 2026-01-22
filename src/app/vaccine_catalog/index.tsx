@@ -134,9 +134,7 @@ export default function VaccineCatalogScreen() {
                       )}
 
                       <View className="flex-row gap-4 mt-2">
-                        {!vaccine.batchNumber && (
-                          <Text className="text-xs text-muted">Lote: {vaccine.batchNumber}</Text>
-                        )}
+                        {vaccine.batchNumber && <Text className="text-xs text-muted">Lote: {vaccine.batchNumber}</Text>}
                         {vaccine.daysBetweenDoses !== undefined && vaccine.daysBetweenDoses > 0 && (
                           <Text className="text-xs text-muted">Intervalo: {vaccine.daysBetweenDoses} dias</Text>
                         )}

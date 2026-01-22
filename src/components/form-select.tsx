@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Modal, ScrollView, Text, TouchableOpacity, View } from "react-native";
 
 import { useColors } from "@/hooks/use-colors";
@@ -76,21 +76,20 @@ export function FormSelect({
             className="bg-surface rounded-2xl overflow-hidden shadow-lg border border-border"
             style={{ maxHeight: "80%" }}
           >
-            <View className="p-4 border-b border-border flex-row justify-between items-center bg-muted/10">
+            <View className="p-3 border-b border-border flex-row justify-between items-center bg-muted/10">
               <Text className="font-bold text-lg text-foreground">{label}</Text>
               <TouchableOpacity onPress={handleClose} className="p-1">
                 <IconSymbol name="xmark.circle.fill" size={24} color={colors.muted} />
               </TouchableOpacity>
             </View>
 
-            <View className="px-4 py-2 border-b border-border bg-surface">
+            <View className="py-2 border-b border-border bg-surface">
               <FormInput
                 label=""
                 value={search}
                 onChangeText={setSearch}
                 placeholder="Pesquisar..."
                 containerStyle={{ margin: 0 }}
-                inputStyle={{ backgroundColor: colors.background }}
               />
             </View>
 

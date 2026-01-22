@@ -2,7 +2,6 @@ import { Alert, Text, View } from "react-native";
 
 import { PERIOD_LABELS } from "@/constants/const";
 import { useNavigation } from "@/hooks";
-import { useColors } from "@/hooks/use-colors";
 import { formatDate } from "@/lib/helpers";
 import { milkProductionStorage } from "@/lib/storage";
 import { Cattle, MilkProductionRecord } from "@/types";
@@ -11,7 +10,6 @@ import { CardEdit } from "./card-edit";
 
 interface ProductionCardProps {
   milkProduction: MilkProductionRecord & { cattle: Cattle };
-  onPress?: () => void;
 }
 
 export function ProductionCard({ milkProduction }: ProductionCardProps) {
@@ -65,12 +63,10 @@ export function ProductionCard({ milkProduction }: ProductionCardProps) {
 
 interface ProductionCardCompactProps {
   milkProduction: MilkProductionRecord;
-  onPress?: () => void;
 }
 
 export function ProductionCardCompact({ milkProduction }: ProductionCardCompactProps) {
   const navigation = useNavigation();
-  const colors = useColors();
 
   const handleDelete = async () => {
     Alert.alert("Excluir Registro", `Tem certeza que deseja excluir o registro de este registro de produção?`, [

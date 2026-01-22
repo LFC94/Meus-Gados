@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { StyleProp, Text, TextInput, TextStyle, View, ViewStyle } from "react-native";
 
 import { useColors } from "@/hooks/use-colors";
@@ -49,12 +49,14 @@ export function FormInput({
     return (
       <View className="flex-1" style={containerStyle}>
         <View className="flex-row items-center justify-between">
-          <View className="flex-row items-center gap-1">
-            <Text className="text-sm font-medium text-foreground" style={labelStyle}>
-              {label}
-            </Text>
-            {required && <Text className="text-error">*</Text>}
-          </View>
+          {label && (
+            <View className="flex-row items-center gap-1">
+              <Text className="text-sm font-medium text-foreground" style={labelStyle}>
+                {label}
+              </Text>
+              {required && <Text className="text-error">*</Text>}
+            </View>
+          )}
           <TextInput
             value={value}
             onChangeText={onChangeText}
@@ -88,12 +90,14 @@ export function FormInput({
 
   return (
     <View className="gap-1.5" style={containerStyle}>
-      <View className="flex-row items-center gap-1">
-        <Text className="text-sm font-medium text-foreground" style={labelStyle}>
-          {label}
-        </Text>
-        {required && <Text className="text-error">*</Text>}
-      </View>
+      {label && (
+        <View className="flex-row items-center gap-1">
+          <Text className="text-sm font-medium text-foreground" style={labelStyle}>
+            {label}
+          </Text>
+          {required && <Text className="text-error">*</Text>}
+        </View>
+      )}
       <View
         className={`rounded-xl px-4 py-3 border ${
           error ? "border-error" : isFocused ? "border-primary" : "border-border"
