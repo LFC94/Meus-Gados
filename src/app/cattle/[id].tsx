@@ -160,28 +160,6 @@ export default function CattleDetailScreen() {
     ]);
   };
 
-  const handleDeleteMilkProduction = async (id: string) => {
-    Alert.alert("Confirmar Exclusão", "Tem certeza que deseja excluir este registro de produção?", [
-      {
-        text: "Cancelar",
-        style: "cancel",
-      },
-      {
-        text: "Excluir",
-        style: "destructive",
-        onPress: async () => {
-          try {
-            await milkProductionStorage.delete(id);
-            loadData();
-          } catch (error) {
-            console.error("Erro ao excluir registro:", error);
-            Alert.alert("Erro", "Não foi possível excluir o registro");
-          }
-        },
-      },
-    ]);
-  };
-
   const getStatusBadge = (): CattleResult => {
     // Check for disease in treatment
     const inDeath = diseases.find((d) => d.result === "death");
@@ -446,13 +424,7 @@ export default function CattleDetailScreen() {
               ) : (
                 <>
                   {milkRecords.map((record) => (
-                    <ProductionCardCompact
-                      key={record.id}
-                      milkProduction={record}
-                      handleDelete={() => {
-                        handleDeleteMilkProduction(record.id);
-                      }}
-                    />
+                    <ProductionCardCompact key={record.id} milkProduction={record} />
                   ))}
                   <TouchableOpacity
                     onPress={() => navigation.navigate("MilkProductionCad" as never, { cattleId: id } as never)}

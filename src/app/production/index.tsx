@@ -1,6 +1,6 @@
 import { useFocusEffect } from "@react-navigation/native";
 import React, { useState } from "react";
-import { ActivityIndicator, Alert, RefreshControl, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, RefreshControl, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { IconSymbol, ProductionCard } from "@/components";
@@ -49,28 +49,6 @@ export default function MilkProductionListScreen() {
     } finally {
       setRefreshing(false);
     }
-  };
-
-  const handleDelete = async (id: string, cattleName: string) => {
-    Alert.alert("Excluir Registro", `Tem certeza que deseja excluir o registro de ${cattleName}?`, [
-      {
-        text: "Cancelar",
-        style: "cancel",
-      },
-      {
-        text: "Excluir",
-        style: "destructive",
-        onPress: async () => {
-          try {
-            await milkProductionStorage.delete(id);
-            loadData();
-          } catch (error) {
-            console.error("Erro ao excluir registro:", error);
-            Alert.alert("Erro", "Não foi possível excluir o registro");
-          }
-        },
-      },
-    ]);
   };
 
   if (loading && !refreshing) {
@@ -124,13 +102,7 @@ export default function MilkProductionListScreen() {
           ) : (
             <View className="gap-3">
               {records.map((item) => (
-                <ProductionCard
-                  key={item.id}
-                  milkProduction={item}
-                  handleDelete={() => {
-                    handleDelete(item.id, item.cattle.name || `Animal ${item.cattle.number}`);
-                  }}
-                />
+                <ProductionCard key={item.id} milkProduction={item} />
               ))}
             </View>
           )}

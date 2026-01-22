@@ -12,10 +12,15 @@ export function CardEdit({ children, title, icon, handleDelete, handleEdit }: Ca
     <View className="bg-surface rounded-2xl p-4 border border-border" style={{ opacity: 1 }}>
       <View className="flex-row items-start justify-between">
         <View className="flex-1">
-          <View className="flex-row items-center gap-2">
-            {icon && <Text className="text-xl">{icon}</Text>}
-            {title && <Text className="text-lg font-semibold text-foreground">{title}</Text>}
-          </View>
+          {(icon || title) && (
+            <View
+              className="flex-row items-center gap-2 border-b mb-2"
+              style={{ borderColor: "#dadada", borderStyle: "dotted" }}
+            >
+              {icon && <Text className="text-xl">{icon}</Text>}
+              {title && <Text className="text-lg font-semibold text-foreground">{title}</Text>}
+            </View>
+          )}
           {children}
         </View>
       </View>
@@ -25,7 +30,7 @@ export function CardEdit({ children, title, icon, handleDelete, handleEdit }: Ca
           {handleEdit && (
             <TouchableOpacity
               onPress={() => handleEdit()}
-              className="flex-1 bg-primary/10 rounded-lg p-3 flex-row items-center justify-center gap-2"
+              className="flex-1 bg-primary/10 rounded-lg p-2 flex-row items-center justify-center gap-2"
             >
               <Text className="text-xl">✏️</Text>
               <Text className="text-primary font-semibold">Editar</Text>
@@ -34,7 +39,7 @@ export function CardEdit({ children, title, icon, handleDelete, handleEdit }: Ca
           {handleDelete && (
             <TouchableOpacity
               onPress={() => handleDelete()}
-              className="flex-1 bg-red-50 dark:bg-red-900/10 rounded-lg p-3 flex-row items-center justify-center gap-2"
+              className="flex-1 bg-red-50 dark:bg-red-900/10 rounded-lg p-2 flex-row items-center justify-center gap-2"
             >
               <Text className="text-xl">🗑️</Text>
               <Text className="text-red-600 dark:text-red-400 font-semibold">Excluir</Text>
