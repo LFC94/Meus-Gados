@@ -53,25 +53,6 @@ export default function HomeScreen() {
           continue;
         }
 
-        // Check pregnancy status
-        const activePregnancy = pregnanciesData.find((p) => p.cattleId === animal.id && p.result === "pending");
-        if (activePregnancy) {
-          const expectedBirthDate = new Date(activePregnancy.expectedBirthDate);
-          if (today > expectedBirthDate) {
-            overduePregnancies++;
-          } else {
-            pregnant++;
-          }
-          continue; // Pregnant animals are counted separately
-        }
-
-        // Check disease status
-        const inTreat = diseasesData.find((d) => d.cattleId === animal.id && d.result === "in_treatment");
-        if (inTreat) {
-          inTreatment++;
-          continue; // Animals in treatment are counted separately
-        }
-
         // Check vaccine status
         const animalVaccines = vaccinesData.filter((v) => v.cattleId === animal.id);
         const hasPendingVaccine = animalVaccines.some((v) => {
@@ -81,7 +62,24 @@ export default function HomeScreen() {
         });
         if (hasPendingVaccine) {
           pendingVaccines++;
-          continue; // Animals with pending vaccines are counted separately
+        }
+
+        // Check pregnancy status
+        const activePregnancy = pregnanciesData.find((p) => p.cattleId === animal.id && p.result === "pending");
+        if (activePregnancy) {
+          const expectedBirthDate = new Date(activePregnancy.expectedBirthDate);
+          if (today > expectedBirthDate) {
+            overduePregnancies++;
+          } else {
+            pregnant++;
+          }
+        }
+
+        // Check disease status
+        const inTreat = diseasesData.find((d) => d.cattleId === animal.id && d.result === "in_treatment");
+        if (inTreat) {
+          inTreatment++;
+          continue; // Animals in treatment are counted separately
         }
 
         // If no special status, count as healthy
@@ -143,16 +141,16 @@ export default function HomeScreen() {
                 <Text className="text-sm text-muted mt-2">Saudáveis</Text>
               </TouchableOpacity>
 
-              {/* Gestantes */}
+              {/* Em Tratamento */}
               <TouchableOpacity
                 className="flex-1 bg-surface rounded-2xl p-4 border border-border"
                 style={{ opacity: 1 }}
-                onPress={() => navigation.navigate("CattleList", { status: "pregnancy" })}
+                onPress={() => navigation.navigate("CattleList", { status: "in_treatment" })}
               >
-                <Text className="text-3xl font-bold" style={{ color: "#3B82F6" }}>
-                  {stats.pregnant}
+                <Text className="text-3xl font-bold" style={{ color: "#EF4444" }}>
+                  {stats.inTreatment}
                 </Text>
-                <Text className="text-sm text-muted mt-2">Gestantes</Text>
+                <Text className="text-sm text-muted mt-2">Em Tratamento</Text>
               </TouchableOpacity>
             </View>
 
@@ -166,19 +164,20 @@ export default function HomeScreen() {
                 <Text className="text-3xl font-bold" style={{ color: "#F59E0B" }}>
                   {stats.pendingVaccines}
                 </Text>
-                <Text className="text-sm text-muted mt-2">Vacinas Pend.</Text>
+                <Text className="text-sm text-muted mt-2" numberOfLines={1}>
+                  Vacinas Pendentes
+                </Text>
               </TouchableOpacity>
-
-              {/* Em Tratamento */}
+              {/* Gestantes */}
               <TouchableOpacity
                 className="flex-1 bg-surface rounded-2xl p-4 border border-border"
                 style={{ opacity: 1 }}
-                onPress={() => navigation.navigate("CattleList", { status: "in_treatment" })}
+                onPress={() => navigation.navigate("CattleList", { status: "pregnancy" })}
               >
-                <Text className="text-3xl font-bold" style={{ color: "#EF4444" }}>
-                  {stats.inTreatment}
+                <Text className="text-3xl font-bold" style={{ color: "#3B82F6" }}>
+                  {stats.pregnant}
                 </Text>
-                <Text className="text-sm text-muted mt-2">Em Tratamento</Text>
+                <Text className="text-sm text-muted mt-2">Gestantes</Text>
               </TouchableOpacity>
             </View>
 

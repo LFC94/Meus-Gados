@@ -3,7 +3,7 @@ import * as Haptics from "expo-haptics";
 import React, { useState } from "react";
 import { ActivityIndicator, Alert, ScrollView, Text, TouchableOpacity, View } from "react-native";
 
-import { ProductionCardCompact } from "@/components";
+import { CardEdit, ProductionCardCompact } from "@/components";
 import { ConfirmDialog } from "@/components/confirm-dialog";
 import { DiseaseRecord } from "@/components/disease-record";
 import { IconSymbol } from "@/components/icon-symbol";
@@ -49,7 +49,7 @@ export default function CattleDetailScreen() {
   useScreenHeader("Detalhes do Animal", undefined, () => (
     <TouchableOpacity
       onPress={() => navigation.navigate("CattleCad", { id })}
-      className="w-10 h-10 items-center justify-center"
+      className="w-10 h-10 items-center justify-center mr-2"
       style={{ opacity: 1 }}
     >
       <IconSymbol name="pencil" size={20} color={colors.primary} />
@@ -286,47 +286,36 @@ export default function CattleDetailScreen() {
             <View className="gap-3">
               <Text className="text-base font-semibold text-foreground">Informações do Animal</Text>
               {/* Quick Info */}
-              <View className="bg-surface rounded-2xl p-4 border border-border gap-3">
-                <View className="flex-row justify-between items-center">
-                  <Text className="text-sm text-muted">Raça</Text>
-                  <Text className="text-sm font-semibold text-foreground">{cattle.breed}</Text>
-                </View>
-                <View className="h-px bg-border" />
-                <View className="flex-row justify-between items-center">
-                  <Text className="text-sm text-muted">Data de Nascimento</Text>
-                  <Text className="text-sm font-semibold text-foreground">{formatDate(cattle.birthDate)}</Text>
-                </View>
-                <View className="h-px bg-border" />
-                <View className="flex-row justify-between items-center">
-                  <Text className="text-sm text-muted">Peso</Text>
-                  <Text className="text-sm font-semibold text-foreground">{formatWeight(cattle.weight)}</Text>
-                </View>
-                {cattle.motherId && (
-                  <>
-                    <View className="h-px bg-border" />
-                    <View className="flex-row justify-between items-center">
-                      <Text className="text-sm text-muted">Mãe</Text>
-                      <Text className="text-sm font-semibold text-primary">Cadastrada</Text>
-                    </View>
-                  </>
-                )}
-              </View>
-              <TouchableOpacity
-                onPress={() => navigation.navigate("CattleCad" as never, { id } as never)}
-                className="bg-surface rounded-2xl p-4 border border-border flex-row items-center"
-                style={{ opacity: 1 }}
+              <CardEdit
+                handleEdit={() => navigation.navigate("CattleCad" as never, { id } as never)}
+                handleDelete={() => setShowDeleteDialog(true)}
               >
-                <IconSymbol name="pencil" size={20} color={colors.muted} />
-                <Text className="text-foreground font-semibold px-2">Editar Informações</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() => setShowDeleteDialog(true)}
-                className="bg-surface rounded-2xl p-4 border border-error flex-row items-center"
-                style={{ opacity: 1 }}
-              >
-                <IconSymbol name="trash" size={20} color="#EF4444" />
-                <Text className="text-error font-semibold px-2">Excluir Animal</Text>
-              </TouchableOpacity>
+                <View className="gap-3">
+                  <View className="flex-row justify-between items-center">
+                    <Text className="text-sm text-muted">Raça</Text>
+                    <Text className="text-sm font-semibold text-foreground">{cattle.breed}</Text>
+                  </View>
+                  <View className="h-px bg-border" />
+                  <View className="flex-row justify-between items-center">
+                    <Text className="text-sm text-muted">Data de Nascimento</Text>
+                    <Text className="text-sm font-semibold text-foreground">{formatDate(cattle.birthDate)}</Text>
+                  </View>
+                  <View className="h-px bg-border" />
+                  <View className="flex-row justify-between items-center">
+                    <Text className="text-sm text-muted">Peso</Text>
+                    <Text className="text-sm font-semibold text-foreground">{formatWeight(cattle.weight)}</Text>
+                  </View>
+                  {cattle.motherId && (
+                    <>
+                      <View className="h-px bg-border" />
+                      <View className="flex-row justify-between items-center">
+                        <Text className="text-sm text-muted">Mãe</Text>
+                        <Text className="text-sm font-semibold text-primary">Cadastrada</Text>
+                      </View>
+                    </>
+                  )}
+                </View>
+              </CardEdit>
             </View>
           )}
 
