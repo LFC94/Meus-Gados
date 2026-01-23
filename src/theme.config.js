@@ -6,7 +6,7 @@ const themeColors = {
   foreground: { light: "#11181C", dark: "#ECEDEE" },
   muted: { light: "#687076", dark: "#9BA1A6" },
   border: { light: "#D1D5DB", dark: "#334155" },
-  success: { light: "#22C55E", dark: "#4ADE80" },
+  success: { light: "#16c455", dark: "#34c76a" },
   warning: { light: "#F59E0B", dark: "#FBBF24" },
   error: { light: "#EF4444", dark: "#F87171" },
 };

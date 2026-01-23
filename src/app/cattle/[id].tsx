@@ -259,7 +259,7 @@ export default function CattleDetailScreen() {
           <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
-            className="rounded-md bg-surface border border-border flex-row"
+            className="rounded-md bg-muted border border-border flex-row"
           >
             {[
               { label: "Info", value: "info" },
@@ -271,8 +271,15 @@ export default function CattleDetailScreen() {
               <TouchableOpacity
                 key={tab.value}
                 onPress={() => setActiveTab(tab.value as Tab)}
-                className={`flex py-3 items-center ${activeTab === tab.value ? "bg-primary" : "bg-transparent"} border border-border`}
-                style={{ width: 100 }}
+                className={`flex justify-center items-center border-border`}
+                style={{
+                  width: 100,
+                  height: 30,
+                  borderLeftWidth: 1,
+                  borderRightWidth: 1,
+
+                  backgroundColor: activeTab === tab.value ? colors.primary : colors.surface,
+                }}
               >
                 <Text className={`font-bold text-xs ${activeTab === tab.value ? "text-white" : "text-muted"}`}>
                   {tab.label}
