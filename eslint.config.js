@@ -17,7 +17,7 @@ export default defineConfig([
     },
   },
   {
-    ignores: ["dist/*", "node_modules/*", "ios/*", "android/*"],
+    ignores: ["dist/*", "node_modules/*", "ios/*", "android/*", "eslint.config.js"],
   },
   eslintConfigPrettier,
 ]);

@@ -109,7 +109,7 @@ async function updateItem<T extends SyncBase>(key: string, id: string, updates: 
 
 async function deleteItem<T extends { id: string; isDeleted?: boolean; updatedAt: string }>(
   key: string,
-  id: string
+  id: string,
 ): Promise<boolean> {
   const items = await getAllItemsIncludingDeleted<T>(key);
   const index = items.findIndex((item) => item.id === id);
@@ -208,7 +208,7 @@ export const vaccineCatalogStorage = {
     return vaccines.map((vaccine) => {
       const vaccineRecords = records.filter((r) => r.vaccineId === vaccine.id);
       const lastRecord = vaccineRecords.sort(
-        (a, b) => new Date(b.dateApplied).getTime() - new Date(a.dateApplied).getTime()
+        (a, b) => new Date(b.dateApplied).getTime() - new Date(a.dateApplied).getTime(),
       )[0];
 
       return {
@@ -369,7 +369,9 @@ export const diseaseStorage = {
 
   getByCattleId: async (cattleId: string): Promise<Disease[]> => {
     const allDiseases = await getItems<Disease>(STORAGE_KEYS.DISEASES);
-    return allDiseases.filter((disease) => disease.cattleId === cattleId);
+    return allDiseases
+      .filter((disease) => disease.cattleId === cattleId)
+      .sort((a, b) => new Date(b.diagnosisDate).getTime() - new Date(a.diagnosisDate).getTime());
   },
 
   add: (disease: Omit<Disease, "id" | "createdAt" | "updatedAt">) => {
@@ -484,7 +486,7 @@ export const exportAllData = async (): Promise<string> => {
       exportedAt: new Date().toISOString(),
     },
     null,
-    2
+    2,
   );
 };
 
