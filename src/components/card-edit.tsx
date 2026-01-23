@@ -31,7 +31,7 @@ export function CardEdit({ children, title, icon, label, handleDelete, handleEdi
       {children}
 
       {(!!handleEdit || !!handleDelete) && (
-        <View className="flex-row gap-2 mt-3 pt-3 border-t border-border">
+        <View className={`flex-row gap-2  ${children ? " mt-3 pt-3 border-t border-border" : ""}`}>
           {handleEdit && (
             <TouchableOpacity
               onPress={() => handleEdit()}
