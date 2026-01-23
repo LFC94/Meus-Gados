@@ -80,12 +80,16 @@ export function addDaysToDate(date: Date, days: number): Date {
  */
 export function daysUntil(targetDate: string): number {
   const target = new Date(targetDate);
+
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   target.setHours(0, 0, 0, 0);
 
   const diffTime = target.getTime() - today.getTime();
-  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  let diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  if (diffDays === 0) {
+    diffDays = isPastDate(targetDate) ? 0 : 1;
+  }
 
   return diffDays;
 }
@@ -176,12 +180,15 @@ export function getVaccineStatusColor(status: ReturnType<typeof getVaccineStatus
 /**
  * Retorna label para status de vacina
  */
-export function getVaccineStatusLabel(status: ReturnType<typeof getVaccineStatus>): string {
+export function getVaccineStatusLabel(nextDose?: string): string {
+  const daysUntilNextDose = nextDose ? daysUntil(nextDose) : 0;
+  const status = getVaccineStatus(nextDose);
+
   switch (status) {
     case "up_to_date":
       return "Em dia";
     case "upcoming":
-      return "Próxima";
+      return `Próxima em ${daysUntilNextDose} dia${daysUntilNextDose > 1 ? "s" : ""}`;
     case "overdue":
       return "Atrasada";
     default:

@@ -52,8 +52,8 @@ export function FormSelect({
         onPress={() => !disabled && setShowOptions(true)}
         className={`rounded-xl px-4 py-3 border ${
           error ? "border-error" : showOptions ? "border-primary" : "border-border"
-        } ${disabled ? "bg-surface/50" : "bg-surface"}`}
-        style={{ opacity: disabled ? 0.6 : 1 }}
+        } ${disabled ? "bg-surface/40" : "bg-surface"}`}
+        style={{ opacity: disabled ? 0.5 : 1 }}
         accessibilityLabel={displayText}
         accessibilityRole="combobox"
       >
@@ -65,15 +65,14 @@ export function FormSelect({
         </View>
       </TouchableOpacity>
       {error && <Text className="text-error text-xs">{error}</Text>}
-
       <Modal visible={showOptions} transparent animationType="fade" onRequestClose={handleClose}>
         <TouchableOpacity
-          style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.5)", justifyContent: "center", padding: 24 }}
+          style={{ flex: 1, backgroundColor: "#00000050", justifyContent: "center", padding: 24 }}
           activeOpacity={1}
           onPress={handleClose}
         >
           <View
-            className="bg-surface rounded-2xl overflow-hidden shadow-lg border border-border"
+            className="bg-surface rounded-xl overflow-hidden shadow-lg border border-border"
             style={{ maxHeight: "80%" }}
           >
             <View className="p-3 border-b border-border flex-row justify-between items-center bg-muted/10">
@@ -83,17 +82,19 @@ export function FormSelect({
               </TouchableOpacity>
             </View>
 
-            <View className="py-2 border-b border-border bg-surface">
-              <FormInput
-                label=""
-                value={search}
-                onChangeText={setSearch}
-                placeholder="Pesquisar..."
-                containerStyle={{ margin: 0 }}
-              />
-            </View>
+            {filteredOptions.length > 5 && (
+              <View className="py-2 bg-muted/10">
+                <FormInput
+                  label=""
+                  value={search}
+                  onChangeText={setSearch}
+                  placeholder="Pesquisar..."
+                  containerStyle={{ margin: 0 }}
+                />
+              </View>
+            )}
 
-            <ScrollView>
+            <ScrollView className="mb-2">
               {filteredOptions.length === 0 ? (
                 <View className="p-4 items-center">
                   <Text className="text-muted">Nenhuma opção encontrada</Text>
