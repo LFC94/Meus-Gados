@@ -1,5 +1,5 @@
 import DateTimePicker from "@react-native-community/datetimepicker";
-import React, { useState } from "react";
+import { useState } from "react";
 import { Platform, StyleProp, Text, TouchableOpacity, View, ViewStyle } from "react-native";
 
 import { useColors } from "@/hooks/use-colors";
@@ -76,7 +76,7 @@ export function FormTimePicker({
             style={{ opacity: disabled ? 0.6 : 1 }}
           >
             <Text className="text-base text-foreground font-semibold">{displayValue}</Text>
-            <IconSymbol name="clock" size={20} color={colors.muted} />
+            <IconSymbol name="timer" size={20} color={colors.muted} />
           </TouchableOpacity>
         </View>
         {error && <Text className="text-error text-xs mt-1">{error}</Text>}
@@ -110,7 +110,7 @@ export function FormTimePicker({
         style={{ opacity: disabled ? 0.6 : 1 }}
       >
         <Text className="text-base text-foreground">{displayValue}</Text>
-        <IconSymbol name="clock" size={20} color={colors.muted} />
+        <IconSymbol name="timer" size={20} color={colors.muted} />
       </TouchableOpacity>
       {error && <Text className="text-error text-xs">{error}</Text>}
 

@@ -1,5 +1,4 @@
 import { useRouter } from "expo-router";
-import React from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 
 import { IconSymbol } from "@/components/icon-symbol";
@@ -61,7 +60,7 @@ export function CattleCard({ cattle, showStatus = true, status, onPress }: Cattl
       )}
 
       {/* Arrow */}
-      <IconSymbol name="chevron.right" size={20} color={colors.muted} />
+      <IconSymbol name="chevron-right" size={20} color={colors.muted} />
     </TouchableOpacity>
   );
 }
@@ -100,7 +99,7 @@ export function CattleCardCompact({ cattle, onPress }: CattleCardCompactProps) {
         </Text>
         <Text className="text-xs text-muted">Nº {cattle.number}</Text>
       </View>
-      <IconSymbol name="chevron.right" size={16} color={colors.muted} />
+      <IconSymbol name="chevron-right" size={16} color={colors.muted} />
     </TouchableOpacity>
   );
 }

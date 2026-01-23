@@ -181,7 +181,7 @@ export default function CattleListScreen() {
           {/* Search and Filters Toggle */}
           <View className="flex-row gap-2">
             <View className="flex-1 bg-surface rounded-xl px-4 border border-border flex-row items-center">
-              <IconSymbol name="magnifyingglass" size={20} color={colors.muted} />
+              <IconSymbol name="search" size={20} color={colors.muted} />
               <TextInput
                 placeholder="Buscar por número, nome..."
                 placeholderTextColor={colors.muted}
@@ -197,7 +197,7 @@ export default function CattleListScreen() {
               }}
               className={`p-3 rounded-xl border ${showFilters ? "bg-primary border-primary" : "bg-surface border-border"}`}
             >
-              <IconSymbol name="slider.horizontal.3" size={20} color={showFilters ? colors.background : colors.muted} />
+              <IconSymbol name="cancel" size={20} color={showFilters ? colors.background : colors.muted} />
             </TouchableOpacity>
           </View>
 
@@ -254,7 +254,7 @@ export default function CattleListScreen() {
                     className="flex-1 bg-background border border-border rounded-lg px-3 py-2 text-foreground"
                   />
                   <TouchableOpacity onPress={() => setAgeRange({ min: "", max: "" })} className="p-2">
-                    <IconSymbol name="xmark.circle.fill" size={20} color={colors.muted} />
+                    <IconSymbol name="cancel" size={20} color={colors.muted} />
                   </TouchableOpacity>
                 </View>
               </View>

@@ -80,7 +80,7 @@ export function CustomDatePicker({
           </Text>
           {value && !disabled && (
             <TouchableOpacity onPress={handleClear} className="p-1 -mr-2">
-              <IconSymbol name="xmark.circle.fill" size={18} color={colors.muted} />
+              <IconSymbol name="cancel" size={18} color={colors.muted} />
             </TouchableOpacity>
           )}
         </TouchableOpacity>

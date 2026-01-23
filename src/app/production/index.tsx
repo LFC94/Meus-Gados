@@ -81,7 +81,7 @@ export default function MilkProductionListScreen() {
                 className="flex-1 bg-primary rounded-xl p-4 items-center flex-row  justify-center gap-2"
                 style={{ opacity: 1 }}
               >
-                <IconSymbol name="plus" color={"white"} />
+                <IconSymbol name="add" color={"white"} />
                 <Text className="px-1 text-white font-semibold text-base">Cadastrar Ordenha</Text>
               </TouchableOpacity>
             </View>

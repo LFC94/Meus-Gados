@@ -61,7 +61,7 @@ export function FormSelect({
           <Text className="text-base" style={{ color: selectedOption ? colors.foreground : colors.muted }}>
             {displayText}
           </Text>
-          <IconSymbol name="chevron.down" size={20} color={colors.muted} />
+          <IconSymbol name="keyboard-arrow-down" size={20} color={colors.muted} />
         </View>
       </TouchableOpacity>
       {error && <Text className="text-error text-xs">{error}</Text>}
@@ -78,7 +78,7 @@ export function FormSelect({
             <View className="p-3 border-b border-border flex-row justify-between items-center bg-muted/10">
               <Text className="font-bold text-lg text-foreground">{label}</Text>
               <TouchableOpacity onPress={handleClose} className="p-1">
-                <IconSymbol name="xmark.circle.fill" size={24} color={colors.muted} />
+                <IconSymbol name="cancel" size={24} color={colors.muted} />
               </TouchableOpacity>
             </View>
 

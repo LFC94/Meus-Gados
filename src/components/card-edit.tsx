@@ -37,7 +37,7 @@ export function CardEdit({ children, title, icon, label, handleDelete, handleEdi
               onPress={() => handleEdit()}
               className="flex-1 bg-primary/20 rounded-lg p-2 flex-row items-center justify-center gap-2"
             >
-              <IconSymbol name="pencil" color={colors.primary} />
+              <IconSymbol name="edit" color={colors.primary} />
               <Text className="text-primary font-semibold">Editar</Text>
             </TouchableOpacity>
           )}
@@ -46,7 +46,7 @@ export function CardEdit({ children, title, icon, label, handleDelete, handleEdi
               onPress={() => handleDelete()}
               className="flex-1 bg-error/20 rounded-lg p-2 flex-row items-center justify-center gap-2"
             >
-              <IconSymbol name="trash" color={colors.error} />
+              <IconSymbol name="delete" color={colors.error} />
               <Text className="text-error font-semibold">Excluir</Text>
             </TouchableOpacity>
           )}

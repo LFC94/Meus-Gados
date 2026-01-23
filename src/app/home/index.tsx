@@ -3,9 +3,11 @@ import React, { useCallback, useState } from "react";
 import { ActivityIndicator, RefreshControl, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+import { CardResume } from "@/components";
 import { CattleCardCompact } from "@/components/cattle-card";
 import { IconSymbol } from "@/components/icon-symbol";
 import { ScreenContainer } from "@/components/screen-container";
+import { STATUS_CATTLE } from "@/constants/const";
 import { useColors } from "@/hooks/use-colors";
 import useNavigation from "@/hooks/use-navigation";
 import { cattleStorage, diseaseStorage, pregnancyStorage, vaccinationRecordStorage } from "@/lib/storage";
@@ -127,58 +129,43 @@ export default function HomeScreen() {
       >
         <View className="p-6 gap-6 flex-1" style={{ paddingBottom: insets.bottom }}>
           {/* Status Cards */}
+          <Text className="text-lg font-semibold text-foreground">Resumo do Rebanho</Text>
           <View className="gap-3">
             <View className="flex-row gap-3">
-              {/* Saudáveis */}
-              <TouchableOpacity
-                className="flex-1 bg-surface rounded-2xl p-4 border border-border"
-                style={{ opacity: 1 }}
+              <CardResume
+                number={stats.healthy}
+                title="Saudáveis"
+                icon="favorite"
+                color={STATUS_CATTLE["healthy"].color}
                 onPress={() => navigation.navigate("CattleList", { status: "healthy" })}
-              >
-                <Text className="text-3xl font-bold" style={{ color: "#22C55E" }}>
-                  {stats.healthy}
-                </Text>
-                <Text className="text-sm text-muted mt-2">Saudáveis</Text>
-              </TouchableOpacity>
-
+              />
               {/* Em Tratamento */}
-              <TouchableOpacity
-                className="flex-1 bg-surface rounded-2xl p-4 border border-border"
-                style={{ opacity: 1 }}
+              <CardResume
+                number={stats.inTreatment}
+                title="Em Tratamento"
+                icon="medical-services"
+                color={STATUS_CATTLE["in_treatment"].color}
                 onPress={() => navigation.navigate("CattleList", { status: "in_treatment" })}
-              >
-                <Text className="text-3xl font-bold" style={{ color: "#EF4444" }}>
-                  {stats.inTreatment}
-                </Text>
-                <Text className="text-sm text-muted mt-2">Em Tratamento</Text>
-              </TouchableOpacity>
+              />
             </View>
-
             <View className="flex-row gap-3">
               {/* Vacinas Pendentes */}
-              <TouchableOpacity
-                className="flex-1 bg-surface rounded-2xl p-4 border border-border"
-                style={{ opacity: 1 }}
+              <CardResume
+                number={stats.pendingVaccines}
+                title="Vacinas Pendentes"
+                icon="vaccines"
+                color={STATUS_CATTLE["pending_vaccine"].color}
                 onPress={() => navigation.navigate("VaccinePending")}
-              >
-                <Text className="text-3xl font-bold" style={{ color: "#F59E0B" }}>
-                  {stats.pendingVaccines}
-                </Text>
-                <Text className="text-sm text-muted mt-2" numberOfLines={1}>
-                  Vacinas Pendentes
-                </Text>
-              </TouchableOpacity>
+              />
+
               {/* Gestantes */}
-              <TouchableOpacity
-                className="flex-1 bg-surface rounded-2xl p-4 border border-border"
-                style={{ opacity: 1 }}
+              <CardResume
+                number={stats.pregnant}
+                title="Gestantes"
+                icon="stroller"
+                color={STATUS_CATTLE["pregnancy"].color}
                 onPress={() => navigation.navigate("CattleList", { status: "pregnancy" })}
-              >
-                <Text className="text-3xl font-bold" style={{ color: "#3B82F6" }}>
-                  {stats.pregnant}
-                </Text>
-                <Text className="text-sm text-muted mt-2">Gestantes</Text>
-              </TouchableOpacity>
+              />
             </View>
 
             {/* Atrasadas */}
@@ -194,6 +181,7 @@ export default function HomeScreen() {
 
           {/* Quick Actions */}
           <View className="gap-3">
+            <Text className="text-lg font-semibold text-foreground">Ação Rápidas</Text>
             <TouchableOpacity
               onPress={() => navigation.navigate("CattleList")}
               className="bg-surface rounded-2xl p-4 border border-border flex-row items-center justify-between"
@@ -205,7 +193,7 @@ export default function HomeScreen() {
                 </View>
                 <Text className="text-foreground font-semibold">Ver Todos os Animais</Text>
               </View>
-              <IconSymbol name="chevron.right" size={20} color={colors.muted} />
+              <IconSymbol name="chevron-right" size={20} color={colors.muted} />
             </TouchableOpacity>
 
             <TouchableOpacity
@@ -222,7 +210,7 @@ export default function HomeScreen() {
                 </View>
                 <Text className="text-foreground font-semibold">Produção de Leite</Text>
               </View>
-              <IconSymbol name="chevron.right" size={20} color={colors.muted} />
+              <IconSymbol name="chevron-right" size={20} color={colors.muted} />
             </TouchableOpacity>
 
             <TouchableOpacity
@@ -236,7 +224,7 @@ export default function HomeScreen() {
                 </View>
                 <Text className="text-foreground font-semibold">Vacinas Pendentes</Text>
               </View>
-              <IconSymbol name="chevron.right" size={20} color={colors.muted} />
+              <IconSymbol name="chevron-right" size={20} color={colors.muted} />
             </TouchableOpacity>
 
             <TouchableOpacity
@@ -253,7 +241,7 @@ export default function HomeScreen() {
                 </View>
                 <Text className="text-foreground font-semibold">Notificações Agendadas</Text>
               </View>
-              <IconSymbol name="chevron.right" size={20} color={colors.muted} />
+              <IconSymbol name="chevron-right" size={20} color={colors.muted} />
             </TouchableOpacity>
           </View>
 

@@ -52,7 +52,7 @@ export default function CattleDetailScreen() {
       className="w-10 h-10 items-center justify-center mr-2"
       style={{ opacity: 1 }}
     >
-      <IconSymbol name="pencil" size={20} color={colors.primary} />
+      <IconSymbol name="edit" size={20} color={colors.primary} />
     </TouchableOpacity>
   ));
 

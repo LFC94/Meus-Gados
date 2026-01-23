@@ -20,7 +20,7 @@ export default function useScreenOptions() {
           className="w-10 h-10 items-center justify-center"
           style={{ opacity: 1 }}
         >
-          <IconSymbol name="chevron.left" size={24} color={colors.primary} />
+          <IconSymbol name="chevron-left" size={24} color={colors.primary} />
         </TouchableOpacity>
       );
     },
