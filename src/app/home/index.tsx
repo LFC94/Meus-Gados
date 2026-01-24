@@ -189,7 +189,7 @@ export default function HomeScreen() {
               style={{ opacity: 1 }}
             >
               <View className="flex-row items-center gap-3">
-                <View className="w-10 h-10 rounded-full items-center justify-center bg-primary/20">
+                <View className="w-10 h-10 rounded-md items-center justify-center bg-primary/20">
                   <IconSymbol name="cow" color={colors.primary} />
                 </View>
                 <Text className="text-foreground font-semibold">Ver Todos os Animais</Text>
@@ -203,7 +203,7 @@ export default function HomeScreen() {
               style={{ opacity: 1 }}
             >
               <View className="flex-row items-center gap-3">
-                <View className="w-10 h-10 bg-milk_production/20 rounded-full items-center justify-center">
+                <View className="w-10 h-10 bg-milk_production/20 rounded-md items-center justify-center">
                   <IconSymbol name="baby-bottle" color={colors.milk_production} />
                 </View>
                 <Text className="text-foreground font-semibold">Produção de Leite</Text>
@@ -217,7 +217,7 @@ export default function HomeScreen() {
               style={{ opacity: 1 }}
             >
               <View className="flex-row items-center gap-3">
-                <View className="w-10 h-10 rounded-full items-center justify-center">
+                <View className="w-10 h-10 bg-warning/20 rounded-md items-center justify-center">
                   <IconSymbol name="notifications" color={colors.warning} />
                 </View>
                 <Text className="text-foreground font-semibold">Notificações Agendadas</Text>

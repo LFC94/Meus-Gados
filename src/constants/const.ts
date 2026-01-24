@@ -95,7 +95,7 @@ export const STATUS_CATTLE: Record<CattleResult, { color: keyof ThemeColorPalett
     healthy: { color: "healthy", text: "Saudável", icon: "heart" },
     death: { color: "deceased", text: "Óbito", icon: "heart-broken" },
     pregnancy: { color: "pregnant", text: "Gestação", icon: "stroller" },
-    overdue_pregnancy: { color: "pregnant_delayed", text: "Gestação Atrasada", icon: "stroller" },
+    overdue_pregnancy: { color: "pregnant_delayed", text: "Gestação Atrasada", icon: "baby-carriage" },
     pending_vaccine: { color: "vaccine_pending", text: "Vacina Pendente", icon: "vaccines" },
   };
 

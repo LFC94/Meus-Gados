@@ -27,12 +27,14 @@ export function CardResume({ number, title, icon, color, onPress }: CardResumePr
           borderBottomRightRadius: 0,
         }}
       />
-      <View className="flex-row gap-4 p-4 h-full">
-        <View className="flex-1 flex justify-between">
-          <Text className="text-3xl text-muted font-bold">{number}</Text>
-          <Text className="text-md text-muted">{title}</Text>
+      <View className="flex-1 gap-4 p-4 h-full">
+        <View className="flex-row mr-2 justify-between">
+          <Text className="text-4xl text-foreground font-bold">{number}</Text>
+          <View className="w-10 h-10 rounded-md items-center justify-center" style={{ backgroundColor: `${color}20` }}>
+            <IconSymbol name={icon} color={color} size={24} />
+          </View>
         </View>
-        <IconSymbol name={icon} color={color} size={28} />
+        <Text className="text-md text-foreground">{title.toUpperCase()}</Text>
       </View>
     </TouchableOpacity>
   );

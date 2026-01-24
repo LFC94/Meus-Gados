@@ -29,40 +29,50 @@ export function CattleCard({ cattle, showStatus = true, status, onPress }: Cattl
   return (
     <TouchableOpacity
       onPress={handlePress}
-      className="bg-surface rounded-2xl p-4 border border-border flex-row items-center gap-4"
+      className="bg-surface rounded-2xl border border-border"
       style={{ opacity: 1 }}
       accessibilityLabel={`Animal ${cattle.number}${cattle.name ? `, ${cattle.name}` : ""}, ${STATUS_CATTLE[status].text}`}
       accessibilityRole="button"
     >
       {/* Status Bar */}
       <View
-        className="w-1 h-20 rounded-full"
-        style={{ backgroundColor: colors[STATUS_CATTLE[status].color] }}
-        accessible={false}
+        className="w-2 h-full rounded-xl"
+        style={{
+          backgroundColor: colors[STATUS_CATTLE[status].color],
+          position: "absolute",
+          left: 0,
+          borderTopRightRadius: 0,
+          borderBottomRightRadius: 0,
+        }}
       />
-
-      {/* Content */}
-      <View className="flex-1">
-        <Text className="text-lg font-semibold text-foreground" numberOfLines={1}>
-          {cattle.name || `Animal ${cattle.number}`}
-        </Text>
-        <Text className="text-sm text-muted mt-1">Nº {cattle.number}</Text>
-        <Text className="text-sm text-muted mt-1">
-          {cattle.breed} • {formatAge(cattle.birthDate)} • {cattle.weight} kg
-        </Text>
-      </View>
-
-      {showStatus && (
-        <View className="flex items-center">
-          <IconSymbol name={STATUS_CATTLE[status].icon} color={colors[STATUS_CATTLE[status].color]} />
-          <Text className="font-bold" numberOfLines={1} style={{ color: colors[STATUS_CATTLE[status].color] }}>
-            {STATUS_CATTLE[status].text}
+      <View className="py-4 flex-row items-center gap-4" style={{ paddingLeft: 20, paddingRight: 4 }}>
+        {/* Content */}
+        <View className="flex-1">
+          <Text className="text-lg font-semibold text-foreground" numberOfLines={1}>
+            {cattle.name || `Animal ${cattle.number}`}
+          </Text>
+          <Text className="text-sm text-muted mt-1">Nº {cattle.number}</Text>
+          <Text className="text-sm text-muted mt-1">
+            {cattle.breed} • {formatAge(cattle.birthDate)} • {cattle.weight} kg
           </Text>
         </View>
-      )}
 
-      {/* Arrow */}
-      <IconSymbol name="chevron-right" size={20} color={colors.muted} />
+        {showStatus && (
+          <View className="items-end gap-2">
+            <IconSymbol
+              style={{ paddingEnd: 4 }}
+              name={STATUS_CATTLE[status].icon}
+              color={colors[STATUS_CATTLE[status].color]}
+            />
+            <Text className="font-bold" numberOfLines={2} style={{ color: colors[STATUS_CATTLE[status].color] }}>
+              {STATUS_CATTLE[status].text}
+            </Text>
+          </View>
+        )}
+
+        {/* Arrow */}
+        <IconSymbol name="chevron-right" size={20} color={colors.muted} />
+      </View>
     </TouchableOpacity>
   );
 }
@@ -92,7 +102,7 @@ export function CattleCardCompact({ cattle, onPress }: CattleCardCompactProps) {
       accessibilityLabel={`Animal ${cattle.number}${cattle.name ? `, ${cattle.name}` : ""}`}
       accessibilityRole="button"
     >
-      <View className="w-8 h-8 rounded-full items-center justify-center bg-primary/20">
+      <View className="w-8 h-8 rounded-md items-center justify-center bg-primary/20">
         <IconSymbol name="cow" color={colors.primary} />
       </View>
       <View className="flex-1">
