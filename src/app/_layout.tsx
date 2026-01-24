@@ -8,6 +8,7 @@ import { useEffect, useMemo } from "react";
 import { Text } from "react-native";
 import { initialWindowMetrics, SafeAreaProvider } from "react-native-safe-area-context";
 
+import { IconSymbol } from "@/components";
 import { AuthProvider, useColors, useScreenOptions } from "@/hooks/";
 import { useUpdates } from "@/hooks/use-updates";
 import { requestNotificationPermission } from "@/lib/notifications";
@@ -73,7 +74,7 @@ function DrawerNavigator() {
         options={{
           drawerLabel: "Meus Gados",
           title: "Meus Gados",
-          drawerIcon: () => <Text className="text-lg">🐮</Text>,
+          drawerIcon: () => <IconSymbol name="home" color={colors.primary} />,
         }}
       />
       <Drawer.Screen
@@ -82,7 +83,7 @@ function DrawerNavigator() {
         options={{
           drawerLabel: "Animais",
           title: "Animais",
-          drawerIcon: () => <Text className="text-lg">🐄</Text>,
+          drawerIcon: () => <IconSymbol name="cow" color={colors.primary} />,
         }}
       />
 
@@ -101,7 +102,7 @@ function DrawerNavigator() {
         options={{
           drawerLabel: "Catálogo de Vacinas",
           title: "Catálogo de Vacinas",
-          drawerIcon: () => <Text className="text-lg">💉</Text>,
+          drawerIcon: () => <IconSymbol name={"vaccines"} color={colors.vaccine_pending} />,
         }}
       />
       <Drawer.Screen

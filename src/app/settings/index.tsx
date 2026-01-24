@@ -8,8 +8,9 @@ import React, { useEffect, useState } from "react";
 import { ActivityIndicator, Alert, Image, ScrollView, Switch, Text, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { FormInput, FormTimePicker } from "@/components";
+import { FormInput, FormTimePicker, IconSymbol } from "@/components";
 import { ScreenContainer } from "@/components/screen-container";
+import { STATUS_CATTLE } from "@/constants/const";
 import { useAuth, useColors, useScreenHeader } from "@/hooks";
 import { type BackupData, backupService } from "@/lib/backup";
 import {
@@ -346,7 +347,7 @@ export default function SettingsScreen() {
                   <View className="gap-3 py-4">
                     <View className="flex-row items-center justify-between">
                       <View className="flex-row items-center gap-2">
-                        <Text className="text-lg">💉</Text>
+                        <IconSymbol name={"vaccines"} color={colors.foreground} />
                         <Text className="font-semibold text-foreground">Vacinas</Text>
                       </View>
                       <Switch
@@ -376,7 +377,7 @@ export default function SettingsScreen() {
                   <View className="gap-3 border-t border-border/50 py-4">
                     <View className="flex-row items-center justify-between">
                       <View className="flex-row items-center gap-2">
-                        <Text className="text-lg">🐄</Text>
+                        <IconSymbol name={STATUS_CATTLE["pregnancy"].icon} color={colors.foreground} />
                         <Text className="font-semibold text-foreground">Gestação/Parto</Text>
                       </View>
                       <Switch
@@ -406,7 +407,7 @@ export default function SettingsScreen() {
                   <View className="gap-3 border-t border-border/50 py-4">
                     <View className="bg-background px-4 py-3 rounded-xl border border-border flex-row items-center">
                       <FormTimePicker
-                        label="⏰ Horário dos Alertas"
+                        label="Horário dos Alertas"
                         horizontal={true}
                         value={notifSettings.notificationTime}
                         onChange={(date) => {

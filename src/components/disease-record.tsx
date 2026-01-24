@@ -21,16 +21,17 @@ export function DiseaseRecord({ disease, onEdit, onDelete }: DiseaseRecordProps)
   return (
     <CardEdit
       className="p-4 flex-row items-center justify-between"
-      style={{ opacity: 1 }}
+      style={{ opacity: 1, borderColor: colorValue }}
       accessibilityLabel={`Doença ${disease.type}, status: ${resultLabel.text}`}
       accessibilityRole="button"
       handleEdit={onEdit}
       handleDelete={onDelete}
       title={disease.type}
       icon={resultLabel.icon}
+      iconColor={colorValue}
       label={
-        <View className="px-2 py-0.5 rounded-full" style={{ backgroundColor: `${colorValue}20` }}>
-          <Text className="text-xs font-medium" style={{ color: colorValue }}>
+        <View className="px-2 py-1 rounded-full" style={{ backgroundColor: `${colorValue}20` }}>
+          <Text className="text-xs font-bold" style={{ color: colorValue }}>
             {resultLabel.text}
           </Text>
         </View>

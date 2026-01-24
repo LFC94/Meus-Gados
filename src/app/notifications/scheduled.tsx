@@ -3,6 +3,7 @@ import { useCallback, useState } from "react";
 import { ActivityIndicator, Alert, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+import { IconSymbol } from "@/components";
 import { ScreenContainer } from "@/components/screen-container";
 import { useColors, useScreenHeader } from "@/hooks";
 import { formatDate } from "@/lib/helpers";
@@ -86,7 +87,10 @@ export default function ScheduledNotificationsScreen() {
               {/* Vacinas */}
               {vaccineNotifications.length > 0 && (
                 <View className="gap-3">
-                  <Text className="text-lg font-semibold text-foreground">💉 Vacinas</Text>
+                  <View className="flex-row gap-2">
+                    <IconSymbol name={"vaccines"} color={colors.foreground} />
+                    <Text className="text-lg font-semibold text-foreground">Vacinas</Text>
+                  </View>
                   {vaccineNotifications.map((notification) => (
                     <View key={notification.id} className="bg-surface rounded-2xl p-4 border border-border">
                       <View className="flex-row items-start justify-between mb-2">
@@ -115,7 +119,10 @@ export default function ScheduledNotificationsScreen() {
               {/* Gestações */}
               {pregnancyNotifications.length > 0 && (
                 <View className="gap-3">
-                  <Text className="text-lg font-semibold text-foreground">🐄 Gestação/Parto</Text>
+                  <View className="flex-row gap-2">
+                    <IconSymbol name="cow" color={colors.foreground} />
+                    <Text className="text-lg font-semibold text-foreground">Gestação/Parto</Text>
+                  </View>
                   {pregnancyNotifications.map((notification) => (
                     <View key={notification.id} className="bg-surface rounded-2xl p-4 border border-border">
                       <View className="flex-row items-start justify-between mb-2">

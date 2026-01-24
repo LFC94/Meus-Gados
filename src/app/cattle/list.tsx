@@ -274,7 +274,7 @@ export default function CattleListScreen() {
           {/* List */}
           {filteredCattle.length === 0 ? (
             <View className="flex-1 items-center justify-center py-12">
-              <Text className="text-4xl mb-4">🐄</Text>
+              <IconSymbol name="cow" color={colors.muted} />
               <Text className="text-muted text-center text-base">
                 {searchQuery ? "Nenhum animal encontrado" : "Nenhum animal cadastrado ainda"}
               </Text>

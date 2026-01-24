@@ -190,7 +190,7 @@ export default function HomeScreen() {
             >
               <View className="flex-row items-center gap-3">
                 <View className="w-10 h-10 rounded-full items-center justify-center bg-primary/20">
-                  <Text className="text-lg">🐄</Text>
+                  <IconSymbol name="cow" color={colors.primary} />
                 </View>
                 <Text className="text-foreground font-semibold">Ver Todos os Animais</Text>
               </View>
@@ -207,20 +207,6 @@ export default function HomeScreen() {
                   <Text className="text-lg">🥛</Text>
                 </View>
                 <Text className="text-foreground font-semibold">Produção de Leite</Text>
-              </View>
-              <IconSymbol name="chevron-right" size={20} color={colors.muted} />
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              onPress={() => navigation.navigate("VaccinePending")}
-              className="bg-surface rounded-2xl p-4 border border-border flex-row items-center justify-between"
-              style={{ opacity: 1 }}
-            >
-              <View className="flex-row items-center gap-3">
-                <View className="w-10 h-10 rounded-full items-center justify-center bg-warning/20">
-                  <Text className="text-lg">💉</Text>
-                </View>
-                <Text className="text-foreground font-semibold">Vacinas Pendentes</Text>
               </View>
               <IconSymbol name="chevron-right" size={20} color={colors.muted} />
             </TouchableOpacity>

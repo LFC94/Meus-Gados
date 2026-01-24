@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { ActivityIndicator, RefreshControl, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { CardEdit } from "@/components";
+import { CardEdit, IconSymbol } from "@/components";
 import { ConfirmDialog } from "@/components/confirm-dialog";
 import { ScreenContainer } from "@/components/screen-container";
 import { useNavigation } from "@/hooks";
@@ -107,7 +107,7 @@ export default function VaccineCatalogScreen() {
           {/* Empty State */}
           {vaccines.length === 0 ? (
             <View className="flex-1 items-center justify-center py-12">
-              <Text className="text-4xl mb-4">💉</Text>
+              <IconSymbol name={"vaccines"} color={colors.muted} />
               <Text className="text-muted text-center text-base">Nenhuma vaccine cadastrada no catálogo</Text>
               <TouchableOpacity
                 onPress={() => navigation.navigate("VaccineCatalogCad")}
@@ -123,7 +123,7 @@ export default function VaccineCatalogScreen() {
                 <CardEdit
                   key={vaccine.id}
                   title={vaccine.name}
-                  icon="💉"
+                  icon="vaccines"
                   handleDelete={() => setVaccineToDelete(vaccine)}
                   handleEdit={() => navigation.navigate("VaccineCatalogCad", { id: vaccine.id })}
                 >

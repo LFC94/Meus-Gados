@@ -3,17 +3,18 @@ import { Text, TouchableOpacity, View, type ViewProps } from "react-native";
 
 import { useColors } from "@/hooks";
 
-import { IconSymbol } from "./icon-symbol";
+import { IconMapping, IconSymbol } from "./icon-symbol";
 
 export interface CardEditProps extends ViewProps {
   title?: string;
-  icon?: string;
+  icon?: IconMapping;
+  iconColor?: string;
   label?: JSX.Element;
   handleDelete?: () => void;
   handleEdit?: () => void;
 }
 
-export function CardEdit({ children, title, icon, label, handleDelete, handleEdit, style }: CardEditProps) {
+export function CardEdit({ children, title, icon, iconColor, label, handleDelete, handleEdit, style }: CardEditProps) {
   const colors = useColors();
 
   return (
@@ -23,7 +24,7 @@ export function CardEdit({ children, title, icon, label, handleDelete, handleEdi
           className="flex-row items-center gap-2 border-b mb-2"
           style={{ borderColor: `${colors.border}50`, paddingBottom: label ? 2 : 0 }}
         >
-          {icon && <Text className="text-xl">{icon}</Text>}
+          {icon && <IconSymbol name={icon} color={iconColor ? iconColor : colors.foreground} />}
           {title && <Text className="flex-1 text-lg font-semibold text-foreground">{title}</Text>}
           {label}
         </View>

@@ -95,7 +95,7 @@ export async function saveNotificationSettings(settings: Partial<NotificationSet
  * Agendar notificação para uma vacina
  */
 export async function scheduleVaccineNotification(
-  vaccine: VaccinationRecordWithDetails & { cattleName: string }
+  vaccine: VaccinationRecordWithDetails & { cattleName: string },
 ): Promise<string | null> {
   try {
     const settings = await getNotificationSettings();
@@ -121,7 +121,7 @@ export async function scheduleVaccineNotification(
       notificationDate.setDate(notificationDate.getDate() + 1);
     }
 
-    const title = `💉 Vacina Pendente`;
+    const title = `Vacina Pendente`;
     const body = `${vaccine.cattleName} precisa tomar ${vaccine.vaccineName} em ${formatDate(vaccine.nextDoseDate)}`;
 
     const notificationId = await Notifications.scheduleNotificationAsync({
@@ -165,7 +165,7 @@ export async function scheduleVaccineNotification(
  * Agendar notificação para uma gestação
  */
 export async function schedulePregnancyNotification(
-  pregnancy: Pregnancy & { cattleName: string }
+  pregnancy: Pregnancy & { cattleName: string },
 ): Promise<string | null> {
   try {
     const settings = await getNotificationSettings();
@@ -191,7 +191,7 @@ export async function schedulePregnancyNotification(
       notificationDate.setDate(notificationDate.getDate() + 1);
     }
 
-    const title = `🐄 Parto Previsto`;
+    const title = `Parto Previsto`;
     const body = `${pregnancy.cattleName} deve parir em ${formatDate(pregnancy.expectedBirthDate)}`;
 
     const notificationId = await Notifications.scheduleNotificationAsync({
@@ -320,7 +320,7 @@ export async function cleanupOldNotifications(): Promise<void> {
  */
 export async function rescheduleAllNotifications(
   vaccines: (VaccinationRecordWithDetails & { cattleName: string })[],
-  pregnancies: (Pregnancy & { cattleName: string })[]
+  pregnancies: (Pregnancy & { cattleName: string })[],
 ): Promise<void> {
   try {
     // Cancelar todas as notificações anteriores
