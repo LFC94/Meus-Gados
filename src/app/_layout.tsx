@@ -5,7 +5,6 @@ import "react-native-reanimated";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useEffect, useMemo } from "react";
-import { Text } from "react-native";
 import { initialWindowMetrics, SafeAreaProvider } from "react-native-safe-area-context";
 
 import { IconSymbol } from "@/components";
@@ -53,6 +52,12 @@ function DrawerNavigator() {
         drawerStyle: {
           backgroundColor: colors.background,
         },
+        drawerItemStyle: {
+          borderRadius: 10,
+          borderColor: `${colors.border}20`,
+          borderWidth: 0,
+          borderBottomWidth: 1,
+        },
         drawerLabelStyle: {
           fontSize: 16,
           color: colors.text,
@@ -93,7 +98,7 @@ function DrawerNavigator() {
         options={{
           title: "Controle de Leite",
           drawerLabel: "Controle de Leite",
-          drawerIcon: () => <Text className="text-lg">🥛</Text>,
+          drawerIcon: () => <IconSymbol name="baby-bottle" color={colors.milk_production} />,
         }}
       />
       <Drawer.Screen
@@ -102,7 +107,7 @@ function DrawerNavigator() {
         options={{
           drawerLabel: "Catálogo de Vacinas",
           title: "Catálogo de Vacinas",
-          drawerIcon: () => <IconSymbol name={"vaccines"} color={colors.vaccine_pending} />,
+          drawerIcon: () => <IconSymbol name={"medication"} color={colors.primary} />,
         }}
       />
       <Drawer.Screen
@@ -111,7 +116,7 @@ function DrawerNavigator() {
         options={{
           drawerLabel: "Vacinas Pendentes",
           title: "Vacinas Pendentes",
-          drawerIcon: () => <Text className="text-lg">🚨</Text>,
+          drawerIcon: () => <IconSymbol name={"vaccines"} color={colors.vaccine_pending} />,
         }}
       />
       <Drawer.Screen
@@ -120,7 +125,7 @@ function DrawerNavigator() {
         options={{
           drawerLabel: "Notificações",
           title: "Notificações",
-          drawerIcon: () => <Text className="text-lg">🔔</Text>,
+          drawerIcon: () => <IconSymbol name="notifications" color={colors.warning} />,
         }}
       />
       <Drawer.Screen
@@ -129,7 +134,7 @@ function DrawerNavigator() {
         options={{
           drawerLabel: "Configurações",
           title: "Configurações",
-          drawerIcon: () => <Text className="text-lg">⚙️</Text>,
+          drawerIcon: () => <IconSymbol name={"settings"} color={colors.muted} />,
         }}
       />
     </Drawer.Navigator>

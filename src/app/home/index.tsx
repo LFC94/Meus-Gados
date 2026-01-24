@@ -204,7 +204,7 @@ export default function HomeScreen() {
             >
               <View className="flex-row items-center gap-3">
                 <View className="w-10 h-10 bg-milk_production/20 rounded-full items-center justify-center">
-                  <Text className="text-lg">🥛</Text>
+                  <IconSymbol name="baby-bottle" color={colors.milk_production} />
                 </View>
                 <Text className="text-foreground font-semibold">Produção de Leite</Text>
               </View>
@@ -218,7 +218,7 @@ export default function HomeScreen() {
             >
               <View className="flex-row items-center gap-3">
                 <View className="w-10 h-10 rounded-full items-center justify-center">
-                  <Text className="text-lg">🔔</Text>
+                  <IconSymbol name="notifications" color={colors.warning} />
                 </View>
                 <Text className="text-foreground font-semibold">Notificações Agendadas</Text>
               </View>

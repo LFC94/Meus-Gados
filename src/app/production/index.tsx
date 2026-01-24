@@ -89,7 +89,7 @@ export default function MilkProductionListScreen() {
 
           {records.length === 0 ? (
             <View className="flex-1 items-center justify-center py-12">
-              <Text className="text-4xl mb-4">🥛</Text>
+              <IconSymbol name="baby-bottle" color={colors.milk_production} />
               <Text className="text-muted text-center text-base">Nenhum registro encontrado Ordenha</Text>
               <TouchableOpacity
                 onPress={() => navigation.navigate("MilkProductionCad", {})}
