@@ -135,7 +135,7 @@ export default function HomeScreen() {
               <CardResume
                 number={stats.healthy}
                 title="Saudáveis"
-                icon="favorite"
+                icon={STATUS_CATTLE["healthy"].icon}
                 color={colors[STATUS_CATTLE["healthy"].color]}
                 onPress={() => navigation.navigate("CattleList", { status: "healthy" })}
               />
@@ -143,7 +143,7 @@ export default function HomeScreen() {
               <CardResume
                 number={stats.inTreatment}
                 title="Em Tratamento"
-                icon="medical-services"
+                icon={STATUS_CATTLE["in_treatment"].icon}
                 color={colors[STATUS_CATTLE["in_treatment"].color]}
                 onPress={() => navigation.navigate("CattleList", { status: "in_treatment" })}
               />
@@ -153,7 +153,7 @@ export default function HomeScreen() {
               <CardResume
                 number={stats.pendingVaccines}
                 title="Vacinas Pendentes"
-                icon="vaccines"
+                icon={STATUS_CATTLE["pending_vaccine"].icon}
                 color={colors[STATUS_CATTLE["pending_vaccine"].color]}
                 onPress={() => navigation.navigate("VaccinePending")}
               />
@@ -162,7 +162,7 @@ export default function HomeScreen() {
               <CardResume
                 number={stats.pregnant}
                 title="Gestantes"
-                icon="stroller"
+                icon={STATUS_CATTLE["pregnancy"].icon}
                 color={colors[STATUS_CATTLE["pregnancy"].color]}
                 onPress={() => navigation.navigate("CattleList", { status: "pregnancy" })}
               />

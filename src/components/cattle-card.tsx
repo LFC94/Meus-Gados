@@ -54,8 +54,10 @@ export function CattleCard({ cattle, showStatus = true, status, onPress }: Cattl
 
       {showStatus && (
         <View className="flex items-center">
-          <Text className="text-lg">{STATUS_CATTLE[status].icon}</Text>
-          <Text style={{ color: colors[STATUS_CATTLE[status].color] }}>{STATUS_CATTLE[status].text}</Text>
+          <IconSymbol name={STATUS_CATTLE[status].icon} color={colors[STATUS_CATTLE[status].color]} />
+          <Text className="font-bold" numberOfLines={1} style={{ color: colors[STATUS_CATTLE[status].color] }}>
+            {STATUS_CATTLE[status].text}
+          </Text>
         </View>
       )}
 
@@ -90,8 +92,8 @@ export function CattleCardCompact({ cattle, onPress }: CattleCardCompactProps) {
       accessibilityLabel={`Animal ${cattle.number}${cattle.name ? `, ${cattle.name}` : ""}`}
       accessibilityRole="button"
     >
-      <View className="w-8 h-8 rounded-full items-center justify-center bg-primary/40">
-        <Text className="text-md">🐄</Text>
+      <View className="w-8 h-8 rounded-full items-center justify-center bg-primary/20">
+        <IconSymbol name="cow" color={colors.primary} />
       </View>
       <View className="flex-1">
         <Text className="text-sm font-semibold text-foreground" numberOfLines={1}>

@@ -1,3 +1,4 @@
+import { IconMapping } from "@/components";
 import { type ThemeColorPalette } from "@/lib/_core/theme";
 import { CattleResult, DiseaseResult, PregnancyResult } from "@/types";
 
@@ -78,24 +79,25 @@ export const PREGNANCY_RESULT_LABELS: Record<PregnancyResult, string> = {
  */
 export const DISEASE_RESULT_LABELS: Record<
   DiseaseResult,
-  { color: keyof ThemeColorPalette; text: string; icon: string }
+  { color: keyof ThemeColorPalette; text: string; icon: IconMapping }
 > = {
-  in_treatment: { text: "Em Tratamento", color: "treatment", icon: "🏥" },
-  cured: { text: "Curado", color: "healthy", icon: "💚" },
-  death: { text: "Óbito", color: "deceased", icon: "🪦" },
+  in_treatment: { text: "Em Tratamento", color: "treatment", icon: "medical-services" },
+  cured: { text: "Curado", color: "healthy", icon: "heart" },
+  death: { text: "Óbito", color: "deceased", icon: "heart-broken" },
 };
 
 /**
  * STATUS do GADO
  */
-export const STATUS_CATTLE: Record<CattleResult, { color: keyof ThemeColorPalette; text: string; icon: string }> = {
-  in_treatment: { color: "treatment", text: "Em Tratamento", icon: "🏥" },
-  healthy: { color: "healthy", text: "Saudável", icon: "💚" },
-  death: { color: "deceased", text: "Óbito", icon: "🪦" },
-  pregnancy: { color: "pregnant", text: "Gestação", icon: "🤱" },
-  overdue_pregnancy: { color: "pregnant_delayed", text: "Gestação Atrasada", icon: "🤰" },
-  pending_vaccine: { color: "vaccine_pending", text: "Vacina Pendente", icon: "💉" },
-};
+export const STATUS_CATTLE: Record<CattleResult, { color: keyof ThemeColorPalette; text: string; icon: IconMapping }> =
+  {
+    in_treatment: { color: "treatment", text: "Em Tratamento", icon: "medical-services" },
+    healthy: { color: "healthy", text: "Saudável", icon: "heart" },
+    death: { color: "deceased", text: "Óbito", icon: "heart-broken" },
+    pregnancy: { color: "pregnant", text: "Gestação", icon: "stroller" },
+    overdue_pregnancy: { color: "pregnant_delayed", text: "Gestação Atrasada", icon: "stroller" },
+    pending_vaccine: { color: "vaccine_pending", text: "Vacina Pendente", icon: "vaccines" },
+  };
 
 export const PERIOD_LABELS = {
   morning: "Manhã",

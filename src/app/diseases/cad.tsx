@@ -220,7 +220,7 @@ export default function DiseaseCadScreen() {
               value={formData.result || ""}
               onValueChange={(value) => setFormData({ ...formData, result: value as DiseaseResult })}
               options={DISEASE_RESULTS.map((c) => ({
-                label: `${DISEASE_RESULT_LABELS[c].icon} ${DISEASE_RESULT_LABELS[c].text}`,
+                label: `${DISEASE_RESULT_LABELS[c].text}`,
                 value: c,
               }))}
               placeholder="Selecionar animal"

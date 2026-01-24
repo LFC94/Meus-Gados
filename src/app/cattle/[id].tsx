@@ -237,7 +237,6 @@ export default function CattleDetailScreen() {
         <View className="p-6 gap-4">
           {/* Icon and Name */}
           <View className="items-center gap-3">
-            <Text className="text-5xl">🐄</Text>
             <View className="items-center">
               <Text className="text-3xl font-bold text-foreground">{cattle.name || `Animal ${cattle.number}`}</Text>
               <Text className="text-base text-muted mt-1">Nº {cattle.number}</Text>
@@ -247,7 +246,7 @@ export default function CattleDetailScreen() {
           {/* Status Badge */}
           <View className="bg-surface rounded-2xl p-4 border border-border items-center">
             <View className="flex-row items-center gap-2">
-              <Text className="text-base">{statusBadge.icon}</Text>
+              <IconSymbol name={statusBadge.icon} color={colors[statusBadge.color]} />
               <Text className="text-base font-semibold" style={{ color: colors[statusBadge.color] }}>
                 {statusBadge.text}
               </Text>
