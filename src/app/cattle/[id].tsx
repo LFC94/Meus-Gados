@@ -248,7 +248,7 @@ export default function CattleDetailScreen() {
           <View className="bg-surface rounded-2xl p-4 border border-border items-center">
             <View className="flex-row items-center gap-2">
               <Text className="text-base">{statusBadge.icon}</Text>
-              <Text className="text-base font-semibold" style={{ color: statusBadge.color }}>
+              <Text className="text-base font-semibold" style={{ color: colors[statusBadge.color] }}>
                 {statusBadge.text}
               </Text>
             </View>

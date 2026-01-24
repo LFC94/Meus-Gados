@@ -29,7 +29,7 @@ export function CardResume({ number, title, icon, color, onPress }: CardResumePr
       />
       <View className="flex-row gap-4 p-4 h-full">
         <View className="flex-1 flex justify-between">
-          <Text className="text-3xl text-black font-bold">{number}</Text>
+          <Text className="text-3xl text-muted font-bold">{number}</Text>
           <Text className="text-md text-muted">{title}</Text>
         </View>
         <IconSymbol name={icon} color={color} size={28} />

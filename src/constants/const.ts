@@ -75,22 +75,22 @@ export const PREGNANCY_RESULT_LABELS: Record<PregnancyResult, string> = {
 /**
  * Labels para resultados de tratamento
  */
-export const DISEASE_RESULT_LABELS: Record<DiseaseResult, { color: string; text: string; icon: string; bg: string }> = {
-  in_treatment: { text: "Em Tratamento", color: "#f5550b", bg: "#f5550b20", icon: "🏥" },
-  cured: { text: "Curado", color: "#22C55E", bg: "#22C55E20", icon: "💚" },
-  death: { text: "Óbito", color: "#EF4444", bg: "#EF444420", icon: "🪦" },
+export const DISEASE_RESULT_LABELS: Record<DiseaseResult, { color: string; text: string; icon: string }> = {
+  in_treatment: { text: "Em Tratamento", color: "treatment", icon: "🏥" },
+  cured: { text: "Curado", color: "healthy", icon: "💚" },
+  death: { text: "Óbito", color: "deceased", icon: "🪦" },
 };
 
 /**
  * STATUS do GADO
  */
 export const STATUS_CATTLE: Record<CattleResult, { color: string; text: string; icon: string }> = {
-  in_treatment: { color: "#f5550b", text: "Em Tratamento", icon: "🏥" },
-  healthy: { color: "#22C55E", text: "Saudável", icon: "💚" },
-  death: { color: "#9c0101ff", text: "Óbito", icon: "🪦" },
-  pregnancy: { color: "#86ac00", text: "Gestação", icon: "🤱" },
-  overdue_pregnancy: { color: "#EF4444", text: "Gestação Atrasada", icon: "🤰" },
-  pending_vaccine: { color: "#F59E0B", text: "Vacina Pendente", icon: "💉" },
+  in_treatment: { color: "treatment", text: "Em Tratamento", icon: "🏥" },
+  healthy: { color: "healthy", text: "Saudável", icon: "💚" },
+  death: { color: "deceased", text: "Óbito", icon: "🪦" },
+  pregnancy: { color: "pregnant", text: "Gestação", icon: "🤱" },
+  overdue_pregnancy: { color: "pregnant_delayed", text: "Gestação Atrasada", icon: "🤰" },
+  pending_vaccine: { color: "vaccine_pending", text: "Vacina Pendente", icon: "💉" },
 };
 
 export const PERIOD_LABELS = {

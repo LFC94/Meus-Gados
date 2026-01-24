@@ -35,7 +35,7 @@ export function CardEdit({ children, title, icon, label, handleDelete, handleEdi
           {handleEdit && (
             <TouchableOpacity
               onPress={() => handleEdit()}
-              className="flex-1 bg-primary/20 rounded-lg p-2 flex-row items-center justify-center gap-2"
+              className="flex-1 bg-primary/10 border border-primary rounded-lg p-2 flex-row items-center justify-center gap-2"
             >
               <IconSymbol name="edit" color={colors.primary} />
               <Text className="text-primary font-semibold">Editar</Text>
@@ -44,7 +44,7 @@ export function CardEdit({ children, title, icon, label, handleDelete, handleEdi
           {handleDelete && (
             <TouchableOpacity
               onPress={() => handleDelete()}
-              className="flex-1 bg-error/20 rounded-lg p-2 flex-row items-center justify-center gap-2"
+              className="flex-1 bg-error/10 border border-error rounded-lg p-2 flex-row items-center justify-center gap-2"
             >
               <IconSymbol name="delete" color={colors.error} />
               <Text className="text-error font-semibold">Excluir</Text>

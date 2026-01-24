@@ -261,8 +261,8 @@ export default function SettingsScreen() {
                       </View>
                     </View>
 
-                    <View className="bg-background/50 p-3 rounded-lg">
-                      <Text className="text-xs text-muted text-center italic">
+                    <View className="bg-muted p-3 rounded-md">
+                      <Text className="text-xs text-surface text-center italic">
                         {lastSyncStatus || "Aguardando sincronização..."}
                       </Text>
                     </View>
@@ -282,7 +282,7 @@ export default function SettingsScreen() {
 
                       <TouchableOpacity
                         onPress={() => signOut()}
-                        className="bg-error/10 border border-error/20 px-4 py-3 rounded-xl justify-center items-center"
+                        className=" bg-error/10 border border-error/20 px-4 py-3 rounded-xl justify-center items-center"
                       >
                         <Text className="text-error font-semibold">Sair</Text>
                       </TouchableOpacity>

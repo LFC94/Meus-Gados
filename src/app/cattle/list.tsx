@@ -197,7 +197,7 @@ export default function CattleListScreen() {
               }}
               className={`p-3 rounded-xl border ${showFilters ? "bg-primary border-primary" : "bg-surface border-border"}`}
             >
-              <IconSymbol name="cancel" size={20} color={showFilters ? colors.background : colors.muted} />
+              <IconSymbol name="menu" size={20} color={showFilters ? colors.background : colors.muted} />
             </TouchableOpacity>
           </View>
 
