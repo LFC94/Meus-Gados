@@ -179,34 +179,34 @@ export default function CattleListScreen() {
       >
         <View className="p-6 gap-4 flex-1" style={{ marginBottom: insets.bottom }}>
           {/* Search and Filters Toggle */}
-          <View className="flex-row gap-2">
-            <View className="flex-1 bg-surface rounded-xl px-4 border border-border flex-row items-center">
-              <IconSymbol name="search" size={20} color={colors.muted} />
-              <TextInput
-                placeholder="Buscar por número, nome..."
-                placeholderTextColor={colors.muted}
-                value={searchQuery}
-                onChangeText={setSearchQuery}
-                className="flex-1 text-base text-foreground ml-2 py-2"
-              />
+          <View className="rounded-xl p-2 border border-border gap-4">
+            <View className="flex-row gap-2">
+              <View className="flex-1 bg-surface rounded-xl px-4 border border-border flex-row items-center">
+                <IconSymbol name="search" size={20} color={colors.muted} />
+                <TextInput
+                  placeholder="Buscar por número, nome..."
+                  placeholderTextColor={colors.muted}
+                  value={searchQuery}
+                  onChangeText={setSearchQuery}
+                  className="flex-1 text-base text-foreground ml-2 py-2"
+                />
+              </View>
+              <TouchableOpacity
+                onPress={() => {
+                  LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+                  setShowFilters(!showFilters);
+                }}
+                className={`p-3 rounded-xl border ${showFilters ? "bg-primary border-primary" : "bg-surface border-border"}`}
+              >
+                <IconSymbol name="filter-list" size={20} color={showFilters ? colors.background : colors.muted} />
+              </TouchableOpacity>
             </View>
-            <TouchableOpacity
-              onPress={() => {
-                LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-                setShowFilters(!showFilters);
-              }}
-              className={`p-3 rounded-xl border ${showFilters ? "bg-primary border-primary" : "bg-surface border-border"}`}
-            >
-              <IconSymbol name="menu" size={20} color={showFilters ? colors.background : colors.muted} />
-            </TouchableOpacity>
-          </View>
 
-          {/* Expanded Filters Panel */}
-          {showFilters && (
-            <View className="bg-surface rounded-xl p-4 border border-border gap-4">
-              {/* Status Filter */}
-              {
-                <View className="gap-2">
+            {/* Expanded Filters Panel */}
+            {showFilters && (
+              <View className="px-2 pt-2 gap-2 border-t border-border">
+                {/* Status Filter */}
+                {
                   <FormSelect
                     value={statusFilter}
                     label="Status"
@@ -216,12 +216,10 @@ export default function CattleListScreen() {
                       value: status,
                     }))}
                   />
-                </View>
-              }
+                }
 
-              {/* Breed Filter */}
-              {breeds.length > 2 && (
-                <View className="gap-2">
+                {/* Breed Filter */}
+                {breeds.length > 2 && (
                   <FormSelect
                     value={breedFilter}
                     label="Raça"
@@ -231,49 +229,48 @@ export default function CattleListScreen() {
                       value: breed,
                     }))}
                   />
-                </View>
-              )}
+                )}
 
-              {/* Age Range Filter */}
-              <View className="gap-2">
-                <Text className="text-sm font-semibold text-muted">Idade (anos)</Text>
-                <View className="flex-row items-center gap-2">
-                  <TextInput
-                    placeholder="Mín"
-                    value={ageRange.min}
-                    onChangeText={(val) => setAgeRange((prev) => ({ ...prev, min: val }))}
-                    keyboardType="numeric"
-                    className="flex-1 bg-background border border-border rounded-lg px-3 py-2 text-foreground"
-                  />
-                  <Text className="text-muted">até</Text>
-                  <TextInput
-                    placeholder="Máx"
-                    value={ageRange.max}
-                    onChangeText={(val) => setAgeRange((prev) => ({ ...prev, max: val }))}
-                    keyboardType="numeric"
-                    className="flex-1 bg-background border border-border rounded-lg px-3 py-2 text-foreground"
-                  />
-                  <TouchableOpacity onPress={() => setAgeRange({ min: "", max: "" })} className="p-2">
-                    <IconSymbol name="cancel" size={20} color={colors.muted} />
-                  </TouchableOpacity>
+                {/* Age Range Filter */}
+                <View className="gap-2">
+                  <Text className="text-sm font-semibold text-muted">Idade (anos)</Text>
+                  <View className="flex-row items-center gap-2">
+                    <TextInput
+                      placeholder="Mín"
+                      value={ageRange.min}
+                      onChangeText={(val) => setAgeRange((prev) => ({ ...prev, min: val }))}
+                      keyboardType="numeric"
+                      className="flex-1 bg-surface border border-border rounded-lg px-3 py-2 text-foreground"
+                    />
+                    <Text className="text-muted">até</Text>
+                    <TextInput
+                      placeholder="Máx"
+                      value={ageRange.max}
+                      onChangeText={(val) => setAgeRange((prev) => ({ ...prev, max: val }))}
+                      keyboardType="numeric"
+                      className="flex-1 bg-surface border border-border rounded-lg px-3 py-2 text-foreground"
+                    />
+                    <TouchableOpacity onPress={() => setAgeRange({ min: "", max: "" })} className="p-2">
+                      <IconSymbol name="cancel" size={20} color={colors.muted} />
+                    </TouchableOpacity>
+                  </View>
                 </View>
+
+                {/* Clear All Filters */}
+                <TouchableOpacity
+                  onPress={() => {
+                    setStatusFilter("all");
+                    setBreedFilter("all");
+                    setAgeRange({ min: "", max: "" });
+                    setSearchQuery("");
+                  }}
+                  className="mt-2"
+                >
+                  <Text className="text-primary text-center font-medium">Limpar Todos os Filtros</Text>
+                </TouchableOpacity>
               </View>
-
-              {/* Clear All Filters */}
-              <TouchableOpacity
-                onPress={() => {
-                  setStatusFilter("all");
-                  setBreedFilter("all");
-                  setAgeRange({ min: "", max: "" });
-                  setSearchQuery("");
-                }}
-                className="mt-2"
-              >
-                <Text className="text-primary text-center font-medium">Limpar Todos os Filtros</Text>
-              </TouchableOpacity>
-            </View>
-          )}
-
+            )}
+          </View>
           {/* List */}
           {filteredCattle.length === 0 ? (
             <View className="flex-1 items-center justify-center py-12">
