@@ -1,17 +1,17 @@
 import { Text, TouchableOpacity, View } from "react-native";
 
+import { ThemeColorPalette } from "@/constants/theme";
 import { useColors } from "@/hooks/use-colors";
 import { calculateDaysPregnant, formatDate } from "@/lib/helpers";
 import { Pregnancy } from "@/types";
 
 import { CardEdit } from "./card-edit";
 
-function getStatusColor(isPastDue: boolean, primary: string, result?: string): string {
-  if (result === "success") return "#22C55E";
-  if (result === "complications") return "#F59E0B";
-  if (result === "failed") return "#EF4444";
-  if (isPastDue) return "#EF4444";
-  return primary;
+function getStatusColor(isPastDue: boolean, result?: string): keyof ThemeColorPalette {
+  if (result === "success") return "success";
+  if (result === "complications") return "pregnant_delayed";
+  if (result === "failed" || isPastDue) return "error";
+  return "primary";
 }
 interface PregnancyTimelineProps {
   pregnancy: Pregnancy;
@@ -46,7 +46,7 @@ export function PregnancyTimeline({
   const isPastDue = today > expectedBirthDate && pregnancy.result === "pending";
   const isCompleted = pregnancy.result !== "pending";
 
-  const statusColor = getStatusColor(isPastDue, colors.primary, pregnancy.result);
+  const statusColor = colors[getStatusColor(isPastDue, pregnancy.result)];
 
   return (
     <CardEdit
@@ -82,7 +82,7 @@ export function PregnancyTimeline({
         </View>
         <View className="flex-row justify-between">
           <Text className="text-sm text-muted">Previsão de Parto</Text>
-          <Text className="text-sm font-semibold" style={{ color: isPastDue ? "#EF4444" : colors.foreground }}>
+          <Text className="text-sm font-semibold" style={{ color: isPastDue ? colors.error : colors.foreground }}>
             {formatDate(pregnancy.expectedBirthDate)}
           </Text>
         </View>
@@ -139,10 +139,7 @@ export function PregnancyBadge({ pregnancy }: PregnancyBadgeProps) {
 
   return (
     <View className="px-2 py-0.5 rounded-full mt-1 self-start bg-primary/20">
-      <Text
-        className="text-xs font-medium"
-        style={{ color: getStatusColor(isPastDue, colors.primary, pregnancy.result) }}
-      >
+      <Text className="text-xs font-medium" style={{ color: colors[getStatusColor(isPastDue, pregnancy.result)] }}>
         {getStatusText()}
       </Text>
     </View>

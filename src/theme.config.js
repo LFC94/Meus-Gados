@@ -9,6 +9,14 @@ const themeColors = {
   success: { light: "#16c455", dark: "#34c76a" },
   warning: { light: "#F59E0B", dark: "#FBBF24" },
   error: { light: "#EF4444", dark: "#F87171" },
+  treatment: { light: "#3B82F6", dark: "#60A5FA" },
+  healthy: { light: "#16c455", dark: "#34c76a" },
+  deceased: { light: "#6B7280", dark: "#9CA3AF" },
+  pregnant: { light: "#A855F7", dark: "#C084FC" },
+  pregnant_delayed: { light: "#F97316", dark: "#FB923C" },
+  vaccine_pending: { light: "#EAB308", dark: "#FACC15" },
+  milk_production: { light: "#06B6D4", dark: "#22D3EE" },
+  scheduled_notification: { light: "#6366F1", dark: "#818CF8" },
 };
 
 module.exports = { themeColors };

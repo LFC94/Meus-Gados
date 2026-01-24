@@ -31,7 +31,7 @@ export function VaccineItem({ vaccine, onEdit, onDelete }: VaccineItemProps) {
             <Text
               className="text-sm mt-1"
               style={{
-                color: daysUntilNextDose !== null && daysUntilNextDose < 0 ? "#EF4444" : colors.success,
+                color: daysUntilNextDose !== null && daysUntilNextDose < 0 ? colors.error : colors.success,
               }}
             >
               Próxima: {formatDate(vaccine.nextDoseDate)}
@@ -48,10 +48,11 @@ interface VaccineBadgeProps {
 }
 
 export function VaccineBadge({ vaccine }: VaccineBadgeProps) {
+  const colors = useColors();
   const getStatusInfoDetail = () => {
     const status = getVaccineStatus(vaccine.nextDoseDate);
 
-    return { color: getVaccineStatusColor(status), label: getVaccineStatusLabel(vaccine.nextDoseDate), status };
+    return { color: colors[getVaccineStatusColor(status)], label: getVaccineStatusLabel(vaccine.nextDoseDate), status };
   };
   const status = getStatusInfoDetail();
 

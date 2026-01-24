@@ -136,7 +136,7 @@ export default function HomeScreen() {
                 number={stats.healthy}
                 title="Saudáveis"
                 icon="favorite"
-                color={STATUS_CATTLE["healthy"].color}
+                color={colors[STATUS_CATTLE["healthy"].color]}
                 onPress={() => navigation.navigate("CattleList", { status: "healthy" })}
               />
               {/* Em Tratamento */}
@@ -144,7 +144,7 @@ export default function HomeScreen() {
                 number={stats.inTreatment}
                 title="Em Tratamento"
                 icon="medical-services"
-                color={STATUS_CATTLE["in_treatment"].color}
+                color={colors[STATUS_CATTLE["in_treatment"].color]}
                 onPress={() => navigation.navigate("CattleList", { status: "in_treatment" })}
               />
             </View>
@@ -154,7 +154,7 @@ export default function HomeScreen() {
                 number={stats.pendingVaccines}
                 title="Vacinas Pendentes"
                 icon="vaccines"
-                color={STATUS_CATTLE["pending_vaccine"].color}
+                color={colors[STATUS_CATTLE["pending_vaccine"].color]}
                 onPress={() => navigation.navigate("VaccinePending")}
               />
 
@@ -163,16 +163,17 @@ export default function HomeScreen() {
                 number={stats.pregnant}
                 title="Gestantes"
                 icon="stroller"
-                color={STATUS_CATTLE["pregnancy"].color}
+                color={colors[STATUS_CATTLE["pregnancy"].color]}
                 onPress={() => navigation.navigate("CattleList", { status: "pregnancy" })}
               />
             </View>
 
             {/* Atrasadas */}
             {stats.overduePregnancies > 0 && (
-              <View className="rounded-2xl p-4 border border-error bg-error/20">
-                <Text className="text-error font-semibold">
-                  ⚠️ {stats.overduePregnancies} gestação{stats.overduePregnancies > 1 ? "ões" : ""} atrasada
+              <View className="flex-row rounded-2xl p-4 border border-error bg-surface items-center gap-2">
+                <IconSymbol name="warning-amber" color={colors.error} size={30} />
+                <Text className="text-muted font-semibold">
+                  {stats.overduePregnancies} gestaç{stats.overduePregnancies > 1 ? "ões" : "ão"} atrasada
                   {stats.overduePregnancies > 1 ? "s" : ""} - Verificar!
                 </Text>
               </View>
@@ -202,10 +203,7 @@ export default function HomeScreen() {
               style={{ opacity: 1 }}
             >
               <View className="flex-row items-center gap-3">
-                <View
-                  className="w-10 h-10 rounded-full items-center justify-center"
-                  style={{ backgroundColor: "#ffffff20" }}
-                >
+                <View className="w-10 h-10 bg-milk_production/20 rounded-full items-center justify-center">
                   <Text className="text-lg">🥛</Text>
                 </View>
                 <Text className="text-foreground font-semibold">Produção de Leite</Text>
@@ -233,10 +231,7 @@ export default function HomeScreen() {
               style={{ opacity: 1 }}
             >
               <View className="flex-row items-center gap-3">
-                <View
-                  className="w-10 h-10 rounded-full items-center justify-center"
-                  style={{ backgroundColor: "#ffd90020" }}
-                >
+                <View className="w-10 h-10 rounded-full items-center justify-center">
                   <Text className="text-lg">🔔</Text>
                 </View>
                 <Text className="text-foreground font-semibold">Notificações Agendadas</Text>

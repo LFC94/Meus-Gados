@@ -1,3 +1,4 @@
+import { type ThemeColorPalette } from "@/lib/_core/theme";
 import { CattleResult, DiseaseResult, PregnancyResult } from "@/types";
 
 export const COOKIE_NAME = "app_session_id";
@@ -75,7 +76,10 @@ export const PREGNANCY_RESULT_LABELS: Record<PregnancyResult, string> = {
 /**
  * Labels para resultados de tratamento
  */
-export const DISEASE_RESULT_LABELS: Record<DiseaseResult, { color: string; text: string; icon: string }> = {
+export const DISEASE_RESULT_LABELS: Record<
+  DiseaseResult,
+  { color: keyof ThemeColorPalette; text: string; icon: string }
+> = {
   in_treatment: { text: "Em Tratamento", color: "treatment", icon: "🏥" },
   cured: { text: "Curado", color: "healthy", icon: "💚" },
   death: { text: "Óbito", color: "deceased", icon: "🪦" },
@@ -84,7 +88,7 @@ export const DISEASE_RESULT_LABELS: Record<DiseaseResult, { color: string; text:
 /**
  * STATUS do GADO
  */
-export const STATUS_CATTLE: Record<CattleResult, { color: string; text: string; icon: string }> = {
+export const STATUS_CATTLE: Record<CattleResult, { color: keyof ThemeColorPalette; text: string; icon: string }> = {
   in_treatment: { color: "treatment", text: "Em Tratamento", icon: "🏥" },
   healthy: { color: "healthy", text: "Saudável", icon: "💚" },
   death: { color: "deceased", text: "Óbito", icon: "🪦" },

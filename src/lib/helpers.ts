@@ -2,6 +2,8 @@
  * Funções auxiliares para o aplicativo Meus Gados
  */
 
+import { ThemeColorPalette } from "./_core/theme";
+
 /**
  * Calcula a idade em anos a partir da data de nascimento
  */
@@ -164,16 +166,16 @@ export function getVaccineStatus(nextDose?: string): "up_to_date" | "upcoming" |
 /**
  * Retorna cor para status de vacina
  */
-export function getVaccineStatusColor(status: ReturnType<typeof getVaccineStatus>): string {
+export function getVaccineStatusColor(status: ReturnType<typeof getVaccineStatus>): keyof ThemeColorPalette {
   switch (status) {
     case "up_to_date":
-      return "#22C55E"; // success
+      return "success";
     case "upcoming":
-      return "#F59E0B"; // warning
+      return "warning";
     case "overdue":
-      return "#EF4444"; // error
+      return "error";
     default:
-      return "#687076"; // muted
+      return "muted";
   }
 }
 

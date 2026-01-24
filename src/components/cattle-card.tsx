@@ -37,7 +37,7 @@ export function CattleCard({ cattle, showStatus = true, status, onPress }: Cattl
       {/* Status Bar */}
       <View
         className="w-1 h-20 rounded-full"
-        style={{ backgroundColor: STATUS_CATTLE[status].color }}
+        style={{ backgroundColor: colors[STATUS_CATTLE[status].color] }}
         accessible={false}
       />
 
@@ -55,7 +55,7 @@ export function CattleCard({ cattle, showStatus = true, status, onPress }: Cattl
       {showStatus && (
         <View className="flex items-center">
           <Text className="text-lg">{STATUS_CATTLE[status].icon}</Text>
-          <Text style={{ color: STATUS_CATTLE[status].color }}>{STATUS_CATTLE[status].text}</Text>
+          <Text style={{ color: colors[STATUS_CATTLE[status].color] }}>{STATUS_CATTLE[status].text}</Text>
         </View>
       )}
 

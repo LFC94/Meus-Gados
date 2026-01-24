@@ -67,7 +67,8 @@ export function FormSelect({
       {error && <Text className="text-error text-xs">{error}</Text>}
       <Modal visible={showOptions} transparent animationType="fade" onRequestClose={handleClose}>
         <TouchableOpacity
-          style={{ flex: 1, backgroundColor: "#00000050", justifyContent: "center", padding: 24 }}
+          className="flex-1 bg-black/40 justify-center"
+          style={{ padding: 24 }}
           activeOpacity={1}
           onPress={handleClose}
         >
