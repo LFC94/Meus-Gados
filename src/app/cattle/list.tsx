@@ -12,7 +12,7 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { CattleCard, FormSelect, IconSymbol } from "@/components/";
+import { ButtonAdd, CattleCard, FormSelect, IconSymbol } from "@/components/";
 import { ScreenContainer } from "@/components/screen-container";
 import { STATUS_CATTLE } from "@/constants/const";
 import { useColors } from "@/hooks/use-colors";
@@ -293,35 +293,12 @@ export default function CattleListScreen() {
         </View>
         <View style={{ height: 60 }} />
       </ScrollView>
-      <View
-        style={{
-          position: "absolute",
-          bottom: 0,
-          left: 0,
-          right: 0,
-          alignItems: "center",
-          zIndex: 999,
-          marginBottom: insets.bottom,
-          height: 55,
-        }}
-      >
-        <TouchableOpacity
-          onPress={() => navigation.navigate("CattleCad")}
-          className="flex-row bg-primary rounded-xl p-4 items-center"
-          style={{
-            shadowColor: colors.foreground,
-            shadowOffset: {
-              width: 0,
-              height: 2,
-            },
-            shadowOpacity: 0.23,
-            shadowRadius: 2.62,
-            elevation: 4,
-          }}
-        >
-          <Text className="text-white font-bold text-lg">+ Cadastrar Animal</Text>
-        </TouchableOpacity>
-      </View>
+      <ButtonAdd
+        label="Adicionar Animal"
+        color={colors.primary}
+        icon="add"
+        onPress={() => navigation.navigate("CattleCad")}
+      />
     </ScreenContainer>
   );
 }

@@ -6,6 +6,7 @@ export { DiseaseRecord } from "./disease-record";
 export { PregnancyBadge, PregnancyTimeline } from "./pregnancy-timeline";
 export { ProductionCard, ProductionCardCompact } from "./production-card";
 export { ScreenContainer } from "./screen-container";
+export { ButtonAdd } from "./ui/button-add";
 export { AlertDialog, ConfirmDialog } from "./ui/confirm-dialog";
 export { CustomDatePicker } from "./ui/date-picker";
 export { FormInput } from "./ui/form-input";

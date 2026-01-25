@@ -1,10 +1,10 @@
 import { useFocusEffect } from "@react-navigation/native";
 import * as Haptics from "expo-haptics";
 import React, { useState } from "react";
-import { ActivityIndicator, RefreshControl, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, RefreshControl, ScrollView, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { CardEdit, IconSymbol } from "@/components";
+import { ButtonAdd, CardEdit, IconSymbol } from "@/components";
 import { ScreenContainer } from "@/components/screen-container";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { useNavigation } from "@/hooks";
@@ -109,13 +109,6 @@ export default function VaccineCatalogScreen() {
             <View className="flex-1 items-center justify-center py-12">
               <IconSymbol name={"vaccines"} color={colors.muted} />
               <Text className="text-muted text-center text-base">Nenhuma vaccine cadastrada no catálogo</Text>
-              <TouchableOpacity
-                onPress={() => navigation.navigate("VaccineCatalogCad")}
-                className="mt-4 bg-primary rounded-xl px-6 py-3"
-                style={{ opacity: 1 }}
-              >
-                <Text className="text-white font-semibold">+ Cadastrar Primeira Vacina</Text>
-              </TouchableOpacity>
             </View>
           ) : (
             <View className="gap-3">
@@ -160,19 +153,15 @@ export default function VaccineCatalogScreen() {
               ))}
             </View>
           )}
-
-          {/* Add Button */}
-          {vaccines.length > 0 && (
-            <TouchableOpacity
-              onPress={() => navigation.navigate("VaccineCatalogCad")}
-              className="bg-primary rounded-xl p-4 items-center mt-2"
-              style={{ opacity: 1 }}
-            >
-              <Text className="text-white font-semibold text-base">+ Cadastrar Nova Vacina</Text>
-            </TouchableOpacity>
-          )}
         </View>
+        <View style={{ height: 60 }} />
       </ScrollView>
+      <ButtonAdd
+        label="Adicionar Vacina"
+        color={colors.primary}
+        icon="add"
+        onPress={() => navigation.navigate("CattleCad")}
+      />
     </ScreenContainer>
   );
 }
