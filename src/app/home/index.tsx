@@ -183,49 +183,39 @@ export default function HomeScreen() {
           {/* Quick Actions */}
           <View className="gap-3">
             <Text className="text-lg font-semibold text-foreground">Ação Rápidas</Text>
-            <TouchableOpacity
-              onPress={() => navigation.navigate("CattleList")}
-              className="bg-surface rounded-2xl p-4 border border-border flex-row items-center justify-between"
-              style={{ opacity: 1 }}
-            >
-              <View className="flex-row items-center gap-3">
-                <View className="w-10 h-10 rounded-md items-center justify-center bg-primary/20">
-                  <IconSymbol name="cow" color={colors.primary} />
-                </View>
-                <Text className="text-foreground font-semibold">Ver Todos os Animais</Text>
+            <View className="flex-row gap-3">
+              <View className="items-center justify-center">
+                <TouchableOpacity
+                  onPress={() => navigation.navigate("CattleList")}
+                  className="bg-surface rounded-2xl p-4 border-2 border-border"
+                  style={{ opacity: 1 }}
+                >
+                  <IconSymbol name="cow" color={colors.primary} size={30} />
+                </TouchableOpacity>
+                <Text className="text-foreground font-semibold">Animais</Text>
               </View>
-              <IconSymbol name="chevron-right" size={20} color={colors.muted} />
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              onPress={() => navigation.navigate("MilkProductionList")}
-              className="bg-surface rounded-2xl p-4 border border-border flex-row items-center justify-between"
-              style={{ opacity: 1 }}
-            >
-              <View className="flex-row items-center gap-3">
-                <View className="w-10 h-10 bg-milk_production/20 rounded-md items-center justify-center">
-                  <IconSymbol name="baby-bottle" color={colors.milk_production} />
-                </View>
-                <Text className="text-foreground font-semibold">Produção de Leite</Text>
+              <View className="items-center justify-center">
+                <TouchableOpacity
+                  onPress={() => navigation.navigate("MilkProductionList")}
+                  className="bg-surface rounded-2xl p-4 border-2 border-border"
+                  style={{ opacity: 1 }}
+                >
+                  <IconSymbol name="baby-bottle" color={colors.milk_production} size={30} />
+                </TouchableOpacity>
+                <Text className="text-foreground font-semibold">Leite</Text>
               </View>
-              <IconSymbol name="chevron-right" size={20} color={colors.muted} />
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              onPress={() => navigation.navigate("ScheduledNotifications")}
-              className="bg-surface rounded-2xl p-4 border border-border flex-row items-center justify-between"
-              style={{ opacity: 1 }}
-            >
-              <View className="flex-row items-center gap-3">
-                <View className="w-10 h-10 bg-warning/20 rounded-md items-center justify-center">
-                  <IconSymbol name="notifications" color={colors.warning} />
-                </View>
-                <Text className="text-foreground font-semibold">Notificações Agendadas</Text>
+              <View className=" items-center justify-center">
+                <TouchableOpacity
+                  onPress={() => navigation.navigate("ScheduledNotifications")}
+                  className="bg-surface rounded-2xl p-4 border-2 border-border"
+                  style={{ opacity: 1 }}
+                >
+                  <IconSymbol name="notifications" color={colors.warning} size={30} />
+                </TouchableOpacity>
+                <Text className="text-foreground font-semibold">Agenda</Text>
               </View>
-              <IconSymbol name="chevron-right" size={20} color={colors.muted} />
-            </TouchableOpacity>
+            </View>
           </View>
-
           {/* Recent Animals */}
           {recentCattle.length > 0 && (
             <View className="gap-3">

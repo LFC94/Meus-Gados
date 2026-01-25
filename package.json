@@ -13,7 +13,7 @@
     "build:dev": "eas build --profile development --platform android",
     "build:preview": "eas build --profile preview --platform android",
     "build:prod": "eas build --profile production --platform android",
-    "build:local": "cd android && gradlew assembleRelease --no-configuration-cache"
+    "build:local": "expo prebuild --clean && cd android && gradlew assembleRelease --no-configuration-cache"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.3",
