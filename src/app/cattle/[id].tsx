@@ -3,12 +3,11 @@ import * as Haptics from "expo-haptics";
 import React, { useState } from "react";
 import { ActivityIndicator, Alert, ScrollView, Text, TouchableOpacity, View } from "react-native";
 
-import { CardEdit, ProductionCardCompact } from "@/components";
+import { ButtonAdd, CardEdit, IconSymbol, ProductionCardCompact } from "@/components";
 import { DiseaseRecord } from "@/components/disease-record";
 import { PregnancyTimeline } from "@/components/pregnancy-timeline";
 import { ScreenContainer } from "@/components/screen-container";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
-import { IconSymbol } from "@/components/ui/icon-symbol";
 import { VaccineItem } from "@/components/vaccine-item";
 import { STATUS_CATTLE } from "@/constants/const";
 import { useColors, useNavigation, useScreenHeader } from "@/hooks";
@@ -44,6 +43,7 @@ export default function CattleDetailScreen() {
   const [diseases, setDiseases] = useState<Disease[]>([]);
   const [milkRecords, setMilkRecords] = useState<MilkProductionRecord[]>([]);
   const [activeTab, setActiveTab] = useState<Tab>("info");
+  const [buttonAdd, setbuttonAdd] = useState<string | undefined>(undefined);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   useScreenHeader("Detalhes do Animal", undefined, () => (
@@ -196,6 +196,42 @@ export default function CattleDetailScreen() {
     return "healthy";
   };
 
+  const selecionarTab = (tab: Tab) => {
+    switch (tab) {
+      case "vaccines":
+        setbuttonAdd("Vacina");
+        break;
+      case "production":
+        setbuttonAdd("Produção");
+        break;
+      case "pregnancy":
+        setbuttonAdd("Gestação");
+        break;
+      case "diseases":
+        setbuttonAdd("Doença");
+        break;
+      default:
+        setbuttonAdd(undefined);
+    }
+    setActiveTab(tab as Tab);
+  };
+
+  const pressButtonAdd = () => {
+    switch (activeTab) {
+      case "vaccines":
+        navigation.navigate("VaccineCad" as never, { cattleId: id } as never);
+        break;
+      case "production":
+        navigation.navigate("MilkProductionCad" as never, { cattleId: id } as never);
+      case "pregnancy":
+        navigation.navigate("PregnancyAdd" as never, { cattleId: id } as never);
+      case "diseases":
+        navigation.navigate("DiseasesCad" as never, { cattleId: id } as never);
+      default:
+        break;
+    }
+  };
+
   if (loading) {
     return (
       <ScreenContainer className="items-center justify-center">
@@ -269,7 +305,7 @@ export default function CattleDetailScreen() {
             ].map((tab) => (
               <TouchableOpacity
                 key={tab.value}
-                onPress={() => setActiveTab(tab.value as Tab)}
+                onPress={() => selecionarTab(tab.value as Tab)}
                 className={`flex justify-center items-center border-border`}
                 style={{
                   width: 100,
@@ -325,18 +361,27 @@ export default function CattleDetailScreen() {
             </View>
           )}
 
-          {activeTab === "vaccines" && (
+          {activeTab === "production" && (
             <View className="gap-3">
+              {milkRecords.length === 0 ? (
+                <View className="items-center py-8">
+                  <Text className="text-muted text-center mb-4">Nenhuma produção registrada</Text>
+                </View>
+              ) : (
+                <>
+                  {milkRecords.map((record) => (
+                    <ProductionCardCompact key={record.id} milkProduction={record} />
+                  ))}
+                </>
+              )}
+            </View>
+          )}
+
+          {activeTab === "vaccines" && (
+            <View className="gap-3 flex-1">
               {vaccines.length === 0 ? (
                 <View className="items-center py-8">
                   <Text className="text-muted text-center mb-4">Nenhuma vacina registrada</Text>
-                  <TouchableOpacity
-                    onPress={() => navigation.navigate("VaccineCad" as never, { cattleId: id } as never)}
-                    className="bg-primary rounded-xl px-6 py-3"
-                    style={{ opacity: 1 }}
-                  >
-                    <Text className="text-background font-semibold">+ Adicionar Vacina</Text>
-                  </TouchableOpacity>
                 </View>
               ) : (
                 <>
@@ -348,13 +393,6 @@ export default function CattleDetailScreen() {
                       onDelete={() => handleDeleteVaccine(vaccine.id)}
                     />
                   ))}
-                  <TouchableOpacity
-                    onPress={() => navigation.navigate("VaccineCad" as never, { cattleId: id } as never)}
-                    className="bg-primary rounded-xl p-4 items-center mt-2"
-                    style={{ opacity: 1 }}
-                  >
-                    <Text className="text-background font-semibold">+ Adicionar Vacina</Text>
-                  </TouchableOpacity>
                 </>
               )}
             </View>
@@ -365,13 +403,6 @@ export default function CattleDetailScreen() {
               {pregnancies.length === 0 ? (
                 <View className="items-center py-8">
                   <Text className="text-muted text-center mb-4">Nenhuma gestação registrada</Text>
-                  <TouchableOpacity
-                    onPress={() => navigation.navigate("PregnancyAdd" as never, { cattleId: id } as never)}
-                    className="bg-primary rounded-xl px-6 py-3"
-                    style={{ opacity: 1 }}
-                  >
-                    <Text className="text-background font-semibold">+ Registrar Gestação</Text>
-                  </TouchableOpacity>
                 </View>
               ) : (
                 <>
@@ -391,43 +422,6 @@ export default function CattleDetailScreen() {
                       }
                     />
                   ))}
-                  <TouchableOpacity
-                    onPress={() => navigation.navigate("PregnancyAdd" as never, { cattleId: id } as never)}
-                    className="bg-primary rounded-xl p-4 items-center mt-2"
-                    style={{ opacity: 1 }}
-                  >
-                    <Text className="text-background font-semibold">+ Registrar Gestação</Text>
-                  </TouchableOpacity>
-                </>
-              )}
-            </View>
-          )}
-
-          {activeTab === "production" && (
-            <View className="gap-3">
-              {milkRecords.length === 0 ? (
-                <View className="items-center py-8">
-                  <Text className="text-muted text-center mb-4">Nenhuma produção registrada</Text>
-                  <TouchableOpacity
-                    onPress={() => navigation.navigate("MilkProductionCad" as never, { cattleId: id } as never)}
-                    className="bg-primary rounded-xl px-6 py-3"
-                    style={{ opacity: 1 }}
-                  >
-                    <Text className="text-background font-semibold">+ Registrar Produção</Text>
-                  </TouchableOpacity>
-                </View>
-              ) : (
-                <>
-                  {milkRecords.map((record) => (
-                    <ProductionCardCompact key={record.id} milkProduction={record} />
-                  ))}
-                  <TouchableOpacity
-                    onPress={() => navigation.navigate("MilkProductionCad" as never, { cattleId: id } as never)}
-                    className="bg-primary rounded-xl p-4 items-center mt-2"
-                    style={{ opacity: 1 }}
-                  >
-                    <Text className="text-background font-semibold">+ Registrar Produção</Text>
-                  </TouchableOpacity>
                 </>
               )}
             </View>
@@ -438,13 +432,6 @@ export default function CattleDetailScreen() {
               {diseases.length === 0 ? (
                 <View className="items-center py-8">
                   <Text className="text-muted text-center mb-4">Nenhuma doença registrada</Text>
-                  <TouchableOpacity
-                    onPress={() => navigation.navigate("DiseasesCad" as never, { cattleId: id } as never)}
-                    className="bg-primary rounded-xl px-6 py-3"
-                    style={{ opacity: 1 }}
-                  >
-                    <Text className="text-background font-semibold">+ Registrar Doença</Text>
-                  </TouchableOpacity>
                 </View>
               ) : (
                 <>
@@ -456,19 +443,16 @@ export default function CattleDetailScreen() {
                       onDelete={() => handleDeleteDisease(disease.id)}
                     />
                   ))}
-                  <TouchableOpacity
-                    onPress={() => navigation.navigate("DiseasesCad" as never, { cattleId: id } as never)}
-                    className="bg-primary rounded-xl p-4 items-center mt-2"
-                    style={{ opacity: 1 }}
-                  >
-                    <Text className="text-background font-semibold">+ Registrar Doença</Text>
-                  </TouchableOpacity>
                 </>
               )}
             </View>
           )}
         </View>
+        <View style={{ height: 60 }} />
       </ScrollView>
+      {buttonAdd && (
+        <ButtonAdd label={`Registrar ${buttonAdd}`} color={colors.primary} icon="add" onPress={pressButtonAdd} />
+      )}
     </ScreenContainer>
   );
 }
