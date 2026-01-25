@@ -4,9 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import { ActivityIndicator, Alert, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { FormInput, FormSelect } from "@/components";
-import { CustomDatePicker } from "@/components/date-picker";
-import { ScreenContainer } from "@/components/screen-container";
+import { CustomDatePicker, FormInput, FormSelect, ScreenContainer } from "@/components";
 import { DISEASE_RESULT_LABELS } from "@/constants/const";
 import { useColors, useNavigation, useScreenHeader } from "@/hooks";
 import { cattleStorage, diseaseStorage } from "@/lib/storage";

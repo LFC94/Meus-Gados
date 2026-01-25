@@ -3,7 +3,7 @@ import { Text, TouchableOpacity, View, type ViewProps } from "react-native";
 
 import { useColors } from "@/hooks";
 
-import { IconMapping, IconSymbol } from "./icon-symbol";
+import { IconMapping, IconSymbol } from "./ui/icon-symbol";
 
 export interface CardEditProps extends ViewProps {
   title?: string;

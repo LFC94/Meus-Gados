@@ -1,7 +1,7 @@
 import { useRouter } from "expo-router";
 import { Text, TouchableOpacity, View } from "react-native";
 
-import { IconSymbol } from "@/components/icon-symbol";
+import { IconSymbol } from "@/components/ui/icon-symbol";
 import { STATUS_CATTLE } from "@/constants/const";
 import { useColors } from "@/hooks/use-colors";
 import { formatAge } from "@/lib/helpers";

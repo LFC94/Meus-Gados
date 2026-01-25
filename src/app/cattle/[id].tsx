@@ -4,11 +4,11 @@ import React, { useState } from "react";
 import { ActivityIndicator, Alert, ScrollView, Text, TouchableOpacity, View } from "react-native";
 
 import { CardEdit, ProductionCardCompact } from "@/components";
-import { ConfirmDialog } from "@/components/confirm-dialog";
 import { DiseaseRecord } from "@/components/disease-record";
-import { IconSymbol } from "@/components/icon-symbol";
 import { PregnancyTimeline } from "@/components/pregnancy-timeline";
 import { ScreenContainer } from "@/components/screen-container";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { IconSymbol } from "@/components/ui/icon-symbol";
 import { VaccineItem } from "@/components/vaccine-item";
 import { STATUS_CATTLE } from "@/constants/const";
 import { useColors, useNavigation, useScreenHeader } from "@/hooks";

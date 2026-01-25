@@ -5,8 +5,8 @@ import { ActivityIndicator, Alert, ScrollView, Text, TouchableOpacity, View } fr
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { FormInput } from "@/components";
-import { CustomDatePicker } from "@/components/date-picker";
 import { ScreenContainer } from "@/components/screen-container";
+import { CustomDatePicker } from "@/components/ui/date-picker";
 import { useNavigation, useScreenHeader } from "@/hooks";
 import { useColors } from "@/hooks/use-colors";
 import { cattleStorage, pregnancyStorage } from "@/lib/storage";

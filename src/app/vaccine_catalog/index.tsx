@@ -5,8 +5,8 @@ import { ActivityIndicator, RefreshControl, ScrollView, Text, TouchableOpacity, 
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { CardEdit, IconSymbol } from "@/components";
-import { ConfirmDialog } from "@/components/confirm-dialog";
 import { ScreenContainer } from "@/components/screen-container";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { useNavigation } from "@/hooks";
 import { useColors } from "@/hooks/use-colors";
 import useScreenHeader from "@/hooks/use-screen-header";

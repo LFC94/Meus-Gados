@@ -1,6 +1,6 @@
 import { Text, TouchableOpacity, View } from "react-native";
 
-import { IconMapping, IconSymbol } from "./icon-symbol";
+import { IconMapping, IconSymbol } from "./ui/icon-symbol";
 
 export interface CardResumeProps {
   title: string;

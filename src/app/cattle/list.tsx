@@ -175,7 +175,6 @@ export default function CattleListScreen() {
       <ScrollView
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={loadData} tintColor={colors.primary} />}
         contentContainerStyle={{ flexGrow: 1 }}
-        className="pt-4"
       >
         <View className="p-6 gap-4 flex-1" style={{ marginBottom: insets.bottom }}>
           {/* Search and Filters Toggle */}
@@ -274,46 +273,55 @@ export default function CattleListScreen() {
           {/* List */}
           {filteredCattle.length === 0 ? (
             <View className="flex-1 items-center justify-center py-12">
-              <IconSymbol name="cow" color={colors.muted} />
+              <IconSymbol name="cow-off" color={colors.muted} />
               <Text className="text-muted text-center text-base">
                 {searchQuery ? "Nenhum animal encontrado" : "Nenhum animal cadastrado ainda"}
               </Text>
-
-              {!searchQuery && (
-                <TouchableOpacity
-                  onPress={() => navigation.navigate("CattleCad")}
-                  className="mt-4 bg-primary rounded-xl px-6 py-3"
-                  style={{ opacity: 1 }}
-                >
-                  <Text className="text-white font-semibold">+ Cadastrar Primeiro Animal</Text>
-                </TouchableOpacity>
-              )}
             </View>
           ) : (
-            <>
-              <View className="gap-3">
-                {filteredCattle.map((item) => (
-                  <CattleCard
-                    key={item.id}
-                    cattle={item}
-                    status={getStatus(item)}
-                    onPress={() => navigation.navigate("CattleDetail", { id: item.id })}
-                  />
-                ))}
-              </View>
-
-              {/* Add Button */}
-              <TouchableOpacity
-                onPress={() => navigation.navigate("CattleCad")}
-                className="bg-primary rounded-xl p-4 items-center mt-4"
-                style={{ opacity: 1 }}
-              >
-                <Text className="text-background font-semibold text-base">+ Cadastrar Novo Animal</Text>
-              </TouchableOpacity>
-            </>
+            <View className="gap-3">
+              {filteredCattle.map((item) => (
+                <CattleCard
+                  key={item.id}
+                  cattle={item}
+                  status={getStatus(item)}
+                  onPress={() => navigation.navigate("CattleDetail", { id: item.id })}
+                />
+              ))}
+            </View>
           )}
         </View>
+        <View style={{ height: 60 }} />
       </ScrollView>
+      <View
+        style={{
+          position: "absolute",
+          bottom: 0,
+          left: 0,
+          right: 0,
+          alignItems: "center",
+          zIndex: 999,
+          marginBottom: insets.bottom,
+          height: 55,
+        }}
+      >
+        <TouchableOpacity
+          onPress={() => navigation.navigate("CattleCad")}
+          className="flex-row bg-primary rounded-xl p-4 items-center"
+          style={{
+            shadowColor: colors.foreground,
+            shadowOffset: {
+              width: 0,
+              height: 2,
+            },
+            shadowOpacity: 0.23,
+            shadowRadius: 2.62,
+            elevation: 4,
+          }}
+        >
+          <Text className="text-white font-bold text-lg">+ Cadastrar Animal</Text>
+        </TouchableOpacity>
+      </View>
     </ScreenContainer>
   );
 }

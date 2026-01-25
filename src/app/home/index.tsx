@@ -5,8 +5,8 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { CardResume } from "@/components";
 import { CattleCardCompact } from "@/components/cattle-card";
-import { IconSymbol } from "@/components/icon-symbol";
 import { ScreenContainer } from "@/components/screen-container";
+import { IconSymbol } from "@/components/ui/icon-symbol";
 import { STATUS_CATTLE } from "@/constants/const";
 import { useColors } from "@/hooks/use-colors";
 import useNavigation from "@/hooks/use-navigation";
