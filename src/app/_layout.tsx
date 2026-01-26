@@ -2,10 +2,16 @@ import "@/global.css";
 import "@/lib/_core/nativewind-pressable";
 import "react-native-reanimated";
 
-import { createDrawerNavigator } from "@react-navigation/drawer";
+import {
+  createDrawerNavigator,
+  DrawerContentComponentProps,
+  DrawerContentScrollView,
+  DrawerItemList,
+} from "@react-navigation/drawer";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useEffect, useMemo } from "react";
-import { initialWindowMetrics, SafeAreaProvider } from "react-native-safe-area-context";
+import { Image, View } from "react-native";
+import { initialWindowMetrics, SafeAreaProvider, useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { IconSymbol } from "@/components";
 import { AuthProvider, useColors, useScreenOptions } from "@/hooks/";
@@ -38,6 +44,20 @@ import {
 const Drawer = createDrawerNavigator();
 const Stack = createStackNavigator<RootStackParamList>();
 
+// Custom Drawer Content to show the Logo
+function CustomDrawerContent(props: DrawerContentComponentProps) {
+  const insets = useSafeAreaInsets();
+
+  return (
+    <DrawerContentScrollView {...props} contentContainerStyle={{ paddingTop: 0 }}>
+      <View className="items-center" style={{ paddingTop: insets.top }}>
+        <Image source={require("@/assets/images/icon.png")} style={{ height: 120 }} resizeMode="contain" />
+      </View>
+      <DrawerItemList {...props} />
+    </DrawerContentScrollView>
+  );
+}
+
 // Drawer Navigator - telas principais acessíveis pelo menu lateral
 function DrawerNavigator() {
   const colors = useColors();
@@ -45,6 +65,7 @@ function DrawerNavigator() {
   return (
     <Drawer.Navigator
       initialRouteName="Home"
+      drawerContent={(props) => <CustomDrawerContent {...props} />}
       screenOptions={{
         drawerActiveTintColor: colors.primary,
         drawerInactiveTintColor: colors.muted,
@@ -77,7 +98,7 @@ function DrawerNavigator() {
         name="Home"
         component={HomeScreen}
         options={{
-          drawerLabel: "Meus Gados",
+          drawerLabel: "Inicio",
           title: "Meus Gados",
           drawerIcon: () => <IconSymbol name="home" color={colors.primary} />,
         }}
