@@ -2,8 +2,9 @@ import { RouteProp, useFocusEffect, useRoute } from "@react-navigation/native";
 import * as Haptics from "expo-haptics";
 import React, { useState } from "react";
 import { ActivityIndicator, Alert, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { ButtonAdd, CardEdit, IconSymbol, ProductionCardCompact } from "@/components";
+import { ButtonAdd, CardEdit, IconSymbol, InfiniteList, ProductionCardCompact } from "@/components";
 import { DiseaseRecord } from "@/components/disease-record";
 import { PregnancyTimeline } from "@/components/pregnancy-timeline";
 import { ScreenContainer } from "@/components/screen-container";
@@ -35,6 +36,7 @@ export default function CattleDetailScreen() {
   const navigation = useNavigation();
   const route = useRoute<RouteProp<RootStackParamList, "CattleDetail">>();
   const colors = useColors();
+  const insets = useSafeAreaInsets();
   const { id } = route.params;
   const [loading, setLoading] = useState(true);
   const [cattle, setCattle] = useState<Cattle | null>(null);
@@ -45,6 +47,21 @@ export default function CattleDetailScreen() {
   const [activeTab, setActiveTab] = useState<Tab>("info");
   const [buttonAdd, setbuttonAdd] = useState<string | undefined>(undefined);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+
+  // Pagination
+  const [productionOffset, setProductionOffset] = useState(0);
+  const [hasMoreProduction, setHasMoreProduction] = useState(true);
+  const [isLoadingMoreProduction, setIsLoadingMoreProduction] = useState(false);
+
+  const [vaccineOffset, setVaccineOffset] = useState(0);
+  const [hasMoreVaccines, setHasMoreVaccines] = useState(true);
+  const [isLoadingMoreVaccines, setIsLoadingMoreVaccines] = useState(false);
+
+  const [diseaseOffset, setDiseaseOffset] = useState(0);
+  const [hasMoreDiseases, setHasMoreDiseases] = useState(true);
+  const [isLoadingMoreDiseases, setIsLoadingMoreDiseases] = useState(false);
+
+  const LIMIT = 5;
 
   useScreenHeader("Detalhes do Animal", undefined, () => (
     <TouchableOpacity
@@ -61,10 +78,10 @@ export default function CattleDetailScreen() {
       setLoading(true);
       const results = await Promise.all([
         cattleStorage.getById(id),
-        vaccinationRecordStorage.getByCattleId(id),
+        vaccinationRecordStorage.getByCattleId(id, LIMIT, 0),
         pregnancyStorage.getByCattleId(id),
-        diseaseStorage.getByCattleId(id),
-        milkProductionStorage.getByCattleId(id),
+        diseaseStorage.getByCattleId(id, LIMIT, 0),
+        milkProductionStorage.getByCattleId(id, LIMIT, 0),
       ]);
 
       const cattleData = results[0];
@@ -78,6 +95,15 @@ export default function CattleDetailScreen() {
       setPregnancies(pregnanciesData);
       setDiseases(diseasesData);
       setMilkRecords(milkRecordsData);
+
+      setProductionOffset(LIMIT);
+      setHasMoreProduction(milkRecordsData.length === LIMIT);
+
+      setVaccineOffset(LIMIT);
+      setHasMoreVaccines(vaccinesData.length === LIMIT);
+
+      setDiseaseOffset(LIMIT);
+      setHasMoreDiseases(diseasesData.length === LIMIT);
     } catch (error) {
       console.error("Error loading cattle data:", error);
     } finally {
@@ -92,6 +118,51 @@ export default function CattleDetailScreen() {
       }
     }, [id, loadData]),
   );
+
+  const loadMore = async () => {
+    if (loading) return;
+
+    if (activeTab === "production") {
+      if (isLoadingMoreProduction || !hasMoreProduction) return;
+      try {
+        setIsLoadingMoreProduction(true);
+        const data = await milkProductionStorage.getByCattleId(id, LIMIT, productionOffset);
+        setMilkRecords((prev) => [...prev, ...data]);
+        setProductionOffset((prev) => prev + LIMIT);
+        setHasMoreProduction(data.length === LIMIT);
+      } catch (error) {
+        console.error("Error loading more milk records:", error);
+      } finally {
+        setIsLoadingMoreProduction(false);
+      }
+    } else if (activeTab === "vaccines") {
+      if (isLoadingMoreVaccines || !hasMoreVaccines) return;
+      try {
+        setIsLoadingMoreVaccines(true);
+        const data = await vaccinationRecordStorage.getByCattleId(id, LIMIT, vaccineOffset);
+        setVaccines((prev) => [...prev, ...data]);
+        setVaccineOffset((prev) => prev + LIMIT);
+        setHasMoreVaccines(data.length === LIMIT);
+      } catch (error) {
+        console.error("Error loading more vaccines:", error);
+      } finally {
+        setIsLoadingMoreVaccines(false);
+      }
+    } else if (activeTab === "diseases") {
+      if (isLoadingMoreDiseases || !hasMoreDiseases) return;
+      try {
+        setIsLoadingMoreDiseases(true);
+        const data = await diseaseStorage.getByCattleId(id, LIMIT, diseaseOffset);
+        setDiseases((prev) => [...prev, ...data]);
+        setDiseaseOffset((prev) => prev + LIMIT);
+        setHasMoreDiseases(data.length === LIMIT);
+      } catch (error) {
+        console.error("Error loading more diseases:", error);
+      } finally {
+        setIsLoadingMoreDiseases(false);
+      }
+    }
+  };
 
   const handleDelete = async () => {
     try {
@@ -223,10 +294,13 @@ export default function CattleDetailScreen() {
         break;
       case "production":
         navigation.navigate("MilkProductionCad" as never, { cattleId: id } as never);
+        break;
       case "pregnancy":
         navigation.navigate("PregnancyAdd" as never, { cattleId: id } as never);
+        break;
       case "diseases":
         navigation.navigate("DiseasesCad" as never, { cattleId: id } as never);
+        break;
       default:
         break;
     }
@@ -255,201 +329,232 @@ export default function CattleDetailScreen() {
     );
   }
 
-  const statusBadge = STATUS_CATTLE[getStatusBadge()];
+  // No statusBadge here, it's used in renderHeader
+
+  const renderHeader = () => {
+    if (!cattle) return null;
+    const statusBadge = STATUS_CATTLE[getStatusBadge()];
+
+    return (
+      <View className="p-6 gap-4">
+        <ConfirmDialog
+          visible={showDeleteDialog}
+          title="Confirmar Exclusão"
+          message="Tem certeza que deseja excluir este animal? Esta ação não pode ser desfeita."
+          confirmText="Excluir"
+          confirmStyle="destructive"
+          onConfirm={handleDelete}
+          onCancel={() => setShowDeleteDialog(false)}
+        />
+        {/* Animal Info Card */}
+        {/* Icon and Name */}
+        <View className="items-center gap-3">
+          <View className="items-center">
+            <Text className="text-3xl font-bold text-foreground">{cattle.name || `Animal ${cattle.number}`}</Text>
+            <Text className="text-base text-muted mt-1">Nº {cattle.number}</Text>
+          </View>
+        </View>
+
+        {/* Status Badge */}
+        <View className="bg-surface rounded-2xl p-4 border border-border items-center">
+          <View className="flex-row items-center gap-2">
+            <IconSymbol name={statusBadge.icon} color={colors[statusBadge.color]} />
+            <Text className="text-base font-semibold" style={{ color: colors[statusBadge.color] }}>
+              {statusBadge.text}
+            </Text>
+          </View>
+        </View>
+
+        {/* Tabs */}
+
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          className="rounded-md bg-muted border border-border flex-row"
+        >
+          {[
+            { label: "Info", value: "info" },
+            { label: "Produção", value: "production" },
+            { label: "Vacinas", value: "vaccines" },
+            { label: "Gestação", value: "pregnancy" },
+            { label: "Doenças", value: "diseases" },
+          ].map((tab) => (
+            <TouchableOpacity
+              key={tab.value}
+              onPress={() => selecionarTab(tab.value as Tab)}
+              className={`flex justify-center items-center border-border`}
+              style={{
+                width: 100,
+                height: 30,
+                borderLeftWidth: 1,
+                borderRightWidth: 1,
+
+                backgroundColor: activeTab === tab.value ? colors.primary : colors.surface,
+              }}
+            >
+              <Text className={`font-bold text-xs ${activeTab === tab.value ? "text-white" : "text-muted"}`}>
+                {tab.label}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+      </View>
+    );
+  };
+
+  const renderTabContent = () => {
+    return (
+      <View className="px-6 gap-3">
+        <Text className="text-base font-semibold text-foreground">Informações do Animal</Text>
+        <CardEdit
+          handleEdit={() => navigation.navigate("CattleCad" as never, { id } as never)}
+          handleDelete={() => setShowDeleteDialog(true)}
+        >
+          <View className="gap-3">
+            <View className="flex-row justify-between items-center">
+              <Text className="text-sm text-muted">Raça</Text>
+              <Text className="text-sm font-semibold text-foreground">{cattle.breed}</Text>
+            </View>
+            <View className="h-px bg-border" />
+            <View className="flex-row justify-between items-center">
+              <Text className="text-sm text-muted">Data de Nascimento</Text>
+              <Text className="text-sm font-semibold text-foreground">{formatDate(cattle.birthDate)}</Text>
+            </View>
+            <View className="h-px bg-border" />
+            <View className="flex-row justify-between items-center">
+              <Text className="text-sm text-muted">Peso</Text>
+              <Text className="text-sm font-semibold text-foreground">{formatWeight(cattle.weight)}</Text>
+            </View>
+            {cattle.motherId && (
+              <>
+                <View className="h-px bg-border" />
+                <View className="flex-row justify-between items-center">
+                  <Text className="text-sm text-muted">Mãe</Text>
+                  <Text className="text-sm font-semibold text-primary">Cadastrada</Text>
+                </View>
+              </>
+            )}
+          </View>
+        </CardEdit>
+      </View>
+    );
+  };
+
+  const getTabData = () => {
+    switch (activeTab) {
+      case "production":
+        return milkRecords;
+      case "vaccines":
+        return vaccines;
+      case "diseases":
+        return diseases;
+      case "pregnancy":
+        return pregnancies;
+      default:
+        return [1];
+    }
+  };
+
+  const isLoadingMore =
+    activeTab === "production"
+      ? isLoadingMoreProduction
+      : activeTab === "vaccines"
+        ? isLoadingMoreVaccines
+        : activeTab === "diseases"
+          ? isLoadingMoreDiseases
+          : false;
+
+  const hasMore =
+    activeTab === "production"
+      ? hasMoreProduction
+      : activeTab === "vaccines"
+        ? hasMoreVaccines
+        : activeTab === "diseases"
+          ? hasMoreDiseases
+          : false;
+
+  const getEmptyMessage = () => {
+    switch (activeTab) {
+      case "production":
+        return "Nenhuma produção registrada";
+      case "vaccines":
+        return "Nenhuma vacina registrada";
+      case "diseases":
+        return "Nenhuma doença registrada";
+      case "pregnancy":
+        return "Nenhuma gestação registrada";
+      default:
+        return "";
+    }
+  };
 
   return (
     <ScreenContainer className="p-0">
-      <ConfirmDialog
-        visible={showDeleteDialog}
-        title="Confirmar Exclusão"
-        message="Tem certeza que deseja excluir este animal? Esta ação não pode ser desfeita."
-        confirmText="Excluir"
-        confirmStyle="destructive"
-        onConfirm={handleDelete}
-        onCancel={() => setShowDeleteDialog(false)}
+      <InfiniteList<any>
+        data={getTabData()}
+        renderItem={({ item }) => {
+          switch (activeTab) {
+            case "production":
+              return (
+                <View className="px-6 mb-3">
+                  <ProductionCardCompact milkProduction={item} />
+                </View>
+              );
+            case "vaccines":
+              return (
+                <View className="px-6 mb-3">
+                  <VaccineItem
+                    vaccine={item}
+                    onEdit={() => navigation.navigate("VaccineCad" as never, { id: item.id } as never)}
+                    onDelete={() => handleDeleteVaccine(item.id)}
+                  />
+                </View>
+              );
+            case "diseases":
+              return (
+                <View className="px-6 mb-3">
+                  <DiseaseRecord
+                    disease={item}
+                    onEdit={() => navigation.navigate("DiseasesCad" as never, { id: item.id } as never)}
+                    onDelete={() => handleDeleteDisease(item.id)}
+                  />
+                </View>
+              );
+            case "pregnancy":
+              return (
+                <View className="px-6 mb-3">
+                  <PregnancyTimeline
+                    pregnancy={item}
+                    onEdit={() => navigation.navigate("PregnancyEdit" as never, { id: item.id } as never)}
+                    onDelete={() => handleDeletePregnancy(item.id)}
+                    onCompleteBirth={() => navigation.navigate("PregnancyEdit" as never, { id: item.id } as never)}
+                    onCreateCalf={
+                      item.result === "success" && !item.calfId
+                        ? () => navigation.navigate("PregnancyEdit" as never, { id: item.id } as never)
+                        : undefined
+                    }
+                  />
+                </View>
+              );
+            case "info":
+              return renderTabContent();
+            default:
+              return null;
+          }
+        }}
+        keyExtractor={(item, index) => {
+          if (activeTab === "info") return "info-tab";
+          return item.id || `item-${index}`;
+        }}
+        onLoadMore={loadMore}
+        isLoadingMore={isLoadingMore}
+        hasMore={hasMore}
+        onRefresh={loadData}
+        refreshing={loading}
+        headerComponent={renderHeader()}
+        contentContainerStyle={{ paddingBottom: insets.bottom + 20 }}
+        emptyMessage={getEmptyMessage()}
       />
-      <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
-        {/* Animal Info Card */}
-        <View className="p-6 gap-4">
-          {/* Icon and Name */}
-          <View className="items-center gap-3">
-            <View className="items-center">
-              <Text className="text-3xl font-bold text-foreground">{cattle.name || `Animal ${cattle.number}`}</Text>
-              <Text className="text-base text-muted mt-1">Nº {cattle.number}</Text>
-            </View>
-          </View>
-
-          {/* Status Badge */}
-          <View className="bg-surface rounded-2xl p-4 border border-border items-center">
-            <View className="flex-row items-center gap-2">
-              <IconSymbol name={statusBadge.icon} color={colors[statusBadge.color]} />
-              <Text className="text-base font-semibold" style={{ color: colors[statusBadge.color] }}>
-                {statusBadge.text}
-              </Text>
-            </View>
-          </View>
-
-          {/* Tabs */}
-
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            className="rounded-md bg-muted border border-border flex-row"
-          >
-            {[
-              { label: "Info", value: "info" },
-              { label: "Produção", value: "production" },
-              { label: "Vacinas", value: "vaccines" },
-              { label: "Gestação", value: "pregnancy" },
-              { label: "Doenças", value: "diseases" },
-            ].map((tab) => (
-              <TouchableOpacity
-                key={tab.value}
-                onPress={() => selecionarTab(tab.value as Tab)}
-                className={`flex justify-center items-center border-border`}
-                style={{
-                  width: 100,
-                  height: 30,
-                  borderLeftWidth: 1,
-                  borderRightWidth: 1,
-
-                  backgroundColor: activeTab === tab.value ? colors.primary : colors.surface,
-                }}
-              >
-                <Text className={`font-bold text-xs ${activeTab === tab.value ? "text-white" : "text-muted"}`}>
-                  {tab.label}
-                </Text>
-              </TouchableOpacity>
-            ))}
-          </ScrollView>
-
-          {/* Tab Content */}
-          {activeTab === "info" && (
-            <View className="gap-3">
-              <Text className="text-base font-semibold text-foreground">Informações do Animal</Text>
-              {/* Quick Info */}
-              <CardEdit
-                handleEdit={() => navigation.navigate("CattleCad" as never, { id } as never)}
-                handleDelete={() => setShowDeleteDialog(true)}
-              >
-                <View className="gap-3">
-                  <View className="flex-row justify-between items-center">
-                    <Text className="text-sm text-muted">Raça</Text>
-                    <Text className="text-sm font-semibold text-foreground">{cattle.breed}</Text>
-                  </View>
-                  <View className="h-px bg-border" />
-                  <View className="flex-row justify-between items-center">
-                    <Text className="text-sm text-muted">Data de Nascimento</Text>
-                    <Text className="text-sm font-semibold text-foreground">{formatDate(cattle.birthDate)}</Text>
-                  </View>
-                  <View className="h-px bg-border" />
-                  <View className="flex-row justify-between items-center">
-                    <Text className="text-sm text-muted">Peso</Text>
-                    <Text className="text-sm font-semibold text-foreground">{formatWeight(cattle.weight)}</Text>
-                  </View>
-                  {cattle.motherId && (
-                    <>
-                      <View className="h-px bg-border" />
-                      <View className="flex-row justify-between items-center">
-                        <Text className="text-sm text-muted">Mãe</Text>
-                        <Text className="text-sm font-semibold text-primary">Cadastrada</Text>
-                      </View>
-                    </>
-                  )}
-                </View>
-              </CardEdit>
-            </View>
-          )}
-
-          {activeTab === "production" && (
-            <View className="gap-3">
-              {milkRecords.length === 0 ? (
-                <View className="items-center py-8">
-                  <Text className="text-muted text-center mb-4">Nenhuma produção registrada</Text>
-                </View>
-              ) : (
-                <>
-                  {milkRecords.map((record) => (
-                    <ProductionCardCompact key={record.id} milkProduction={record} />
-                  ))}
-                </>
-              )}
-            </View>
-          )}
-
-          {activeTab === "vaccines" && (
-            <View className="gap-3 flex-1">
-              {vaccines.length === 0 ? (
-                <View className="items-center py-8">
-                  <Text className="text-muted text-center mb-4">Nenhuma vacina registrada</Text>
-                </View>
-              ) : (
-                <>
-                  {vaccines.map((vaccine) => (
-                    <VaccineItem
-                      key={vaccine.id}
-                      vaccine={vaccine}
-                      onEdit={() => navigation.navigate("VaccineCad" as never, { id: vaccine.id } as never)}
-                      onDelete={() => handleDeleteVaccine(vaccine.id)}
-                    />
-                  ))}
-                </>
-              )}
-            </View>
-          )}
-
-          {activeTab === "pregnancy" && (
-            <View className="gap-3">
-              {pregnancies.length === 0 ? (
-                <View className="items-center py-8">
-                  <Text className="text-muted text-center mb-4">Nenhuma gestação registrada</Text>
-                </View>
-              ) : (
-                <>
-                  {pregnancies.map((pregnancy) => (
-                    <PregnancyTimeline
-                      key={pregnancy.id}
-                      pregnancy={pregnancy}
-                      onEdit={() => navigation.navigate("PregnancyEdit" as never, { id: pregnancy.id } as never)}
-                      onDelete={() => handleDeletePregnancy(pregnancy.id)}
-                      onCompleteBirth={() =>
-                        navigation.navigate("PregnancyEdit" as never, { id: pregnancy.id } as never)
-                      }
-                      onCreateCalf={
-                        pregnancy.result === "success" && !pregnancy.calfId
-                          ? () => navigation.navigate("PregnancyEdit" as never, { id: pregnancy.id } as never)
-                          : undefined
-                      }
-                    />
-                  ))}
-                </>
-              )}
-            </View>
-          )}
-
-          {activeTab === "diseases" && (
-            <View className="gap-3">
-              {diseases.length === 0 ? (
-                <View className="items-center py-8">
-                  <Text className="text-muted text-center mb-4">Nenhuma doença registrada</Text>
-                </View>
-              ) : (
-                <>
-                  {diseases.map((disease) => (
-                    <DiseaseRecord
-                      key={disease.id}
-                      disease={disease}
-                      onEdit={() => navigation.navigate("DiseasesCad" as never, { id: disease.id } as never)}
-                      onDelete={() => handleDeleteDisease(disease.id)}
-                    />
-                  ))}
-                </>
-              )}
-            </View>
-          )}
-        </View>
-        <View style={{ height: 60 }} />
-      </ScrollView>
       {buttonAdd && (
         <ButtonAdd label={`Registrar ${buttonAdd}`} color={colors.primary} icon="add" onPress={pressButtonAdd} />
       )}

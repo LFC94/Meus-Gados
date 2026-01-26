@@ -229,12 +229,13 @@ export const vaccinationRecordStorage = {
 
   getById: (id: string) => getItemById<VaccinationRecord>(STORAGE_KEYS.VACCINATION_RECORDS, id),
 
-  getByCattleId: async (cattleId: string): Promise<VaccinationRecordWithDetails[]> => {
+  getByCattleId: async (cattleId: string, limit = 10, offset = 0): Promise<VaccinationRecordWithDetails[]> => {
     const allRecords = await getItems<VaccinationRecord>(STORAGE_KEYS.VACCINATION_RECORDS);
     const allVaccineCatalog = await getItems<VaccineModel>(STORAGE_KEYS.VACCINE_CATALOG);
     return allRecords
       .filter((record) => record.cattleId === cattleId)
       .sort((a, b) => new Date(b.dateApplied).getTime() - new Date(a.dateApplied).getTime())
+      .slice(offset, offset + limit)
       .map((vaccination): VaccinationRecordWithDetails => {
         const vaccine = allVaccineCatalog.find((vaccine) => vaccine.id === vaccination.vaccineId);
         return { ...vaccination, vaccineName: vaccine?.name || "" };
@@ -367,11 +368,12 @@ export const diseaseStorage = {
 
   getById: (id: string) => getItemById<Disease>(STORAGE_KEYS.DISEASES, id),
 
-  getByCattleId: async (cattleId: string): Promise<Disease[]> => {
+  getByCattleId: async (cattleId: string, limit = 10, offset = 0): Promise<Disease[]> => {
     const allDiseases = await getItems<Disease>(STORAGE_KEYS.DISEASES);
     return allDiseases
       .filter((disease) => disease.cattleId === cattleId)
-      .sort((a, b) => new Date(b.diagnosisDate).getTime() - new Date(a.diagnosisDate).getTime());
+      .sort((a, b) => new Date(b.diagnosisDate).getTime() - new Date(a.diagnosisDate).getTime())
+      .slice(offset, offset + limit);
   },
 
   add: (disease: Omit<Disease, "id" | "createdAt" | "updatedAt">) => {
@@ -406,11 +408,12 @@ export const milkProductionStorage = {
 
   getById: (id: string) => getItemById<MilkProductionRecord>(STORAGE_KEYS.MILK_PRODUCTION, id),
 
-  getByCattleId: async (cattleId: string): Promise<MilkProductionRecord[]> => {
+  getByCattleId: async (cattleId: string, limit = 10, offset = 0): Promise<MilkProductionRecord[]> => {
     const allRecords = await getItems<MilkProductionRecord>(STORAGE_KEYS.MILK_PRODUCTION);
     return allRecords
       .filter((record) => record.cattleId === cattleId)
-      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+      .slice(offset, offset + limit);
   },
 
   add: (record: Omit<MilkProductionRecord, "id" | "createdAt" | "updatedAt">) => {

@@ -3,6 +3,8 @@ import { ActivityIndicator, FlatList, FlatListProps, RefreshControl, Text, View 
 
 import { useColors } from "@/hooks/use-colors";
 
+import { IconSymbol } from "./ui/icon-symbol";
+
 interface InfiniteListProps<T> extends Omit<
   FlatListProps<T>,
   "onEndReached" | "onEndReachedThreshold" | "ListFooterComponent" | "refreshControl"
@@ -45,7 +47,7 @@ export function InfiniteList<T>({
     if (refreshing) return null;
     return (
       <View className="flex-1 items-center justify-center py-12">
-        {emptyIcon}
+        {emptyIcon ? emptyIcon : <IconSymbol name="file-outline" color={colors.muted} size={30} />}
         <Text className="text-muted text-center text-base mt-2">{emptyMessage}</Text>
       </View>
     );
@@ -59,7 +61,7 @@ export function InfiniteList<T>({
           onLoadMore();
         }
       }}
-      onEndReachedThreshold={0.5}
+      onEndReachedThreshold={0.1}
       ListHeaderComponent={headerComponent}
       ListFooterComponent={renderFooter}
       ListEmptyComponent={renderEmpty}
