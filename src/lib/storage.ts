@@ -423,13 +423,13 @@ export const milkProductionStorage = {
 
   delete: (id: string) => deleteItem<MilkProductionRecord>(STORAGE_KEYS.MILK_PRODUCTION, id),
 
-  getRecent: async (limit = 20): Promise<(MilkProductionRecord & { cattle: Cattle })[]> => {
+  getRecent: async (limit = 10, offset = 0): Promise<(MilkProductionRecord & { cattle: Cattle })[]> => {
     const allRecords = await getItems<MilkProductionRecord>(STORAGE_KEYS.MILK_PRODUCTION);
     const allCattle = await getItems<Cattle>(STORAGE_KEYS.CATTLE);
 
     return allRecords
       .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-      .slice(0, limit)
+      .slice(offset, offset + limit)
       .map((record) => {
         const cattle = allCattle.find((c) => c.id === record.cattleId);
         if (!cattle) return null;
