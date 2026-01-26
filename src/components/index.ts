@@ -3,6 +3,7 @@ export { CardEdit } from "./card-edit";
 export { CardResume } from "./card-resume";
 export { CattleCard, CattleCardCompact } from "./cattle-card";
 export { DiseaseRecord } from "./disease-record";
+export { InfiniteList } from "./infinite-list";
 export { PregnancyBadge, PregnancyTimeline } from "./pregnancy-timeline";
 export { ProductionCard, ProductionCardCompact } from "./production-card";
 export { ScreenContainer } from "./screen-container";
