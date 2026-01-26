@@ -50,7 +50,7 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
 
   return (
     <DrawerContentScrollView {...props} contentContainerStyle={{ paddingTop: 0 }}>
-      <View className="items-center" style={{ paddingTop: insets.top }}>
+      <View className="items-center border-b border-border" style={{ paddingTop: insets.top }}>
         <Image source={require("@/assets/images/icon.png")} style={{ height: 120 }} resizeMode="contain" />
       </View>
       <DrawerItemList {...props} />
