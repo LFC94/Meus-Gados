@@ -71,7 +71,7 @@ export default function PendingVaccinesScreen() {
           ) : (
             <View className="gap-3 pb-6">
               {pendingVaccines.map((item) => {
-                const status = getVaccineStatus(item.nextDoseDate);
+                const status = getVaccineStatus(item.nextDoseDate, item.isNextDoseApplied);
                 const statusColor = colors[getVaccineStatusColor(status)];
                 const days = item.nextDoseDate ? daysUntil(item.nextDoseDate) : 0;
                 const isOverdue = days < 0;

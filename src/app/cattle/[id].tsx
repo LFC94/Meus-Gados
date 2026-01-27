@@ -231,40 +231,42 @@ export default function CattleDetailScreen() {
     ]);
   };
 
-  const getStatusBadge = (): CattleResult => {
+  const getStatusBadge = (): CattleResult[] => {
     // Check for disease in treatment
     const inDeath = diseases.find((d) => d.result === "death");
     if (inDeath) {
-      return "death";
+      return ["death" as CattleResult];
     }
 
-    // Check for active pregnancy
+    let result = [] as CattleResult[];
     const activePregnancy = pregnancies.find((p) => p.result === "pending");
     if (activePregnancy) {
       const expectedBirthDate = new Date(activePregnancy.expectedBirthDate);
       const isOverdue = new Date() > expectedBirthDate;
-      return isOverdue ? "overdue_pregnancy" : "pregnancy";
+      result.push(isOverdue ? "overdue_pregnancy" : "pregnancy");
     }
 
     // Check for disease in treatment
     const inTreatment = diseases.find((d) => d.result === "in_treatment");
     if (inTreatment) {
-      return "in_treatment";
+      result.push("in_treatment");
+    } else {
+      result.push("healthy");
     }
 
     // Check for pending vaccines
     const today = new Date();
     const thirtyDaysFromNow = new Date(today.getTime() + 30 * 24 * 60 * 60 * 1000);
     const hasPendingVaccine = vaccines.some((v) => {
-      if (!v.nextDoseDate) return false;
+      if (!v.nextDoseDate || v.isNextDoseApplied) return false;
       const nextDoseDate = new Date(v.nextDoseDate);
       return nextDoseDate <= thirtyDaysFromNow;
     });
     if (hasPendingVaccine) {
-      return "pending_vaccine";
+      result.push("pending_vaccine");
     }
 
-    return "healthy";
+    return result;
   };
 
   const selecionarTab = async (tab: Tab) => {
@@ -333,7 +335,6 @@ export default function CattleDetailScreen() {
 
   const renderHeader = () => {
     if (!cattle) return null;
-    const statusBadge = STATUS_CATTLE[getStatusBadge()];
 
     return (
       <View className="p-6 gap-4">
@@ -346,8 +347,6 @@ export default function CattleDetailScreen() {
           onConfirm={handleDelete}
           onCancel={() => setShowDeleteDialog(false)}
         />
-        {/* Animal Info Card */}
-        {/* Icon and Name */}
         <View className="items-center gap-3">
           <View className="items-center">
             <Text className="text-3xl font-bold text-foreground">{cattle.name || `Animal ${cattle.number}`}</Text>
@@ -356,13 +355,31 @@ export default function CattleDetailScreen() {
         </View>
 
         {/* Status Badge */}
-        <View className="bg-surface rounded-2xl p-4 border border-border items-center">
-          <View className="flex-row items-center gap-2">
-            <IconSymbol name={statusBadge.icon} color={colors[statusBadge.color]} />
-            <Text className="text-base font-semibold" style={{ color: colors[statusBadge.color] }}>
-              {statusBadge.text}
-            </Text>
-          </View>
+        <View
+          className="flex-row gap-3 p-4 rounded-2xl justify-center items-center"
+          style={{
+            flexWrap: "wrap",
+          }}
+        >
+          {getStatusBadge().map((value, index) => {
+            const statusBadge = STATUS_CATTLE[value];
+            const color = colors[statusBadge.color];
+            return (
+              <View
+                key={index}
+                className="flex-row rounded-full items-center gap-2 border px-2 py-1"
+                style={{
+                  backgroundColor: `${color}20`,
+                  borderColor: color,
+                }}
+              >
+                <IconSymbol name={statusBadge.icon} color={color} />
+                <Text className="text-base font-semibold" style={{ color: color }}>
+                  {statusBadge.text}
+                </Text>
+              </View>
+            );
+          })}
         </View>
 
         {/* Tabs */}
@@ -384,8 +401,8 @@ export default function CattleDetailScreen() {
   const renderTabContent = () => {
     return (
       <View className="px-6 gap-3">
-        <Text className="text-base font-semibold text-foreground">Informações do Animal</Text>
         <CardEdit
+          title="Informações do Animal"
           handleEdit={() => navigation.navigate("CattleCad" as never, { id } as never)}
           handleDelete={() => setShowDeleteDialog(true)}
         >

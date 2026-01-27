@@ -21,7 +21,7 @@ export function SegmentedControl({ options, tabInit, onChange, className }: Segm
   };
 
   return (
-    <View className={`bg-muted/50 rounded-xl p-1 ${className}`}>
+    <View className={`bg-surface border border-border rounded-xl p-1 ${className}`}>
       <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ flexGrow: 1 }}>
         <View className="flex-row items-center">
           {options.map((option, index) => {
@@ -34,7 +34,7 @@ export function SegmentedControl({ options, tabInit, onChange, className }: Segm
                 <TouchableOpacity
                   onPress={() => onChangeTab(option.value)}
                   activeOpacity={0.7}
-                  className={`px-5 py-2.5 rounded-lg justify-center items-center ${isActive ? "bg-surface" : ""}`}
+                  className={`px-5 py-2.5 rounded-lg justify-center items-center ${isActive ? "bg-primary" : ""}`}
                   style={
                     isActive
                       ? {
@@ -51,7 +51,7 @@ export function SegmentedControl({ options, tabInit, onChange, className }: Segm
                       : {}
                   }
                 >
-                  <Text className={`text-sm ${isActive ? "font-bold text-foreground" : "font-medium text-muted"}`}>
+                  <Text className={`text-sm ${isActive ? "font-bold text-surface" : "font-medium text-muted"}`}>
                     {option.label}
                   </Text>
                 </TouchableOpacity>

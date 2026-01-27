@@ -14,7 +14,6 @@ interface VaccineItemProps {
 
 export function VaccineItem({ vaccine, onEdit, onDelete }: VaccineItemProps) {
   const colors = useColors();
-  const daysUntilNextDose = vaccine.nextDoseDate ? daysUntil(vaccine.nextDoseDate) : null;
 
   return (
     <CardEdit
@@ -27,11 +26,11 @@ export function VaccineItem({ vaccine, onEdit, onDelete }: VaccineItemProps) {
         {vaccine.batchUsed && <Text className="text-sm text-muted mt-1">Lote: {vaccine.batchUsed}</Text>}
         <View className="flex-row gap-3">
           <Text className="text-sm text-muted mt-1">Aplicada: {formatDate(vaccine.dateApplied)}</Text>
-          {vaccine.nextDoseDate && (
+          {vaccine.nextDoseDate && !vaccine.isNextDoseApplied && (
             <Text
               className="text-sm mt-1"
               style={{
-                color: daysUntilNextDose !== null && daysUntilNextDose < 0 ? colors.error : colors.success,
+                color: daysUntil(vaccine.nextDoseDate) < 0 ? colors.error : colors.success,
               }}
             >
               Próxima: {formatDate(vaccine.nextDoseDate)}
@@ -50,9 +49,13 @@ interface VaccineBadgeProps {
 export function VaccineBadge({ vaccine }: VaccineBadgeProps) {
   const colors = useColors();
   const getStatusInfoDetail = () => {
-    const status = getVaccineStatus(vaccine.nextDoseDate);
+    const status = getVaccineStatus(vaccine.nextDoseDate, vaccine.isNextDoseApplied);
 
-    return { color: colors[getVaccineStatusColor(status)], label: getVaccineStatusLabel(vaccine.nextDoseDate), status };
+    return {
+      color: colors[getVaccineStatusColor(status)],
+      label: getVaccineStatusLabel(vaccine.nextDoseDate, vaccine.isNextDoseApplied),
+      status,
+    };
   };
   const status = getStatusInfoDetail();
 

@@ -153,8 +153,12 @@ export function isDateNear(isoDate: string, daysThreshold: number = 30): boolean
 /**
  * Retorna status de vacina baseado na próxima dose
  */
-export function getVaccineStatus(nextDose?: string): "up_to_date" | "upcoming" | "overdue" | "none" {
+export function getVaccineStatus(
+  nextDose?: string,
+  isNextDoseApplied?: boolean,
+): "up_to_date" | "upcoming" | "overdue" | "none" {
   if (!nextDose) return "none";
+  if (isNextDoseApplied) return "none";
 
   const days = daysUntil(nextDose);
 
@@ -182,10 +186,11 @@ export function getVaccineStatusColor(status: ReturnType<typeof getVaccineStatus
 /**
  * Retorna label para status de vacina
  */
-export function getVaccineStatusLabel(nextDose?: string): string {
+export function getVaccineStatusLabel(nextDose?: string, isNextDoseApplied?: boolean): string {
   const daysUntilNextDose = nextDose ? daysUntil(nextDose) : 0;
-  const status = getVaccineStatus(nextDose);
+  if (isNextDoseApplied) return "Já reaplicada";
 
+  const status = getVaccineStatus(nextDose);
   switch (status) {
     case "up_to_date":
       return "Em dia";

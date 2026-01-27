@@ -27,14 +27,15 @@ export function ButtonAdd({ label, onPress, icon, color }: ButtonAddProps) {
         alignItems: "center",
         zIndex: 999,
         marginBottom: insets.bottom,
-        height: 55,
+        height: 60,
       }}
     >
       <TouchableOpacity
         onPress={onPress}
-        className="flex-row rounded-xl p-4 items-center"
+        className="flex-row rounded-2xl p-4 items-center justify-center"
         style={{
           backgroundColor: color,
+          width: 300,
           shadowColor: colors.foreground,
           shadowOffset: {
             width: 0,
