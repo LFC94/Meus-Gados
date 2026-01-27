@@ -17,6 +17,9 @@ const themeColors = {
   vaccine_pending: { light: "#EAB308", dark: "#FACC15" },
   milk_production: { light: "#06B6D4", dark: "#22D3EE" },
   scheduled_notification: { light: "#6366F1", dark: "#818CF8" },
+  morning: { light: "#64B5F6", dark: "#90CAF9" },
+  afternoon: { light: "#FB8500", dark: "#FF9F1C" },
+  full_day: { light: "#2E7D32", dark: "#4CAF50" },
 };
 
 module.exports = { themeColors };

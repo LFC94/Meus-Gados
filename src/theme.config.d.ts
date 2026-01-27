@@ -16,6 +16,9 @@ export const themeColors: {
   vaccine_pending: { light: string; dark: string };
   milk_production: { light: string; dark: string };
   scheduled_notification: { light: string; dark: string };
+  morning: { light: string; dark: string };
+  afternoon: { light: string; dark: string };
+  full_day: { light: string; dark: string };
 };
 
 declare const themeConfig: {

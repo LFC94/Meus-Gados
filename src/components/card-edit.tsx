@@ -10,11 +10,22 @@ export interface CardEditProps extends ViewProps {
   icon?: IconMapping;
   iconColor?: string;
   label?: JSX.Element;
+  small?: boolean;
   handleDelete?: () => void;
   handleEdit?: () => void;
 }
 
-export function CardEdit({ children, title, icon, iconColor, label, handleDelete, handleEdit, style }: CardEditProps) {
+export function CardEdit({
+  children,
+  title,
+  icon,
+  iconColor,
+  label,
+  handleDelete,
+  handleEdit,
+  style,
+  small,
+}: CardEditProps) {
   const colors = useColors();
 
   return (
@@ -32,23 +43,25 @@ export function CardEdit({ children, title, icon, iconColor, label, handleDelete
       {children}
 
       {(!!handleEdit || !!handleDelete) && (
-        <View className={`flex-row gap-2  ${children ? " mt-3 pt-3 border-t border-border" : ""}`}>
+        <View
+          className={`flex-row gap-2  ${children && !small ? " mt-3 pt-3" : "pt-2"} ${children && !small ? "border-t border-border" : ""}`}
+        >
           {handleEdit && (
             <TouchableOpacity
               onPress={() => handleEdit()}
-              className="flex-1 bg-primary/10 border border-primary rounded-lg p-2 flex-row items-center justify-center gap-2"
+              className={`flex-1 bg-primary/10 border border-primary rounded-lg flex-row items-center justify-center ${small ? "p-1 gap-1" : "p-2 gap-2"}`}
             >
-              <IconSymbol name="edit" color={colors.primary} />
-              <Text className="text-primary font-semibold">Editar</Text>
+              <IconSymbol name="edit" color={colors.primary} size={small ? 16 : 24} />
+              <Text className={`text-primary font-semibold ${small ? "text-sm" : ""}`}>Editar</Text>
             </TouchableOpacity>
           )}
           {handleDelete && (
             <TouchableOpacity
               onPress={() => handleDelete()}
-              className="flex-1 bg-error/10 border border-error rounded-lg p-2 flex-row items-center justify-center gap-2"
+              className={`flex-1 bg-error/10 border border-error rounded-lg flex-row items-center justify-center ${small ? "p-1 gap-1" : "p-2 gap-2"}`}
             >
-              <IconSymbol name="delete" color={colors.error} />
-              <Text className="text-error font-semibold">Excluir</Text>
+              <IconSymbol name="delete" color={colors.error} size={small ? 16 : 24} />
+              <Text className={`text-error font-semibold ${small ? "text-sm" : ""}`}>Excluir</Text>
             </TouchableOpacity>
           )}
         </View>
