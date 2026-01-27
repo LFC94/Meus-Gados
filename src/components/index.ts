@@ -14,4 +14,5 @@ export { FormInput } from "./ui/form-input";
 export { FormSelect } from "./ui/form-select";
 export { FormTimePicker } from "./ui/form-time-picker";
 export { IconMapping, IconSymbol } from "./ui/icon-symbol";
+export { SegmentedControl } from "./ui/segmented-control";
 export { VaccineBadge, VaccineItem } from "./vaccine-item";

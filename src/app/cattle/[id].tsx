@@ -1,10 +1,10 @@
 import { RouteProp, useFocusEffect, useRoute } from "@react-navigation/native";
 import * as Haptics from "expo-haptics";
 import React, { useState } from "react";
-import { ActivityIndicator, Alert, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, Alert, Text, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { ButtonAdd, CardEdit, IconSymbol, InfiniteList, ProductionCardCompact } from "@/components";
+import { ButtonAdd, CardEdit, IconSymbol, InfiniteList, ProductionCardCompact, SegmentedControl } from "@/components";
 import { DiseaseRecord } from "@/components/disease-record";
 import { PregnancyTimeline } from "@/components/pregnancy-timeline";
 import { ScreenContainer } from "@/components/screen-container";
@@ -267,7 +267,7 @@ export default function CattleDetailScreen() {
     return "healthy";
   };
 
-  const selecionarTab = (tab: Tab) => {
+  const selecionarTab = async (tab: Tab) => {
     switch (tab) {
       case "vaccines":
         setbuttonAdd("Vacina");
@@ -366,38 +366,17 @@ export default function CattleDetailScreen() {
         </View>
 
         {/* Tabs */}
-
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          className="rounded-md bg-muted border border-border flex-row"
-        >
-          {[
+        <SegmentedControl
+          options={[
             { label: "Info", value: "info" },
             { label: "Produção", value: "production" },
             { label: "Vacinas", value: "vaccines" },
             { label: "Gestação", value: "pregnancy" },
             { label: "Doenças", value: "diseases" },
-          ].map((tab) => (
-            <TouchableOpacity
-              key={tab.value}
-              onPress={() => selecionarTab(tab.value as Tab)}
-              className={`flex justify-center items-center border-border`}
-              style={{
-                width: 100,
-                height: 30,
-                borderLeftWidth: 1,
-                borderRightWidth: 1,
-
-                backgroundColor: activeTab === tab.value ? colors.primary : colors.surface,
-              }}
-            >
-              <Text className={`font-bold text-xs ${activeTab === tab.value ? "text-white" : "text-muted"}`}>
-                {tab.label}
-              </Text>
-            </TouchableOpacity>
-          ))}
-        </ScrollView>
+          ]}
+          tabInit={activeTab}
+          onChange={(val: string) => selecionarTab(val as Tab)}
+        />
       </View>
     );
   };
