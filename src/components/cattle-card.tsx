@@ -10,13 +10,18 @@ import { Cattle, CattleResult } from "@/types";
 interface CattleCardProps {
   cattle: Cattle;
   showStatus?: boolean;
-  status: CattleResult;
+  status: CattleResult[];
   onPress?: () => void;
 }
 
 export function CattleCard({ cattle, showStatus = true, status, onPress }: CattleCardProps) {
   const router = useRouter();
   const colors = useColors();
+
+  const prioridade = ["in_treatment", "overdue_pregnancy", "pregnancy", "pending_vaccine", "healthy"] as CattleResult[];
+
+  const statusPrimary =
+    status.length > 1 ? (prioridade.find((statu) => status.includes(statu)) as CattleResult) : status[0];
 
   const handlePress = () => {
     if (onPress) {
@@ -31,21 +36,21 @@ export function CattleCard({ cattle, showStatus = true, status, onPress }: Cattl
       onPress={handlePress}
       className="bg-surface rounded-2xl border border-border"
       style={{ opacity: 1 }}
-      accessibilityLabel={`Animal ${cattle.number}${cattle.name ? `, ${cattle.name}` : ""}, ${STATUS_CATTLE[status].text}`}
+      accessibilityLabel={`Animal ${cattle.number}${cattle.name ? `, ${cattle.name}` : ""}, ${STATUS_CATTLE[statusPrimary].text}`}
       accessibilityRole="button"
     >
       {/* Status Bar */}
       <View
         className="w-2 h-full rounded-xl"
         style={{
-          backgroundColor: colors[STATUS_CATTLE[status].color],
+          backgroundColor: colors[STATUS_CATTLE[statusPrimary].color],
           position: "absolute",
           left: 0,
           borderTopRightRadius: 0,
           borderBottomRightRadius: 0,
         }}
       />
-      <View className="py-4 flex-row items-center gap-4" style={{ paddingLeft: 20, paddingRight: 4 }}>
+      <View className="py-4 flex-row items-center gap-2" style={{ paddingLeft: 20, paddingRight: 4 }}>
         {/* Content */}
         <View className="flex-1">
           <Text className="text-lg font-semibold text-foreground" numberOfLines={1}>
@@ -58,15 +63,16 @@ export function CattleCard({ cattle, showStatus = true, status, onPress }: Cattl
         </View>
 
         {showStatus && (
-          <View className="items-end gap-2">
-            <IconSymbol
-              style={{ paddingEnd: 4 }}
-              name={STATUS_CATTLE[status].icon}
-              color={colors[STATUS_CATTLE[status].color]}
-            />
-            <Text className="font-bold" numberOfLines={2} style={{ color: colors[STATUS_CATTLE[status].color] }}>
-              {STATUS_CATTLE[status].text}
-            </Text>
+          <View className="flex-row gap-1 items-end justify-center" style={{ flexWrap: "wrap", width: 80 }}>
+            {status.map((statu, index) => (
+              <IconSymbol
+                key={index}
+                style={{ paddingEnd: 4 }}
+                name={STATUS_CATTLE[statu].icon}
+                color={colors[STATUS_CATTLE[statu].color]}
+                size={22}
+              />
+            ))}
           </View>
         )}
 

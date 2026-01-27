@@ -55,17 +55,20 @@ export default function CattleListScreen() {
   );
 
   const getStatus = useCallback(
-    (cattleItem: Cattle): CattleResult => {
+    (cattleItem: Cattle): CattleResult[] => {
       // Check if in treatment for disease
       const inDeath = diseases.find((d) => d.cattleId === cattleItem.id && d.result === "death");
       if (inDeath) {
-        return "death"; // death - red
+        return ["death"]; // death - red
       }
 
+      let result = [] as CattleResult[];
       // Check if in treatment for disease
       const inTreatment = diseases.find((d) => d.cattleId === cattleItem.id && d.result === "in_treatment");
       if (inTreatment) {
-        return "in_treatment"; // In treatment - orange
+        result.push("in_treatment"); // In treatment - orange
+      } else {
+        result.push("healthy"); // Healthy - green
       }
 
       // Check if pregnant (active pregnancy)
@@ -73,24 +76,23 @@ export default function CattleListScreen() {
       if (activePregnancy) {
         const expectedBirthDate = new Date(activePregnancy.expectedBirthDate);
         if (new Date() > expectedBirthDate) {
-          return "overdue_pregnancy"; // Overdue pregnancy - red
+          result.push("overdue_pregnancy"); // Overdue pregnancy - red
         }
-        return "pregnancy";
+        result.push("pregnancy");
       }
 
       // Check for pending vaccines (within 30 days)
       const pendingVaccine = vaccines.find((v) => {
         if (v.cattleId !== cattleItem.id) return false;
-        if (!v.nextDoseDate) return false;
+        if (!v.nextDoseDate || v.isNextDoseApplied) return false;
         const nextDoseDate = new Date(v.nextDoseDate);
         const thirtyDaysFromNow = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
         return nextDoseDate <= thirtyDaysFromNow;
       });
       if (pendingVaccine) {
-        return "pending_vaccine"; // Pending vaccine - yellow
+        result.push("pending_vaccine"); // Pending vaccine - yellow
       }
-
-      return "healthy"; // Healthy - green
+      return result;
     },
     [diseases, pregnancies, vaccines],
   );
@@ -137,7 +139,7 @@ export default function CattleListScreen() {
 
     // Status filter
     if (statusFilter !== "all") {
-      filtered = filtered.filter((c) => getStatus(c) === statusFilter);
+      filtered = filtered.filter((c) => getStatus(c).includes(statusFilter));
     }
 
     // Breed filter

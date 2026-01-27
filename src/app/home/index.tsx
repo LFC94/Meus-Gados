@@ -58,7 +58,7 @@ export default function HomeScreen() {
         // Check vaccine status
         const animalVaccines = vaccinesData.filter((v) => v.cattleId === animal.id);
         const hasPendingVaccine = animalVaccines.some((v) => {
-          if (!v.nextDoseDate) return false;
+          if (!v.nextDoseDate || v.isNextDoseApplied) return false;
           const nextDoseDate = new Date(v.nextDoseDate);
           return nextDoseDate <= thirtyDaysFromNow;
         });
