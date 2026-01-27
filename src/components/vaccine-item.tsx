@@ -21,6 +21,7 @@ export function VaccineItem({ vaccine, onEdit, onDelete }: VaccineItemProps) {
       label={<VaccineBadge vaccine={vaccine} />}
       handleEdit={onEdit}
       handleDelete={onDelete}
+      small
     >
       <View className="flex-1">
         {vaccine.batchUsed && <Text className="text-sm text-muted mt-1">Lote: {vaccine.batchUsed}</Text>}

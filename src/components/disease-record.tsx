@@ -29,6 +29,7 @@ export function DiseaseRecord({ disease, onEdit, onDelete }: DiseaseRecordProps)
       title={disease.type}
       icon={resultLabel.icon}
       iconColor={colorValue}
+      small
       label={
         <View className="px-2 py-1 rounded-full" style={{ backgroundColor: `${colorValue}20` }}>
           <Text className="text-xs font-bold" style={{ color: colorValue }}>

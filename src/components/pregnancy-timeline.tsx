@@ -54,6 +54,7 @@ export function PregnancyTimeline({
       label={<PregnancyBadge pregnancy={pregnancy} />}
       handleEdit={onEdit}
       handleDelete={onDelete}
+      small
     >
       {!isCompleted && (
         <View className="gap-2 border-b border-border py-1">

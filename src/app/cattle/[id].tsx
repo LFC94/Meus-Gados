@@ -4,7 +4,15 @@ import React, { useState } from "react";
 import { ActivityIndicator, Alert, Text, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { ButtonAdd, CardEdit, IconSymbol, InfiniteList, ProductionCardCompact, SegmentedControl } from "@/components";
+import {
+  ButtonAdd,
+  CardEdit,
+  IconMapping,
+  IconSymbol,
+  InfiniteList,
+  ProductionCardCompact,
+  SegmentedControl,
+} from "@/components";
 import { DiseaseRecord } from "@/components/disease-record";
 import { PregnancyTimeline } from "@/components/pregnancy-timeline";
 import { ScreenContainer } from "@/components/screen-container";
@@ -405,6 +413,7 @@ export default function CattleDetailScreen() {
           title="Informações do Animal"
           handleEdit={() => navigation.navigate("CattleCad" as never, { id } as never)}
           handleDelete={() => setShowDeleteDialog(true)}
+          small
         >
           <View className="gap-3">
             <View className="flex-row justify-between items-center">
@@ -483,6 +492,18 @@ export default function CattleDetailScreen() {
         return "";
     }
   };
+  const getEmptyIcon = (): IconMapping | undefined => {
+    switch (activeTab) {
+      case "production":
+        return "baby-bottle-outline";
+      case "vaccines":
+        return "vaccines";
+      case "diseases":
+        return "medical-information";
+      case "pregnancy":
+        return "baby-buggy-off";
+    }
+  };
 
   return (
     <ScreenContainer className="p-0">
@@ -550,6 +571,7 @@ export default function CattleDetailScreen() {
         headerComponent={renderHeader()}
         contentContainerStyle={{ paddingBottom: insets.bottom + 20 }}
         emptyMessage={getEmptyMessage()}
+        emptyIcon={getEmptyIcon()}
       />
       {buttonAdd && (
         <ButtonAdd label={`Registrar ${buttonAdd}`} color={colors.primary} icon="add" onPress={pressButtonAdd} />

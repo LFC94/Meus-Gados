@@ -3,7 +3,7 @@ import { ActivityIndicator, FlatList, FlatListProps, RefreshControl, Text, View 
 
 import { useColors } from "@/hooks/use-colors";
 
-import { IconSymbol } from "./ui/icon-symbol";
+import { IconMapping, IconSymbol } from "./ui/icon-symbol";
 
 interface InfiniteListProps<T> extends Omit<
   FlatListProps<T>,
@@ -16,7 +16,7 @@ interface InfiniteListProps<T> extends Omit<
   onRefresh: () => void;
   refreshing: boolean;
   emptyMessage?: string;
-  emptyIcon?: React.ReactNode;
+  emptyIcon?: React.ReactNode | IconMapping;
   headerComponent?: React.ReactElement | null;
 }
 
@@ -47,7 +47,11 @@ export function InfiniteList<T>({
     if (refreshing) return null;
     return (
       <View className="flex-1 items-center justify-center py-12">
-        {emptyIcon ? emptyIcon : <IconSymbol name="file-outline" color={colors.muted} size={30} />}
+        {React.isValidElement(emptyIcon) ? (
+          emptyIcon
+        ) : (
+          <IconSymbol name={(emptyIcon || "file-outline") as IconMapping} color={colors.muted} size={30} />
+        )}
         <Text className="text-muted text-center text-base mt-2">{emptyMessage}</Text>
       </View>
     );
