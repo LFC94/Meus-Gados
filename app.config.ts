@@ -11,8 +11,8 @@ const now = new Date();
 const year = String(now.getFullYear()).padEnd(2, "0");
 const month = String(now.getMonth() + 1).padStart(2, "0");
 const day = String(now.getDate()).padStart(2, "0");
-const rand = String(Math.floor(Math.random() * 101)).padStart(3, "0");
-const dynamicVersion = `1.${year}${month}${day}.${rand}`;
+const buildNumber = process.env.GITHUB_RUN_NUMBER || "0";
+const dynamicVersion = `1.${year}${month}${day}.${buildNumber}`;
 
 const env = {
   // App branding - update these values directly (do not use env vars)
