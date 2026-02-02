@@ -30,6 +30,7 @@ const config: ExpoConfig = {
   name: env.appName,
   slug: env.appSlug,
   version: env.version,
+  platforms: ["android", "ios"],
   orientation: "portrait",
   icon: "./src/assets/images/icon.png",
   scheme: env.scheme,
