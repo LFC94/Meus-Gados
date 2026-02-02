@@ -35,15 +35,15 @@ const config: ExpoConfig = {
   scheme: env.scheme,
   userInterfaceStyle: "automatic",
   newArchEnabled: true,
+  updates: {
+    url: "https://u.expo.dev/fe4dc638-7548-439f-b5f2-11bce15ac37f",
+  },
+  runtimeVersion: {
+    policy: "appVersion",
+  },
   extra: {
     eas: {
       projectId: "fe4dc638-7548-439f-b5f2-11bce15ac37f",
-    },
-    updates: {
-      url: "https://u.expo.dev/fe4dc638-7548-439f-b5f2-11bce15ac37f",
-    },
-    runtimeVersion: {
-      policy: "appVersion",
     },
   },
   owner: "luc4scost4",
