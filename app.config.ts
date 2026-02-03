@@ -17,7 +17,7 @@ const env = {
   // App branding - update these values directly (do not use env vars)
   appName: "Meus Gados",
   appSlug: "meus-gados",
-  logoUrl: "./src/assets/images/icon.png",
+  logoUrl: "./src/assets/images/favicon.png",
   scheme: schemeFromBundleId,
   iosBundleId: bundleId,
   androidPackage: bundleId,
@@ -31,7 +31,7 @@ const config: ExpoConfig = {
   version: env.version,
   platforms: ["android", "ios"],
   orientation: "portrait",
-  icon: "./src/assets/images/icon.png",
+  icon: "./src/assets/images/favicon.png",
   scheme: env.scheme,
   userInterfaceStyle: "automatic",
   newArchEnabled: true,
@@ -94,9 +94,6 @@ const config: ExpoConfig = {
         imageWidth: 200,
         resizeMode: "contain",
         backgroundColor: "#c0e2c1",
-        dark: {
-          backgroundColor: "#016805",
-        },
       },
     ],
     [
