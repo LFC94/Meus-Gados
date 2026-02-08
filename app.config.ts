@@ -3,9 +3,8 @@ import "./src/scripts/load-env.js";
 
 import type { ExpoConfig } from "expo/config";
 
-const bundleId = "com.lfcapp.meus.gados.t20260102074808";
-const timestamp = bundleId.split(".").pop()?.replace(/^t/, "") ?? "";
-const schemeFromBundleId = `lfcapp${timestamp}`;
+const bundleId = "br.com.lfcapp.meusgados";
+const scheme = "meusgados";
 
 const now = new Date();
 const year = String(now.getFullYear()).padEnd(2, "0");
@@ -14,11 +13,10 @@ const day = String(now.getDate()).padStart(2, "0");
 const dynamicVersion = `1.${year}${month}.${day}`;
 
 const env = {
-  // App branding - update these values directly (do not use env vars)
   appName: "Meus Gados",
   appSlug: "meus-gados",
   logoUrl: "./src/assets/images/favicon.png",
-  scheme: schemeFromBundleId,
+  scheme: scheme,
   iosBundleId: bundleId,
   androidPackage: bundleId,
   version: dynamicVersion,
