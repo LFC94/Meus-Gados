@@ -99,7 +99,7 @@ const config: ExpoConfig = {
       {
         android: {
           minSdkVersion: env.minSdkVersion,
-          buildArchs: ["armeabi-v7a", "arm64-v8a"],
+          buildArchs: ["armeabi-v7a", "arm64-v8a", "x86", "x86_64"],
         },
       },
     ],
