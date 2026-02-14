@@ -24,8 +24,7 @@ export function useUpdates() {
         );
       }
     } catch (error) {
-      // You can also add more robust error handling here, e.g. reporting to Sentry
-      console.log(`Error fetching latest Expo update: ${error}`);
+      console.error(`Error fetching latest Expo update: ${error}`);
     }
   }
 

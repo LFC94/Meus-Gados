@@ -1,9 +1,9 @@
 import { StatusBar } from "expo-status-bar";
 import { colorScheme as nativewindColorScheme, vars } from "nativewind";
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
-import { Appearance, useColorScheme as useSystemColorScheme,View } from "react-native";
+import { Appearance, useColorScheme as useSystemColorScheme, View } from "react-native";
 
-import { type ColorScheme,SchemeColors } from "@/constants/theme";
+import { type ColorScheme, SchemeColors } from "@/constants/theme";
 import { preferencesStorage, type Theme } from "@/lib/preferences";
 
 type ThemeContextValue = {
@@ -70,7 +70,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       setColorSchemeState(scheme);
       applyScheme(scheme);
     },
-    [applyScheme]
+    [applyScheme],
   );
 
   const setTheme = useCallback(async (newTheme: Theme) => {
@@ -99,7 +99,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
         "color-warning": SchemeColors[colorScheme].warning,
         "color-error": SchemeColors[colorScheme].error,
       }),
-    [colorScheme]
+    [colorScheme],
   );
 
   const value = useMemo(
@@ -109,12 +109,12 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       colorScheme,
       setColorScheme,
     }),
-    [themePreference, setTheme, colorScheme, setColorScheme]
+    [themePreference, setTheme, colorScheme, setColorScheme],
   );
 
   return (
     <ThemeContext.Provider value={value}>
-      <StatusBar style={colorScheme === "dark" ? "light" : "dark"} />
+      <StatusBar style="auto" animated />
       <View style={[{ flex: 1 }, themeVariables]}>{children}</View>
     </ThemeContext.Provider>
   );

@@ -78,7 +78,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
 
     const signInResult = await GoogleSignin.signIn();
-    console.log(signInResult);
 
     let idToken = signInResult.data?.idToken;
 
@@ -93,7 +92,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signOutG = async () => {
     await AsyncStorage.removeItem(STORAGE_KEYS.LAST_SYNC);
-    return signOut(getAuth()).then(() => console.log("user signed out"));
+    return signOut(getAuth()).then();
   };
 
   const syncData = async () => {
