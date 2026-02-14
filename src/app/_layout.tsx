@@ -248,7 +248,6 @@ export default function RootLayout() {
   useUpdates();
 
   useEffect(() => {
-    // Request notification permissions on app startup
     requestNotificationPermission();
   }, []);
 

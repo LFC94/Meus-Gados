@@ -160,7 +160,7 @@ export default function VaccineCatalogScreen() {
         label="Adicionar Vacina"
         color={colors.primary}
         icon="add"
-        onPress={() => navigation.navigate("CattleCad")}
+        onPress={() => navigation.navigate("VaccineCatalogCad")}
       />
     </ScreenContainer>
   );
