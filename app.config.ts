@@ -3,7 +3,9 @@ import "./src/scripts/load-env.js";
 
 import type { ExpoConfig } from "expo/config";
 
-const bundleId = "br.com.lfcapp.meusgados";
+const IS_DEV = process.env.EXPO_APP_VARIANT === "development";
+const bundleId = IS_DEV ? "br.com.lfcapp.meusgados.dev" : "br.com.lfcapp.meusgados";
+const appName = IS_DEV ? "Meus Gados (Dev)" : "Meus Gados";
 const scheme = "meusgados";
 
 const now = new Date();
@@ -13,7 +15,7 @@ const day = String(now.getDate()).padStart(2, "0");
 const dynamicVersion = `1.${year}${month}.${day}`;
 
 const env = {
-  appName: "Meus Gados",
+  appName: appName,
   appSlug: "meus-gados",
   logoUrl: "./src/assets/images/favicon.png",
   scheme: scheme,

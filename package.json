@@ -4,16 +4,16 @@
   "private": true,
   "main": "expo-router/entry",
   "scripts": {
-    "dev": "expo start",
+    "dev": "npx expo start",
     "check": "tsc --noEmit",
-    "lint": "expo lint",
+    "lint": "npx expo lint",
     "format": "prettier --write .",
-    "android": "expo run:android",
-    "ios": "expo run:ios",
+    "android": "npx expo run:android",
+    "ios": "npx expo run:ios",
     "build:dev": "eas build --profile development --platform android",
     "build:preview": "eas build --profile preview --platform android",
     "build:prod": "eas build --profile production --platform android",
-    "build:local": "expo prebuild --clean && cd android && gradlew assembleRelease --no-configuration-cache"
+    "build:local": "npx expo prebuild --clean && cd android && gradlew assembleRelease --no-configuration-cache"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.3",
