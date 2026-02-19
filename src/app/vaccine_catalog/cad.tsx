@@ -6,7 +6,6 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { FormInput } from "@/components";
 import { ScreenContainer } from "@/components/screen-container";
-import { CustomDatePicker } from "@/components/ui/date-picker";
 import { COMMON_VACCINES } from "@/constants/const";
 import { useColors, useNavigation, useScreenHeader } from "@/hooks";
 import { vaccineCatalogStorage } from "@/lib/storage";
@@ -162,36 +161,6 @@ export default function VaccineCatalogCadScreen() {
               placeholder="Ex: Febre Aftosa"
               required
             />
-
-            {/* Fabricante */}
-            <FormInput
-              label="Fabricante"
-              value={formData.manufacturer}
-              onChangeText={(text) => setFormData({ ...formData, manufacturer: text })}
-              placeholder="Ex: Ourofino, MSD, Boehringer"
-            />
-
-            {/* Lote e Validade */}
-            <View className="flex-row gap-3">
-              <View className="flex-1">
-                <FormInput
-                  label="Lote Padrão"
-                  value={formData.batchNumber}
-                  onChangeText={(text) => setFormData({ ...formData, batchNumber: text })}
-                  placeholder="Ex: LOTE-2024-001"
-                />
-              </View>
-
-              <View className="flex-1 gap-2">
-                <Text className="text-sm font-semibold text-foreground">Validade</Text>
-                <CustomDatePicker
-                  value={formData.expiryDate}
-                  onChange={(date) => setFormData({ ...formData, expiryDate: date })}
-                  placeholder="Selecionar"
-                  maximumDate={new Date(Date.now() + 5 * 365 * 24 * 60 * 60 * 1000)}
-                />
-              </View>
-            </View>
 
             {/* Intervalo entre Doses */}
             <FormInput

@@ -125,8 +125,8 @@ export default function CattleCadScreen() {
 
   return (
     <ScreenContainer className="p-0">
-      <ScrollView contentContainerStyle={{ flexGrow: 1, paddingBottom: insets.bottom }} className="p-4">
-        <View className="gap-6">
+      <ScrollView contentContainerStyle={{ flexGrow: 1 }} className="p-4">
+        <View className="gap-6" style={{ marginBottom: insets.bottom }}>
           {/* Form Fields */}
           <View className="gap-4">
             {/* Número */}
@@ -182,7 +182,7 @@ export default function CattleCadScreen() {
           </View>
 
           {/* Buttons */}
-          <View className="gap-3 mt-6">
+          <View className="gap-3">
             <TouchableOpacity onPress={handleSave} disabled={saving} className="bg-primary rounded-lg p-4 items-center">
               {saving ? (
                 <ActivityIndicator color="white" />

@@ -223,7 +223,7 @@ export default function VaccineCadScreen() {
                 });
               }}
               options={vaccineCatalog.map((v) => ({
-                label: `${v.name}${v.manufacturer ? ` - ${v.manufacturer}` : ""}`,
+                label: v.name,
                 value: v.id,
               }))}
               placeholder="Selecionar vacina"
@@ -265,20 +265,6 @@ export default function VaccineCadScreen() {
               minimumDate={formData.appliedDate || undefined}
               placeholder="Selecionar data"
             />
-
-            <View>
-              <FormInput
-                label="Lote"
-                value={formData.batchUsed}
-                onChangeText={(text) => setFormData({ ...formData, batchUsed: text })}
-                placeholder="Ex: LOTE-123"
-              />
-              {formData.batchUsed && formData.vaccineId && (
-                <Text className="text-xs text-muted mt-1 px-1">
-                  Lote preenchido automaticamente do catálogo (pode ser alterado)
-                </Text>
-              )}
-            </View>
 
             <FormInput
               label="Observações"

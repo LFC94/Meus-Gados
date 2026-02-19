@@ -27,7 +27,7 @@ export function CardResume({ number, title, icon, color, onPress }: CardResumePr
           borderBottomRightRadius: 0,
         }}
       />
-      <View className="flex-1 gap-4 p-4 h-full">
+      <View className="flex-1 gap-2 px-4 py-2 h-full">
         <View className="flex-row mr-2 justify-between">
           <Text className="text-4xl text-foreground font-bold">{number}</Text>
           <View className="w-10 h-10 rounded-md items-center justify-center" style={{ backgroundColor: `${color}20` }}>
