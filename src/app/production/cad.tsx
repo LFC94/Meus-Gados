@@ -1,44 +1,32 @@
 import { RouteProp, useRoute } from "@react-navigation/native";
-import * as Haptics from "expo-haptics";
 import { useCallback, useEffect, useState } from "react";
-import { ActivityIndicator, Alert, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { FormInput, FormSelect } from "@/components";
-import { ScreenContainer } from "@/components/screen-container";
+import { FormInput, FormSelect, ScreenContainer } from "@/components";
 import { CustomDatePicker } from "@/components/ui/date-picker";
-import { useNavigation } from "@/hooks";
-import { useColors } from "@/hooks/use-colors";
-import useScreenHeader from "@/hooks/use-screen-header";
+import { useColors, useFormScreen, useScreenHeader } from "@/hooks";
 import { cattleStorage, milkProductionStorage } from "@/lib/storage";
-import { Cattle, RootStackParamList } from "@/types";
+import { Cattle, MilkProductionPeriod, ProductionFormData, RootStackParamList } from "@/types";
 
 export default function MilkProductionCadScreen() {
-  const navigation = useNavigation();
   const route = useRoute<RouteProp<RootStackParamList, "MilkProductionCad">>();
   const colors = useColors();
   const { id, cattleId } = route.params;
-  const [loading, setLoading] = useState(false);
-  const [loadingCattle, setLoadingCattle] = useState(true);
-  const [cattle, setCattle] = useState<Cattle[]>([]);
-
-  const [formData, setFormData] = useState<{
-    cattleId: string;
-    date: Date | null;
-    period: "morning" | "afternoon" | "full_day";
-    quantity: string;
-    notes: string;
-  }>({
-    cattleId: cattleId || "",
-    date: new Date(),
-    period: "morning" as "morning" | "afternoon" | "full_day",
-    quantity: "",
-    notes: "",
-  });
-
   const insets = useSafeAreaInsets();
 
   useScreenHeader(id ? "Editar Produção" : "Registrar Produção");
+
+  const [loadingCattle, setLoadingCattle] = useState(true);
+  const [cattle, setCattle] = useState<Cattle[]>([]);
+
+  const initialData: ProductionFormData = {
+    cattleId: cattleId || "",
+    date: new Date(),
+    period: "morning",
+    quantity: "",
+    notes: "",
+  };
 
   const loadCattle = useCallback(async () => {
     try {
@@ -52,87 +40,59 @@ export default function MilkProductionCadScreen() {
     }
   }, []);
 
-  const loadProduction = useCallback(async () => {
-    try {
-      setLoading(true);
-      if (!id) return;
-      const record = await milkProductionStorage.getById(id);
-      if (record) {
-        setFormData({
-          cattleId: record.cattleId,
-          date: new Date(record.date),
-          period: record.period,
-          quantity: record.quantity.toString(),
-          notes: record.notes || "",
-        });
-      }
-    } catch (error) {
-      console.error("Error loading production:", error);
-      Alert.alert("Erro", "Não foi possível carregar o registro");
-    } finally {
-      setLoading(false);
-    }
-  }, [id]);
-
   useEffect(() => {
     loadCattle();
   }, [loadCattle]);
 
-  useEffect(() => {
-    if (id) {
-      loadProduction();
+  const loadData = useCallback(async () => {
+    if (!id) return null;
+    const record = await milkProductionStorage.getById(id);
+    if (record) {
+      return {
+        cattleId: record.cattleId,
+        date: new Date(record.date),
+        period: record.period,
+        quantity: record.quantity.toString(),
+        notes: record.notes || "",
+      };
     }
-  }, [id, loadProduction]);
+    return null;
+  }, [id]);
 
-  const handleSave = async () => {
-    if (!formData.cattleId) {
-      Alert.alert("Erro", "Selecione um animal");
-      return;
+  const validate = useCallback((data: ProductionFormData): string | null => {
+    if (!data.cattleId) return "Selecione um animal";
+    if (!data.date) return "A data da ordenha é obrigatória";
+    if (!data.quantity || isNaN(Number(data.quantity.replace(",", ".")))) {
+      return "Informe uma quantidade válida";
     }
+    return null;
+  }, []);
 
-    if (!formData.date) {
-      Alert.alert("Erro", "A data da ordenha é obrigatória");
-      return;
-    }
-
-    if (!formData.quantity || isNaN(Number(formData.quantity.replace(",", ".")))) {
-      Alert.alert("Erro", "Informe uma quantidade válida");
-      return;
-    }
-
-    try {
-      setLoading(true);
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-
-      const data = {
+  const onSave = useCallback(
+    async (formData: ProductionFormData) => {
+      const payload = {
         cattleId: formData.cattleId,
-        date: formData.date.toISOString(),
+        date: formData.date!.toISOString(),
         period: formData.period,
         quantity: Number(formData.quantity.replace(",", ".")),
         notes: formData.notes.trim() || undefined,
       };
 
       if (id) {
-        await milkProductionStorage.update(id, data);
+        await milkProductionStorage.update(id, payload);
       } else {
-        await milkProductionStorage.add(data);
+        await milkProductionStorage.add(payload);
       }
+    },
+    [id],
+  );
 
-      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-
-      Alert.alert("Sucesso", "Registro salvo com sucesso!", [
-        {
-          text: "OK",
-          onPress: () => navigation.goBack(),
-        },
-      ]);
-    } catch (error) {
-      console.error("Erro ao salvar registro:", error);
-      Alert.alert("Erro", "Não foi possível salvar o registro");
-    } finally {
-      setLoading(false);
-    }
-  };
+  const { data, setData, saving, save } = useFormScreen<ProductionFormData>({
+    initialData,
+    loadData,
+    validate,
+    onSave,
+  });
 
   if (loadingCattle) {
     return (
@@ -149,26 +109,29 @@ export default function MilkProductionCadScreen() {
           <View className="gap-6 pb-6">
             <FormSelect
               label="Animal"
-              value={formData.cattleId}
-              onValueChange={(value) => setFormData({ ...formData, cattleId: value })}
-              options={cattle.map((c) => ({ label: c.name || `Animal ${c.number}`, value: c.id }))}
+              value={data.cattleId}
+              onValueChange={(value) => setData({ ...data, cattleId: value })}
+              options={cattle.map((c) => ({
+                label: c.name || `Animal ${c.number}`,
+                value: c.id,
+              }))}
               placeholder="Selecionar animal"
               required
-              disabled={!!id || !!cattleId || loading}
+              disabled={!!id || !!cattleId || saving}
             />
 
             <CustomDatePicker
               label="Data da Ordenha *"
-              value={formData.date}
-              onChange={(date) => setFormData({ ...formData, date })}
+              value={data.date}
+              onChange={(date) => setData({ ...data, date })}
               maximumDate={new Date()}
               placeholder="Selecionar data"
             />
 
             <FormSelect
               label="Período"
-              value={formData.period}
-              onValueChange={(value) => setFormData({ ...formData, period: value as any })}
+              value={data.period}
+              onValueChange={(value) => setData({ ...data, period: value as MilkProductionPeriod })}
               options={[
                 { label: "Manhã", value: "morning" },
                 { label: "Tarde", value: "afternoon" },
@@ -179,8 +142,8 @@ export default function MilkProductionCadScreen() {
 
             <FormInput
               label="Quantidade (Litros)"
-              value={formData.quantity}
-              onChangeText={(text) => setFormData({ ...formData, quantity: text })}
+              value={data.quantity}
+              onChangeText={(text) => setData({ ...data, quantity: text })}
               placeholder="0.00"
               keyboardType="numeric"
               required
@@ -188,8 +151,8 @@ export default function MilkProductionCadScreen() {
 
             <FormInput
               label="Observações"
-              value={formData.notes}
-              onChangeText={(text) => setFormData({ ...formData, notes: text })}
+              value={data.notes}
+              onChangeText={(text) => setData({ ...data, notes: text })}
               placeholder="Observações sobre a ordenha..."
               multiline
               numberOfLines={4}
@@ -198,12 +161,12 @@ export default function MilkProductionCadScreen() {
         </ScrollView>
 
         <TouchableOpacity
-          onPress={handleSave}
-          disabled={loading}
+          onPress={save}
+          disabled={saving}
           className="bg-primary rounded-xl p-4 items-center"
-          style={{ opacity: loading ? 0.6 : 1 }}
+          style={{ opacity: saving ? 0.6 : 1 }}
         >
-          {loading ? (
+          {saving ? (
             <ActivityIndicator color={colors.background} />
           ) : (
             <Text className="text-background font-semibold text-base">Salvar Registro</Text>

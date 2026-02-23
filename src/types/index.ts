@@ -19,7 +19,13 @@ export interface Cattle extends SyncBase {
   motherId?: string;
 }
 
-export type CattleResult = "in_treatment" | "healthy" | "death" | "overdue_pregnancy" | "pregnancy" | "pending_vaccine";
+export type CattleResult =
+  | "in_treatment"
+  | "healthy"
+  | "death"
+  | "overdue_pregnancy"
+  | "pregnancy"
+  | "pending_vaccine";
 
 /**
  * Catálogo de Vacinas (Cadastro de Imunizantes)
@@ -59,7 +65,11 @@ export interface Pregnancy extends SyncBase {
   calfId?: string;
 }
 
-export type PregnancyResult = "pending" | "success" | "complications" | "failed";
+export type PregnancyResult =
+  | "pending"
+  | "success"
+  | "complications"
+  | "failed";
 
 export interface Disease extends SyncBase {
   cattleId: string;
@@ -78,6 +88,51 @@ export interface MilkProductionRecord extends SyncBase {
   period: "morning" | "afternoon" | "full_day";
   quantity: number; // in Liters
   notes?: string;
+}
+
+export type MilkProductionPeriod = "morning" | "afternoon" | "full_day";
+
+/**
+ * Form Data Types (telas de cadastro)
+ */
+export interface CattleFormData {
+  number: string;
+  name: string;
+  breed: string;
+  birthDate: Date | null;
+  weight: string;
+}
+
+export interface DiseaseFormData {
+  cattleId?: string;
+  type: string;
+  diagnosisDate: Date | null;
+  symptoms: string;
+  treatment: string;
+  result: DiseaseResult;
+}
+
+export interface ProductionFormData {
+  cattleId: string;
+  date: Date | null;
+  period: MilkProductionPeriod;
+  quantity: string;
+  notes: string;
+}
+
+export interface PregnancyFormData {
+  cattleId: string | undefined;
+  coverageDate: Date | null;
+  expectedBirthDate: Date | null;
+}
+
+export interface VaccineFormData {
+  cattleId: string | undefined;
+  vaccineId: string;
+  appliedDate: Date | null;
+  nextDose: Date | null;
+  batchUsed: string;
+  notes: string;
 }
 
 /**
@@ -104,7 +159,12 @@ export type RootStackParamList = {
   CattleDetail: { id: string };
   CattleCad: { id?: string };
   VaccinePending: undefined;
-  VaccineCad: { id?: string; cattleId?: string; previousRecordId?: string; vaccineId?: string };
+  VaccineCad: {
+    id?: string;
+    cattleId?: string;
+    previousRecordId?: string;
+    vaccineId?: string;
+  };
   VaccineCatalog: undefined;
   VaccineCatalogCad: { id: string };
   PregnancyAdd: { cattleId: string };

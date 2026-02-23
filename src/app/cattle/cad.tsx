@@ -1,119 +1,87 @@
 import { RouteProp, useRoute } from "@react-navigation/native";
-import * as Haptics from "expo-haptics";
-import { useCallback, useEffect, useState } from "react";
-import { ActivityIndicator, Alert, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { useCallback } from "react";
+import { ActivityIndicator, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { CustomDatePicker, FormInput, FormSelect, ScreenContainer } from "@/components";
 import { CATTLE_BREEDS } from "@/constants/const";
-import { useColors, useNavigation, useScreenHeader } from "@/hooks";
+import { useColors, useFormScreen, useNavigation, useScreenHeader } from "@/hooks";
 import { validateCattleNumber, validateWeight } from "@/lib/helpers";
 import { cattleStorage } from "@/lib/storage";
-import { RootStackParamList } from "@/types";
+import { CattleFormData, RootStackParamList } from "@/types";
 
 export default function CattleCadScreen() {
-  const navigation = useNavigation();
   const route = useRoute<RouteProp<RootStackParamList, "CattleCad">>();
+  const navigation = useNavigation();
   const colors = useColors();
   const id = route.params?.id;
-  const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
-  const [formData, setFormData] = useState<{
-    number: string;
-    name: string;
-    breed: string;
-    birthDate: Date | null;
-    weight: string;
-  }>({
+  const insets = useSafeAreaInsets();
+
+  useScreenHeader(id ? "Editar Animal" : "Cadastrar Animal", id ? "Atualize os dados do animal" : undefined);
+
+  const initialData: CattleFormData = {
     number: "",
     name: "",
     breed: "Nelore",
     birthDate: new Date(),
     weight: "",
-  });
-  const insets = useSafeAreaInsets();
+  };
 
-  useScreenHeader(id ? "Editar Animal" : "Cadastrar Animal", id ? "Atualize os dados do animal" : undefined);
-
-  const loadCattle = useCallback(async () => {
-    try {
-      if (!id) {
-        setLoading(false);
-        return;
-      }
-      const cattle = await cattleStorage.getById(id);
-      if (cattle) {
-        setFormData({
-          number: cattle.number,
-          name: cattle.name || "",
-          breed: cattle.breed,
-          birthDate: cattle.birthDate ? new Date(cattle.birthDate) : null,
-          weight: cattle.weight.toString(),
-        });
-      }
-    } catch (error) {
-      console.error("Error loading cattle:", error);
-      Alert.alert("Erro", "Não foi possível carregar os dados do animal");
-    } finally {
-      setLoading(false);
+  const loadData = useCallback(async () => {
+    if (!id) return null;
+    const cattle = await cattleStorage.getById(id);
+    if (cattle) {
+      return {
+        number: cattle.number,
+        name: cattle.name || "",
+        breed: cattle.breed,
+        birthDate: cattle.birthDate ? new Date(cattle.birthDate) : null,
+        weight: cattle.weight.toString(),
+      };
     }
+    return null;
   }, [id]);
 
-  useEffect(() => {
-    loadCattle();
-  }, [loadCattle]);
-
-  const handleSave = async () => {
-    // Validações
-    if (!validateCattleNumber(formData.number)) {
-      Alert.alert("Erro", "O número do animal é obrigatório");
-      return;
+  const validate = useCallback((data: CattleFormData): string | null => {
+    if (!validateCattleNumber(data.number)) {
+      return "O número do animal é obrigatório";
     }
-
-    if (!formData.birthDate) {
-      Alert.alert("Erro", "A data de nascimento é obrigatória");
-      return;
+    if (!data.birthDate) {
+      return "A data de nascimento é obrigatória";
     }
-
-    const weight = parseFloat(formData.weight);
-    if (!formData.weight || isNaN(weight) || !validateWeight(weight)) {
-      Alert.alert("Erro", "Informe um peso válido");
-      return;
+    const weight = parseFloat(data.weight);
+    if (!data.weight || isNaN(weight) || !validateWeight(weight)) {
+      return "Informe um peso válido";
     }
+    return null;
+  }, []);
 
-    try {
-      setSaving(true);
-
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-      const data = {
-        number: formData.number.trim(),
-        name: formData.name.trim(),
-        breed: formData.breed,
-        birthDate: formData.birthDate.toISOString(),
-        weight: parseFloat(formData.weight),
+  const onSave = useCallback(
+    async (data: CattleFormData) => {
+      const payload = {
+        number: data.number.trim(),
+        name: data.name.trim(),
+        breed: data.breed,
+        birthDate: data.birthDate!.toISOString(),
+        weight: parseFloat(data.weight),
       };
 
       if (id) {
-        await cattleStorage.update(id!, data);
+        await cattleStorage.update(id, payload);
       } else {
-        await cattleStorage.add(data);
+        await cattleStorage.add(payload);
       }
+    },
+    [id],
+  );
 
-      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-
-      Alert.alert("Sucesso", id ? "Animal atualizado com sucesso!" : "Animal cadastrado com sucesso!", [
-        {
-          text: "OK",
-          onPress: () => navigation.goBack(),
-        },
-      ]);
-    } catch (error) {
-      console.error("Error updating cattle:", error);
-      Alert.alert("Erro", "Não foi possível atualizar o animal");
-    } finally {
-      setSaving(false);
-    }
-  };
+  const { data, setData, loading, saving, save } = useFormScreen<CattleFormData>({
+    initialData,
+    loadData,
+    validate,
+    onSave,
+    successMessage: id ? "Animal atualizado com sucesso!" : "Animal cadastrado com sucesso!",
+  });
 
   if (loading) {
     return (
@@ -127,53 +95,50 @@ export default function CattleCadScreen() {
     <ScreenContainer className="p-0">
       <ScrollView contentContainerStyle={{ flexGrow: 1 }} className="p-4">
         <View className="gap-6" style={{ marginBottom: insets.bottom }}>
-          {/* Form Fields */}
           <View className="gap-4">
-            {/* Número */}
             <FormInput
               label="Número do Animal"
-              value={formData.number}
-              onChangeText={(text) => setFormData({ ...formData, number: text })}
+              value={data.number}
+              onChangeText={(text) => setData({ ...data, number: text })}
               placeholder="Ex: 001"
               required
               disabled={saving}
             />
 
-            {/* Nome */}
             <FormInput
               label="Nome (Opcional)"
-              value={formData.name}
-              onChangeText={(text) => setFormData({ ...formData, name: text })}
+              value={data.name}
+              onChangeText={(text) => setData({ ...data, name: text })}
               placeholder="Ex: Margarida"
               disabled={saving}
             />
 
-            {/* Raça */}
             <FormSelect
               label="Raça"
-              value={formData.breed}
-              onValueChange={(value) => setFormData({ ...formData, breed: value })}
-              options={CATTLE_BREEDS.map((breed) => ({ label: breed, value: breed }))}
+              value={data.breed}
+              onValueChange={(value) => setData({ ...data, breed: value })}
+              options={CATTLE_BREEDS.map((breed) => ({
+                label: breed,
+                value: breed,
+              }))}
               required
               disabled={saving}
             />
 
-            {/* Data de Nascimento */}
             <View className="gap-2">
               <Text className="text-sm font-semibold text-foreground">Data de Nascimento *</Text>
               <CustomDatePicker
-                value={formData.birthDate}
-                onChange={(date) => setFormData({ ...formData, birthDate: date })}
+                value={data.birthDate}
+                onChange={(date) => setData({ ...data, birthDate: date })}
                 maximumDate={new Date()}
                 disabled={saving}
               />
             </View>
 
-            {/* Peso */}
             <FormInput
               label="Peso (kg)"
-              value={formData.weight}
-              onChangeText={(text) => setFormData({ ...formData, weight: text })}
+              value={data.weight}
+              onChangeText={(text) => setData({ ...data, weight: text })}
               placeholder="Ex: 450"
               keyboardType="decimal-pad"
               required
@@ -181,9 +146,8 @@ export default function CattleCadScreen() {
             />
           </View>
 
-          {/* Buttons */}
           <View className="gap-3">
-            <TouchableOpacity onPress={handleSave} disabled={saving} className="bg-primary rounded-lg p-4 items-center">
+            <TouchableOpacity onPress={save} disabled={saving} className="bg-primary rounded-lg p-4 items-center">
               {saving ? (
                 <ActivityIndicator color="white" />
               ) : (

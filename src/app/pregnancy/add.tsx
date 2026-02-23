@@ -1,37 +1,32 @@
 import { RouteProp, useRoute } from "@react-navigation/native";
-import * as Haptics from "expo-haptics";
 import { useCallback, useEffect, useState } from "react";
 import { ActivityIndicator, Alert, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { CustomDatePicker, FormSelect, ScreenContainer } from "@/components";
-import { useColors, useNavigation, useScreenHeader } from "@/hooks";
+import { useColors, useFormScreen, useNavigation, useScreenHeader } from "@/hooks";
 import { calculateExpectedBirthDateAsDate } from "@/lib/helpers";
 import { schedulePregnancyNotification } from "@/lib/notifications";
 import { cattleStorage, pregnancyStorage } from "@/lib/storage";
-import { Cattle, RootStackParamList } from "@/types";
+import { Cattle, PregnancyFormData, RootStackParamList } from "@/types";
 
 export default function AddPregnancyScreen() {
-  const navigation = useNavigation();
   const route = useRoute<RouteProp<RootStackParamList, "PregnancyAdd">>();
-  const { cattleId } = route.params;
+  const navigation = useNavigation();
   const colors = useColors();
-  const [loading, setLoading] = useState(false);
-  const [loadingCattle, setLoadingCattle] = useState(true);
-  const [cattle, setCattle] = useState<Cattle[]>([]);
-  const [formData, setFormData] = useState<{
-    cattleId: string | undefined;
-    coverageDate: Date | null;
-    expectedBirthDate: Date | null;
-  }>({
-    cattleId: cattleId,
-    coverageDate: new Date(),
-    expectedBirthDate: new Date(),
-  });
-
+  const { cattleId } = route.params;
   const insets = useSafeAreaInsets();
 
   useScreenHeader("Registrar Gestação");
+
+  const [loadingCattle, setLoadingCattle] = useState(true);
+  const [cattle, setCattle] = useState<Cattle[]>([]);
+
+  const initialData: PregnancyFormData = {
+    cattleId: cattleId,
+    coverageDate: new Date(),
+    expectedBirthDate: new Date(),
+  };
 
   const loadCattle = useCallback(async () => {
     try {
@@ -49,46 +44,22 @@ export default function AddPregnancyScreen() {
     loadCattle();
   }, [loadCattle]);
 
-  useEffect(() => {
-    if (formData.coverageDate) {
-      const expected = calculateExpectedBirthDateAsDate(formData.coverageDate);
-      setFormData((prev) => ({
-        ...prev,
-        expectedBirthDate: expected,
-      }));
-    }
-  }, [formData.coverageDate]);
+  const validate = useCallback((data: PregnancyFormData): string | null => {
+    if (!data.cattleId) return "Selecione um animal";
+    if (!data.coverageDate) return "A data de cobertura é obrigatória";
+    if (!data.expectedBirthDate) return "A data prevista de parto é obrigatória";
+    return null;
+  }, []);
 
-  const handleSave = async () => {
-    // Validações
-    if (!formData.cattleId) {
-      Alert.alert("Erro", "Selecione um animal");
-      return;
-    }
-
-    if (!formData.coverageDate) {
-      Alert.alert("Erro", "A data de cobertura é obrigatória");
-      return;
-    }
-
-    if (!formData.expectedBirthDate) {
-      Alert.alert("Erro", "A data prevista de parto é obrigatória");
-      return;
-    }
-
-    try {
-      setLoading(true);
-
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-
+  const onSave = useCallback(
+    async (formData: PregnancyFormData) => {
       const pregnancy = await pregnancyStorage.add({
-        cattleId: formData.cattleId,
-        coverageDate: formData.coverageDate.toISOString(),
-        expectedBirthDate: formData.expectedBirthDate.toISOString(),
+        cattleId: formData.cattleId!,
+        coverageDate: formData.coverageDate!.toISOString(),
+        expectedBirthDate: formData.expectedBirthDate!.toISOString(),
         result: "pending",
       });
 
-      // Agendar notificação para data prevista de parto
       const selectedCattle = cattle.find((c) => c.id === formData.cattleId);
       if (selectedCattle) {
         await schedulePregnancyNotification({
@@ -96,22 +67,44 @@ export default function AddPregnancyScreen() {
           cattleName: selectedCattle.name || `Animal ${selectedCattle.number}`,
         });
       }
+    },
+    [cattle],
+  );
 
-      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+  const handleSuccess = useCallback(() => {
+    Alert.alert("Sucesso", "Gestação registrada com sucesso!", [
+      {
+        text: "OK",
+        onPress: () => navigation.goBack(),
+      },
+    ]);
+  }, [navigation]);
 
-      Alert.alert("Sucesso", "Gestação registrada com sucesso!", [
-        {
-          text: "OK",
-          onPress: () => navigation.goBack(),
-        },
-      ]);
-    } catch (error) {
-      console.error("Error saving pregnancy:", error);
-      Alert.alert("Erro", "Não foi possível registrar a gestação");
-    } finally {
-      setLoading(false);
-    }
-  };
+  const { data, setData, saving, save } = useFormScreen<PregnancyFormData>({
+    initialData,
+    validate,
+    onSave,
+    onSuccess: handleSuccess,
+  });
+
+  const handleCoverageDateChange = useCallback(
+    (date: Date | null) => {
+      if (date) {
+        setData({
+          ...data,
+          coverageDate: date,
+          expectedBirthDate: calculateExpectedBirthDateAsDate(date),
+        });
+      } else {
+        setData({
+          ...data,
+          coverageDate: null,
+          expectedBirthDate: null,
+        });
+      }
+    },
+    [data, setData],
+  );
 
   if (loadingCattle) {
     return (
@@ -126,44 +119,31 @@ export default function AddPregnancyScreen() {
       <View className="flex-1 gap-4" style={{ paddingBottom: insets.bottom }}>
         <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
           <View className="gap-4 pb-6">
-            {/* Animal */}
             <FormSelect
               label="Animal (Vaca)"
-              value={formData.cattleId || ""}
-              onValueChange={(value) => setFormData({ ...formData, cattleId: value })}
-              options={cattle.map((c) => ({ label: c.name || `Animal ${c.number}`, value: c.id }))}
+              value={data.cattleId || ""}
+              onValueChange={(value) => setData({ ...data, cattleId: value })}
+              options={cattle.map((c) => ({
+                label: c.name || `Animal ${c.number}`,
+                value: c.id,
+              }))}
               placeholder="Selecionar animal"
               required
             />
-            {/* Data de Cobertura/Inseminação */}
+
             <CustomDatePicker
               label="Data de Cobertura/Inseminação *"
-              value={formData.coverageDate}
-              onChange={(date) => {
-                if (date) {
-                  setFormData({
-                    ...formData,
-                    coverageDate: date,
-                    expectedBirthDate: calculateExpectedBirthDateAsDate(date),
-                  });
-                } else {
-                  setFormData({
-                    ...formData,
-                    coverageDate: null,
-                    expectedBirthDate: null,
-                  });
-                }
-              }}
+              value={data.coverageDate}
+              onChange={handleCoverageDateChange}
               maximumDate={new Date()}
               placeholder="Selecionar data"
             />
 
-            {/* Data Prevista de Parto */}
             <CustomDatePicker
               label="Data Prevista de Parto *"
-              value={formData.expectedBirthDate}
-              onChange={(date) => setFormData({ ...formData, expectedBirthDate: date })}
-              minimumDate={formData.coverageDate || undefined}
+              value={data.expectedBirthDate}
+              onChange={(date) => setData({ ...data, expectedBirthDate: date })}
+              minimumDate={data.coverageDate || undefined}
               placeholder="Selecionar data"
             />
 
@@ -176,14 +156,13 @@ export default function AddPregnancyScreen() {
           </View>
         </ScrollView>
 
-        {/* Save Button */}
         <TouchableOpacity
-          onPress={handleSave}
-          disabled={loading}
+          onPress={save}
+          disabled={saving}
           className="bg-primary rounded-xl p-4 items-center"
-          style={{ opacity: loading ? 0.6 : 1 }}
+          style={{ opacity: saving ? 0.6 : 1 }}
         >
-          {loading ? (
+          {saving ? (
             <ActivityIndicator color={colors.background} />
           ) : (
             <Text className="text-background font-semibold text-base">Salvar Gestação</Text>

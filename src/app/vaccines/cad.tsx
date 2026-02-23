@@ -1,49 +1,38 @@
 import { RouteProp, useRoute } from "@react-navigation/native";
-import * as Haptics from "expo-haptics";
 import { useCallback, useEffect, useState } from "react";
-import { ActivityIndicator, Alert, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { FormInput, FormSelect } from "@/components";
-import { ScreenContainer } from "@/components/screen-container";
+import { FormInput, FormSelect, ScreenContainer } from "@/components";
 import { CustomDatePicker } from "@/components/ui/date-picker";
-import { useNavigation } from "@/hooks";
-import { useColors } from "@/hooks/use-colors";
-import useScreenHeader from "@/hooks/use-screen-header";
+import { useColors, useFormScreen, useNavigation, useScreenHeader } from "@/hooks";
 import { addDaysToDate } from "@/lib/helpers";
 import { scheduleVaccineNotification } from "@/lib/notifications";
 import { cattleStorage, vaccinationRecordStorage, vaccineCatalogStorage } from "@/lib/storage";
-import { Cattle, RootStackParamList, VaccineModel } from "@/types";
+import { Cattle, RootStackParamList, VaccineFormData, VaccineModel } from "@/types";
 
 export default function VaccineCadScreen() {
-  const navigation = useNavigation();
   const route = useRoute<RouteProp<RootStackParamList, "VaccineCad">>();
+  const navigation = useNavigation();
   const colors = useColors();
   const { id, cattleId, previousRecordId, vaccineId } = route.params;
-  const [loading, setLoading] = useState(false);
+  const insets = useSafeAreaInsets();
+
+  useScreenHeader(id ? "Editar Vacina" : "Registrar Vacina");
+
   const [loadingCattle, setLoadingCattle] = useState(true);
   const [loadingCatalog, setLoadingCatalog] = useState(true);
   const [cattle, setCattle] = useState<Cattle[]>([]);
   const [vaccineCatalog, setVaccineCatalog] = useState<VaccineModel[]>([]);
 
-  const [formData, setFormData] = useState<{
-    cattleId: string | undefined;
-    vaccineId: string;
-    appliedDate: Date | null;
-    nextDose: Date | null;
-    batchUsed: string;
-    notes: string;
-  }>({
+  const initialData: VaccineFormData = {
     cattleId: cattleId,
     vaccineId: vaccineId || "",
     appliedDate: new Date(),
     nextDose: null,
     batchUsed: "",
     notes: "",
-  });
-  const insets = useSafeAreaInsets();
-
-  useScreenHeader(id ? "Editar Vacina" : "Registrar Vacina");
+  };
 
   const loadCattle = useCallback(async () => {
     try {
@@ -69,77 +58,51 @@ export default function VaccineCadScreen() {
     }
   }, []);
 
-  const loadVaccine = useCallback(async () => {
-    try {
-      if (!id) return;
-
-      const vaccination = await vaccinationRecordStorage.getById(id);
-
-      if (vaccination) {
-        const vaccine = await vaccineCatalogStorage.getById(vaccination.vaccineId);
-        if (!vaccine) {
-          return;
-        }
-        setFormData({
-          cattleId: vaccination.cattleId,
-          vaccineId: vaccination.vaccineId,
-          appliedDate: new Date(vaccination.dateApplied),
-          nextDose: vaccination.nextDoseDate ? new Date(vaccination.nextDoseDate) : null,
-          batchUsed: vaccination.batchUsed || "",
-          notes: vaccination.notes || "",
-        });
-      }
-    } catch (error) {
-      console.error("Error loading vaccine:", error);
-      Alert.alert("Erro", "Não foi possível carregar os dados da vacina");
-    } finally {
-      setLoading(false);
-    }
-  }, [id]);
-
   useEffect(() => {
     loadCattle();
     loadVaccineCatalog();
   }, [loadCattle, loadVaccineCatalog]);
 
-  useEffect(() => {
-    loadVaccine();
-  }, [loadVaccine]);
+  const loadData = useCallback(async () => {
+    if (!id) return null;
 
-  const handleSave = async () => {
-    if (!formData.cattleId) {
-      Alert.alert("Erro", "Selecione um animal");
-      return;
+    const vaccination = await vaccinationRecordStorage.getById(id);
+    if (vaccination) {
+      return {
+        cattleId: vaccination.cattleId,
+        vaccineId: vaccination.vaccineId,
+        appliedDate: new Date(vaccination.dateApplied),
+        nextDose: vaccination.nextDoseDate ? new Date(vaccination.nextDoseDate) : null,
+        batchUsed: vaccination.batchUsed || "",
+        notes: vaccination.notes || "",
+      };
     }
+    return null;
+  }, [id]);
 
-    if (!formData.vaccineId) {
-      Alert.alert("Erro", "Selecione uma vacina");
-      return;
-    }
+  const validate = useCallback((data: VaccineFormData): string | null => {
+    if (!data.cattleId) return "Selecione um animal";
+    if (!data.vaccineId) return "Selecione uma vacina";
+    if (!data.appliedDate) return "A data de aplicação é obrigatória";
+    return null;
+  }, []);
 
-    if (!formData.appliedDate) {
-      Alert.alert("Erro", "A data de aplicação é obrigatória");
-      return;
-    }
-
-    try {
-      setLoading(true);
-
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-
+  const onSave = useCallback(
+    async (formData: VaccineFormData) => {
       const selectedVaccine = vaccineCatalog.find((v) => v.id === formData.vaccineId);
-      const data = {
-        cattleId: formData.cattleId,
+      const payload = {
+        cattleId: formData.cattleId!,
         vaccineId: formData.vaccineId,
-        dateApplied: formData.appliedDate.toISOString(),
+        dateApplied: formData.appliedDate!.toISOString(),
         nextDoseDate: formData.nextDose ? formData.nextDose.toISOString() : undefined,
         batchUsed: formData.batchUsed.trim() || selectedVaccine?.batchNumber,
         notes: formData.notes.trim() || undefined,
       };
+
       if (id) {
-        await vaccinationRecordStorage.update(id!, data);
+        await vaccinationRecordStorage.update(id, payload);
       } else {
-        const record = await vaccinationRecordStorage.add(data);
+        const record = await vaccinationRecordStorage.add(payload);
 
         if (previousRecordId) {
           await vaccinationRecordStorage.markNextDoseAsApplied(previousRecordId);
@@ -164,22 +127,49 @@ export default function VaccineCadScreen() {
           }
         }
       }
+    },
+    [id, previousRecordId, cattle, vaccineCatalog],
+  );
 
-      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+  const { data, setData, saving, save } = useFormScreen<VaccineFormData>({
+    initialData,
+    loadData,
+    validate,
+    onSave,
+  });
 
-      Alert.alert("Sucesso", "Vacina registrada com sucesso!", [
-        {
-          text: "OK",
-          onPress: () => navigation.goBack(),
-        },
-      ]);
-    } catch (error) {
-      console.error("Erro ao registrar vacina:", error);
-      Alert.alert("Erro", "Não foi possível registrar a vacina");
-    } finally {
-      setLoading(false);
-    }
-  };
+  const handleVaccineSelect = useCallback(
+    (value: string) => {
+      const selected = vaccineCatalog.find((v) => v.id === value);
+      let nextDose = data.nextDose;
+
+      if (selected?.daysBetweenDoses && data.appliedDate) {
+        nextDose = addDaysToDate(data.appliedDate, selected.daysBetweenDoses);
+      }
+
+      setData({
+        ...data,
+        vaccineId: value,
+        batchUsed: selected?.batchNumber || "",
+        nextDose,
+      });
+    },
+    [data, vaccineCatalog, setData],
+  );
+
+  const handleAppliedDateChange = useCallback(
+    (date: Date | null) => {
+      const selected = vaccineCatalog.find((v) => v.id === data.vaccineId);
+      let nextDose = data.nextDose;
+
+      if (date && selected?.daysBetweenDoses) {
+        nextDose = addDaysToDate(date, selected.daysBetweenDoses);
+      }
+
+      setData({ ...data, appliedDate: date, nextDose });
+    },
+    [data, vaccineCatalog, setData],
+  );
 
   if (loadingCattle || loadingCatalog) {
     return (
@@ -196,9 +186,12 @@ export default function VaccineCadScreen() {
           <View className="gap-4 pb-6">
             <FormSelect
               label="Animal"
-              value={formData.cattleId || ""}
-              onValueChange={(value) => setFormData({ ...formData, cattleId: value })}
-              options={cattle.map((c) => ({ label: c.name || `Animal ${c.number}`, value: c.id }))}
+              value={data.cattleId || ""}
+              onValueChange={(value) => setData({ ...data, cattleId: value })}
+              options={cattle.map((c) => ({
+                label: c.name || `Animal ${c.number}`,
+                value: c.id,
+              }))}
               placeholder="Selecionar animal"
               required
               disabled={!!id || !!cattleId}
@@ -206,22 +199,8 @@ export default function VaccineCadScreen() {
 
             <FormSelect
               label="Vacina"
-              value={formData.vaccineId}
-              onValueChange={(value) => {
-                const selected = vaccineCatalog.find((v) => v.id === value);
-                let nextDose = formData.nextDose;
-
-                if (selected?.daysBetweenDoses && formData.appliedDate) {
-                  nextDose = addDaysToDate(formData.appliedDate, selected.daysBetweenDoses);
-                }
-
-                setFormData({
-                  ...formData,
-                  vaccineId: value,
-                  batchUsed: selected?.batchNumber || "",
-                  nextDose,
-                });
-              }}
+              value={data.vaccineId}
+              onValueChange={handleVaccineSelect}
               options={vaccineCatalog.map((v) => ({
                 label: v.name,
                 value: v.id,
@@ -243,33 +222,24 @@ export default function VaccineCadScreen() {
 
             <CustomDatePicker
               label="Data Aplicada *"
-              value={formData.appliedDate}
-              onChange={(date) => {
-                const selected = vaccineCatalog.find((v) => v.id === formData.vaccineId);
-                let nextDose = formData.nextDose;
-
-                if (date && selected?.daysBetweenDoses) {
-                  nextDose = addDaysToDate(date, selected.daysBetweenDoses);
-                }
-
-                setFormData({ ...formData, appliedDate: date, nextDose });
-              }}
+              value={data.appliedDate}
+              onChange={handleAppliedDateChange}
               maximumDate={new Date()}
               placeholder="Selecionar data"
             />
 
             <CustomDatePicker
               label="Próxima Dose"
-              value={formData.nextDose}
-              onChange={(date) => setFormData({ ...formData, nextDose: date })}
-              minimumDate={formData.appliedDate || undefined}
+              value={data.nextDose}
+              onChange={(date) => setData({ ...data, nextDose: date })}
+              minimumDate={data.appliedDate || undefined}
               placeholder="Selecionar data"
             />
 
             <FormInput
               label="Observações"
-              value={formData.notes}
-              onChangeText={(text) => setFormData({ ...formData, notes: text })}
+              value={data.notes}
+              onChangeText={(text) => setData({ ...data, notes: text })}
               placeholder="Ex: animal apresentou leve reação"
               multiline
               numberOfLines={4}
@@ -278,12 +248,12 @@ export default function VaccineCadScreen() {
         </ScrollView>
 
         <TouchableOpacity
-          onPress={handleSave}
-          disabled={loading}
+          onPress={save}
+          disabled={saving}
           className="bg-primary rounded-xl p-4 items-center"
-          style={{ opacity: loading ? 0.6 : 1 }}
+          style={{ opacity: saving ? 0.6 : 1 }}
         >
-          {loading ? (
+          {saving ? (
             <ActivityIndicator color={colors.background} />
           ) : (
             <Text className="text-background font-semibold text-base">Salvar Vacina</Text>
