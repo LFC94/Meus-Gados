@@ -1,18 +1,9 @@
 import { RouteProp, useFocusEffect, useRoute } from "@react-navigation/native";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import {
-  ActivityIndicator,
-  LayoutAnimation,
-  RefreshControl,
-  ScrollView,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { LayoutAnimation, RefreshControl, ScrollView, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { ButtonAdd, CattleCard, FormSelect, IconSymbol } from "@/components/";
+import { ButtonAdd, CattleCard, FormSelect, IconSymbol, LoadingScreen } from "@/components/";
 import { ScreenContainer } from "@/components/screen-container";
 import { STATUS_CATTLE } from "@/constants/const";
 import { useColors } from "@/hooks/use-colors";
@@ -40,7 +31,10 @@ export default function CattleListScreen() {
   const [showFilters, setShowFilters] = useState(false);
   const [statusFilter, setStatusFilter] = useState<CattleResult | "all">(route.params?.status || "all");
   const [breedFilter, setBreedFilter] = useState<string>("all");
-  const [ageRange, setAgeRange] = useState<{ min: string; max: string }>({ min: "", max: "" });
+  const [ageRange, setAgeRange] = useState<{ min: string; max: string }>({
+    min: "",
+    max: "",
+  });
   const insets = useSafeAreaInsets();
   useScreenHeader("Meu Rebanho", `${cattle.length} ${cattle.length === 1 ? "animal" : "animais"} cadastrados`);
 
@@ -165,13 +159,7 @@ export default function CattleListScreen() {
     filterCattle();
   }, [filterCattle]);
 
-  if (loading) {
-    return (
-      <ScreenContainer className="items-center justify-center">
-        <ActivityIndicator size="large" color={colors.primary} />
-      </ScreenContainer>
-    );
-  }
+  if (loading) return <LoadingScreen />;
 
   return (
     <ScreenContainer className="p-0">

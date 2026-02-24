@@ -1,8 +1,9 @@
 import { useFocusEffect } from "@react-navigation/native";
 import React, { useState } from "react";
-import { ActivityIndicator, RefreshControl, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { RefreshControl, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+import { LoadingScreen } from "@/components";
 import { ScreenContainer } from "@/components/screen-container";
 import { useNavigation } from "@/hooks";
 import { useColors } from "@/hooks/use-colors";
@@ -48,13 +49,7 @@ export default function PendingVaccinesScreen() {
     }
   };
 
-  if (loading) {
-    return (
-      <ScreenContainer className="items-center justify-center">
-        <ActivityIndicator size="large" color={colors.primary} />
-      </ScreenContainer>
-    );
-  }
+  if (loading) return <LoadingScreen />;
 
   return (
     <ScreenContainer className="p-0">
@@ -115,7 +110,11 @@ export default function PendingVaccinesScreen() {
                         <Text className="text-primary font-semibold text-sm">Aplicar Dose</Text>
                       </TouchableOpacity>
                       <TouchableOpacity
-                        onPress={() => navigation.navigate("CattleDetail", { id: item.cattleId })}
+                        onPress={() =>
+                          navigation.navigate("CattleDetail", {
+                            id: item.cattleId,
+                          })
+                        }
                         className="flex-1 bg-surface border border-border rounded-lg p-2 items-center"
                       >
                         <Text className="text-foreground text-sm">Ver Animal</Text>

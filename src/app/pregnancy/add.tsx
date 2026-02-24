@@ -3,7 +3,7 @@ import { useCallback, useEffect, useState } from "react";
 import { ActivityIndicator, Alert, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { CustomDatePicker, FormSelect, ScreenContainer } from "@/components";
+import { CustomDatePicker, FormSelect, LoadingScreen, ScreenContainer } from "@/components";
 import { useColors, useFormScreen, useNavigation, useScreenHeader } from "@/hooks";
 import { calculateExpectedBirthDateAsDate } from "@/lib/helpers";
 import { logger } from "@/lib/logger";
@@ -107,13 +107,7 @@ export default function AddPregnancyScreen() {
     [data, setData],
   );
 
-  if (loadingCattle) {
-    return (
-      <ScreenContainer className="items-center justify-center">
-        <ActivityIndicator size="large" color={colors.primary} />
-      </ScreenContainer>
-    );
-  }
+  if (loadingCattle) return <LoadingScreen />;
 
   return (
     <ScreenContainer className="p-6">

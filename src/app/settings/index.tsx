@@ -8,7 +8,7 @@ import React, { useEffect, useState } from "react";
 import { ActivityIndicator, Alert, Image, ScrollView, Switch, Text, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { FormInput, FormTimePicker, IconSymbol } from "@/components";
+import { FormInput, FormTimePicker, IconSymbol, LoadingScreen } from "@/components";
 import { ScreenContainer } from "@/components/screen-container";
 import { STATUS_CATTLE } from "@/constants/const";
 import { useAuth, useColors, useScreenHeader } from "@/hooks";
@@ -229,13 +229,7 @@ export default function SettingsScreen() {
     ]);
   };
 
-  if (loading) {
-    return (
-      <ScreenContainer className="items-center justify-center">
-        <ActivityIndicator size="large" color={colors.primary} />
-      </ScreenContainer>
-    );
-  }
+  if (loading) return <LoadingScreen />;
 
   return (
     <ScreenContainer className="p-0">
@@ -353,8 +347,16 @@ export default function SettingsScreen() {
                       </View>
                       <Switch
                         value={notifSettings.vaccinesEnabled}
-                        onValueChange={(v) => setNotifSettings({ ...notifSettings, vaccinesEnabled: v })}
-                        trackColor={{ false: colors.border, true: colors.primary }}
+                        onValueChange={(v) =>
+                          setNotifSettings({
+                            ...notifSettings,
+                            vaccinesEnabled: v,
+                          })
+                        }
+                        trackColor={{
+                          false: colors.border,
+                          true: colors.primary,
+                        }}
                         thumbColor={colors.background}
                       />
                     </View>
@@ -367,7 +369,10 @@ export default function SettingsScreen() {
                           inputStyle={{ width: 40, flex: 0 }}
                           value={String(notifSettings.vaccineAlertDaysBefore)}
                           onChangeText={(t) =>
-                            setNotifSettings({ ...notifSettings, vaccineAlertDaysBefore: parseInt(t) || 0 })
+                            setNotifSettings({
+                              ...notifSettings,
+                              vaccineAlertDaysBefore: parseInt(t) || 0,
+                            })
                           }
                         />
                       </View>
@@ -383,8 +388,16 @@ export default function SettingsScreen() {
                       </View>
                       <Switch
                         value={notifSettings.pregnancyEnabled}
-                        onValueChange={(v) => setNotifSettings({ ...notifSettings, pregnancyEnabled: v })}
-                        trackColor={{ false: colors.border, true: colors.primary }}
+                        onValueChange={(v) =>
+                          setNotifSettings({
+                            ...notifSettings,
+                            pregnancyEnabled: v,
+                          })
+                        }
+                        trackColor={{
+                          false: colors.border,
+                          true: colors.primary,
+                        }}
                         thumbColor={colors.background}
                       />
                     </View>
@@ -397,7 +410,10 @@ export default function SettingsScreen() {
                           inputStyle={{ width: 40, flex: 0 }}
                           value={String(notifSettings.pregnancyAlertDaysBefore)}
                           onChangeText={(t) =>
-                            setNotifSettings({ ...notifSettings, pregnancyAlertDaysBefore: parseInt(t) || 0 })
+                            setNotifSettings({
+                              ...notifSettings,
+                              pregnancyAlertDaysBefore: parseInt(t) || 0,
+                            })
                           }
                         />
                       </View>
@@ -417,7 +433,10 @@ export default function SettingsScreen() {
                             minute: "2-digit",
                             hour12: false,
                           });
-                          setNotifSettings({ ...notifSettings, notificationTime: timeStr });
+                          setNotifSettings({
+                            ...notifSettings,
+                            notificationTime: timeStr,
+                          });
                         }}
                       />
                     </View>

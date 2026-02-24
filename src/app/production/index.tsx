@@ -1,9 +1,9 @@
 import { useFocusEffect } from "@react-navigation/native";
 import React, { useState } from "react";
-import { ActivityIndicator, Text, TouchableOpacity, View } from "react-native";
+import { Text, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { IconSymbol, InfiniteList, ProductionCard } from "@/components";
+import { IconSymbol, InfiniteList, LoadingScreen, ProductionCard } from "@/components";
 import { ScreenContainer } from "@/components/screen-container";
 import { useNavigation } from "@/hooks";
 import { useColors } from "@/hooks/use-colors";
@@ -77,13 +77,7 @@ export default function MilkProductionListScreen() {
     }
   };
 
-  if (loading && !refreshing) {
-    return (
-      <ScreenContainer className="items-center justify-center">
-        <ActivityIndicator size="large" color={colors.primary} />
-      </ScreenContainer>
-    );
-  }
+  if (loading && !refreshing) return <LoadingScreen />;
 
   const renderHeader = () => (
     <View className="mb-4">
@@ -117,7 +111,10 @@ export default function MilkProductionListScreen() {
         hasMore={hasMore}
         onRefresh={handleRefresh}
         refreshing={refreshing}
-        contentContainerStyle={{ padding: 24, paddingBottom: insets.bottom + 24 }}
+        contentContainerStyle={{
+          padding: 24,
+          paddingBottom: insets.bottom + 24,
+        }}
         headerComponent={records.length > 0 ? renderHeader() : null}
         emptyIcon={<IconSymbol name="baby-bottle" color={colors.milk_production} />}
         emptyMessage="Nenhum registro encontrado Ordenha"

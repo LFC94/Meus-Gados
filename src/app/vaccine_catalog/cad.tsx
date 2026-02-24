@@ -4,10 +4,10 @@ import { useCallback, useEffect, useState } from "react";
 import { ActivityIndicator, Alert, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { FormInput } from "@/components";
+import { FormInput, LoadingScreen } from "@/components";
 import { ScreenContainer } from "@/components/screen-container";
 import { COMMON_VACCINES } from "@/constants/const";
-import { useColors, useNavigation, useScreenHeader } from "@/hooks";
+import { useNavigation, useScreenHeader } from "@/hooks";
 import { logger } from "@/lib/logger";
 import { vaccineCatalogStorage } from "@/lib/storage";
 import { RootStackParamList } from "@/types";
@@ -15,7 +15,6 @@ import { RootStackParamList } from "@/types";
 export default function VaccineCatalogCadScreen() {
   const navigation = useNavigation();
   const route = useRoute<RouteProp<RootStackParamList, "VaccineCatalogCad">>();
-  const colors = useColors();
   const id = route.params?.id;
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -112,13 +111,7 @@ export default function VaccineCatalogCadScreen() {
     });
   };
 
-  if (loading) {
-    return (
-      <ScreenContainer className="items-center justify-center">
-        <ActivityIndicator size="large" color={colors.primary} />
-      </ScreenContainer>
-    );
-  }
+  if (loading) return <LoadingScreen />;
 
   return (
     <ScreenContainer className="p-0">

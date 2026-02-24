@@ -3,9 +3,9 @@ import { useCallback } from "react";
 import { ActivityIndicator, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { CustomDatePicker, FormInput, FormSelect, ScreenContainer } from "@/components";
+import { CustomDatePicker, FormInput, FormSelect, LoadingScreen, ScreenContainer } from "@/components";
 import { CATTLE_BREEDS } from "@/constants/const";
-import { useColors, useFormScreen, useNavigation, useScreenHeader } from "@/hooks";
+import { useFormScreen, useNavigation, useScreenHeader } from "@/hooks";
 import { validateCattleNumber, validateWeight } from "@/lib/helpers";
 import { cattleStorage } from "@/lib/storage";
 import { CattleFormData, RootStackParamList } from "@/types";
@@ -13,7 +13,6 @@ import { CattleFormData, RootStackParamList } from "@/types";
 export default function CattleCadScreen() {
   const route = useRoute<RouteProp<RootStackParamList, "CattleCad">>();
   const navigation = useNavigation();
-  const colors = useColors();
   const id = route.params?.id;
   const insets = useSafeAreaInsets();
 
@@ -83,13 +82,7 @@ export default function CattleCadScreen() {
     successMessage: id ? "Animal atualizado com sucesso!" : "Animal cadastrado com sucesso!",
   });
 
-  if (loading) {
-    return (
-      <ScreenContainer className="items-center justify-center">
-        <ActivityIndicator size="large" color={colors.primary} />
-      </ScreenContainer>
-    );
-  }
+  if (loading) return <LoadingScreen />;
 
   return (
     <ScreenContainer className="p-0">

@@ -3,9 +3,9 @@ import { useCallback, useEffect, useState } from "react";
 import { ActivityIndicator, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { CustomDatePicker, FormInput, FormSelect, ScreenContainer } from "@/components";
+import { CustomDatePicker, FormInput, FormSelect, LoadingScreen, ScreenContainer } from "@/components";
 import { DISEASE_RESULT_LABELS } from "@/constants/const";
-import { useColors, useFormScreen, useNavigation, useScreenHeader } from "@/hooks";
+import { useFormScreen, useNavigation, useScreenHeader } from "@/hooks";
 import { logger } from "@/lib/logger";
 import { cattleStorage, diseaseStorage } from "@/lib/storage";
 import { Cattle, DiseaseFormData, DiseaseResult, RootStackParamList } from "@/types";
@@ -15,7 +15,6 @@ const DISEASE_RESULTS: DiseaseResult[] = Object.keys(DISEASE_RESULT_LABELS) as D
 export default function DiseaseCadScreen() {
   const route = useRoute<RouteProp<RootStackParamList, "DiseasesCad">>();
   const navigation = useNavigation();
-  const colors = useColors();
   const { id, cattleId } = route.params;
   const insets = useSafeAreaInsets();
 
@@ -102,13 +101,7 @@ export default function DiseaseCadScreen() {
     successMessage: id ? "Doença atualizada com sucesso!" : "Doença registrada com sucesso!",
   });
 
-  if (loading || loadingCattle) {
-    return (
-      <ScreenContainer className="items-center justify-center">
-        <ActivityIndicator size="large" color={colors.primary} />
-      </ScreenContainer>
-    );
-  }
+  if (loading || loadingCattle) return <LoadingScreen />;
 
   return (
     <ScreenContainer className="p-0">

@@ -1,9 +1,9 @@
 import { useFocusEffect } from "@react-navigation/native";
 import React, { useCallback, useState } from "react";
-import { ActivityIndicator, RefreshControl, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { RefreshControl, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { CardResume } from "@/components";
+import { CardResume, LoadingScreen } from "@/components";
 import { CattleCardCompact } from "@/components/cattle-card";
 import { ScreenContainer } from "@/components/screen-container";
 import { IconSymbol } from "@/components/ui/icon-symbol";
@@ -114,13 +114,7 @@ export default function HomeScreen() {
     }, [loadData]),
   );
 
-  if (loading) {
-    return (
-      <ScreenContainer className="items-center justify-center">
-        <ActivityIndicator size="large" color={colors.primary} />
-      </ScreenContainer>
-    );
-  }
+  if (loading) return <LoadingScreen />;
 
   return (
     <ScreenContainer className="p-0">
@@ -174,7 +168,8 @@ export default function HomeScreen() {
               <View className="flex-row rounded-2xl p-4 border border-error bg-surface items-center gap-2">
                 <IconSymbol name="warning-amber" color={colors.error} size={30} />
                 <Text className="text-muted font-semibold">
-                  {stats.overduePregnancies} gestaç{stats.overduePregnancies > 1 ? "ões" : "ão"} atrasada
+                  {stats.overduePregnancies} gestaç
+                  {stats.overduePregnancies > 1 ? "ões" : "ão"} atrasada
                   {stats.overduePregnancies > 1 ? "s" : ""} - Verificar!
                 </Text>
               </View>

@@ -1,9 +1,9 @@
 import { useFocusEffect } from "@react-navigation/native";
 import { useCallback, useState } from "react";
-import { ActivityIndicator, Alert, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { Alert, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { IconSymbol } from "@/components";
+import { IconSymbol, LoadingScreen } from "@/components";
 import { ScreenContainer } from "@/components/screen-container";
 import { useColors, useScreenHeader } from "@/hooks";
 import { formatDate } from "@/lib/helpers";
@@ -64,13 +64,7 @@ export default function ScheduledNotificationsScreen() {
     ]);
   };
 
-  if (loading) {
-    return (
-      <ScreenContainer className="items-center justify-center">
-        <ActivityIndicator size="large" color={colors.primary} />
-      </ScreenContainer>
-    );
-  }
+  if (loading) return <LoadingScreen />;
 
   const vaccineNotifications = notifications.filter((n) => n.type === "vaccine");
   const pregnancyNotifications = notifications.filter((n) => n.type === "pregnancy");
@@ -102,7 +96,10 @@ export default function ScheduledNotificationsScreen() {
                         <TouchableOpacity
                           onPress={() => handleRemove(notification)}
                           className="px-3 py-1 rounded-xl"
-                          style={{ backgroundColor: colors.error + "20", opacity: 1 }}
+                          style={{
+                            backgroundColor: colors.error + "20",
+                            opacity: 1,
+                          }}
                         >
                           <Text className="text-xs font-semibold" style={{ color: colors.error }}>
                             Remover
@@ -134,7 +131,10 @@ export default function ScheduledNotificationsScreen() {
                         <TouchableOpacity
                           onPress={() => handleRemove(notification)}
                           className="px-3 py-1 rounded-xl"
-                          style={{ backgroundColor: colors.error + "20", opacity: 1 }}
+                          style={{
+                            backgroundColor: colors.error + "20",
+                            opacity: 1,
+                          }}
                         >
                           <Text className="text-xs font-semibold" style={{ color: colors.error }}>
                             Remover

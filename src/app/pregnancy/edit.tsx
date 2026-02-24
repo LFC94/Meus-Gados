@@ -4,11 +4,10 @@ import { useCallback, useEffect, useState } from "react";
 import { ActivityIndicator, Alert, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { FormInput } from "@/components";
+import { FormInput, LoadingScreen } from "@/components";
 import { ScreenContainer } from "@/components/screen-container";
 import { CustomDatePicker } from "@/components/ui/date-picker";
 import { useNavigation, useScreenHeader } from "@/hooks";
-import { useColors } from "@/hooks/use-colors";
 import { logger } from "@/lib/logger";
 import { cattleStorage, pregnancyStorage } from "@/lib/storage";
 import { Cattle, PregnancyResult, RootStackParamList } from "@/types";
@@ -16,7 +15,6 @@ import { Cattle, PregnancyResult, RootStackParamList } from "@/types";
 export default function EditPregnancyScreen() {
   const navigation = useNavigation();
   const route = useRoute<RouteProp<RootStackParamList, "PregnancyEdit">>();
-  const colors = useColors();
   const insets = useSafeAreaInsets();
 
   const { id } = route.params;
@@ -190,13 +188,7 @@ export default function EditPregnancyScreen() {
     }
   };
 
-  if (loading) {
-    return (
-      <ScreenContainer className="items-center justify-center">
-        <ActivityIndicator size="large" color={colors.primary} />
-      </ScreenContainer>
-    );
-  }
+  if (loading) return <LoadingScreen />;
 
   return (
     <ScreenContainer className="p-0">

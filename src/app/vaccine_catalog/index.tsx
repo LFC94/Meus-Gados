@@ -1,10 +1,10 @@
 import { useFocusEffect } from "@react-navigation/native";
 import * as Haptics from "expo-haptics";
 import React, { useState } from "react";
-import { ActivityIndicator, RefreshControl, ScrollView, Text, View } from "react-native";
+import { RefreshControl, ScrollView, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { ButtonAdd, CardEdit, IconSymbol } from "@/components";
+import { ButtonAdd, CardEdit, IconSymbol, LoadingScreen } from "@/components";
 import { ScreenContainer } from "@/components/screen-container";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { useNavigation } from "@/hooks";
@@ -75,13 +75,7 @@ export default function VaccineCatalogScreen() {
     }
   };
 
-  if (loading) {
-    return (
-      <ScreenContainer className="items-center justify-center">
-        <ActivityIndicator size="large" color={colors.primary} />
-      </ScreenContainer>
-    );
-  }
+  if (loading) return <LoadingScreen />;
 
   return (
     <ScreenContainer className="p-0">
@@ -137,7 +131,7 @@ export default function VaccineCatalogScreen() {
                     <View className="flex items-end gap-2 ">
                       <View className="bg-surface border border-border rounded-lg px-3 py-1">
                         <Text className="text-xs text-muted">
-                          {vaccine.recordCount} aplicação{vaccine.recordCount !== 1 ? "ões" : ""}
+                          {vaccine.recordCount} aplicaç{vaccine.recordCount !== 1 ? "ões" : "ão"}
                         </Text>
                       </View>
                       {vaccine.lastAppliedDate && (

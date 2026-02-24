@@ -3,7 +3,7 @@ import { useCallback, useEffect, useState } from "react";
 import { ActivityIndicator, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { FormInput, FormSelect, ScreenContainer } from "@/components";
+import { FormInput, FormSelect, LoadingScreen, ScreenContainer } from "@/components";
 import { CustomDatePicker } from "@/components/ui/date-picker";
 import { useColors, useFormScreen, useScreenHeader } from "@/hooks";
 import { logger } from "@/lib/logger";
@@ -95,13 +95,7 @@ export default function MilkProductionCadScreen() {
     onSave,
   });
 
-  if (loadingCattle) {
-    return (
-      <ScreenContainer className="items-center justify-center">
-        <ActivityIndicator size="large" color={colors.primary} />
-      </ScreenContainer>
-    );
-  }
+  if (loadingCattle) return <LoadingScreen />;
 
   return (
     <ScreenContainer className="p-6">

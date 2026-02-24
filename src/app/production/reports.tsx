@@ -1,9 +1,10 @@
 import { useFocusEffect } from "@react-navigation/native";
 import React, { useState } from "react";
-import { ActivityIndicator, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { BarChart } from "react-native-gifted-charts";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+import { LoadingScreen } from "@/components";
 import { ScreenContainer } from "@/components/screen-container";
 import { useColors } from "@/hooks/use-colors";
 import useScreenHeader from "@/hooks/use-screen-header";
@@ -39,13 +40,7 @@ export default function ProductionReportsScreen() {
     }
   };
 
-  if (loading) {
-    return (
-      <ScreenContainer className="items-center justify-center">
-        <ActivityIndicator size="large" color={colors.primary} />
-      </ScreenContainer>
-    );
-  }
+  if (loading) return <LoadingScreen />;
 
   if (!data) {
     return (
@@ -73,7 +68,12 @@ export default function ProductionReportsScreen() {
         ))}
       </View>
 
-      <ScrollView contentContainerStyle={{ flexGrow: 1, paddingBottom: insets.bottom + 20 }}>
+      <ScrollView
+        contentContainerStyle={{
+          flexGrow: 1,
+          paddingBottom: insets.bottom + 20,
+        }}
+      >
         <View className="p-6 gap-6">
           {activeTab === "overview" && (
             <>
@@ -106,7 +106,14 @@ export default function ProductionReportsScreen() {
                         label: d.date.split("T")[0].split("-")[2] + "/" + d.date.split("T")[0].split("-")[1],
                         frontColor: colors.primary,
                         topLabelComponent: () => (
-                          <Text style={{ color: colors.text, fontSize: 10, marginBottom: 2, textAlign: "center" }}>
+                          <Text
+                            style={{
+                              color: colors.text,
+                              fontSize: 10,
+                              marginBottom: 2,
+                              textAlign: "center",
+                            }}
+                          >
                             {d.total.toFixed(0)}
                           </Text>
                         ),
@@ -119,7 +126,10 @@ export default function ProductionReportsScreen() {
                       xAxisThickness={0}
                       yAxisThickness={0}
                       yAxisTextStyle={{ color: colors.muted }}
-                      xAxisLabelTextStyle={{ color: colors.muted, fontSize: 10 }}
+                      xAxisLabelTextStyle={{
+                        color: colors.muted,
+                        fontSize: 10,
+                      }}
                       noOfSections={4}
                       maxValue={Math.max(...data.dailyProduction.map((d) => d.total)) * 1.2}
                       isAnimated

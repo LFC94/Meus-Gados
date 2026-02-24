@@ -1,7 +1,7 @@
 import { RouteProp, useFocusEffect, useRoute } from "@react-navigation/native";
 import * as Haptics from "expo-haptics";
 import { useCallback, useReducer } from "react";
-import { ActivityIndicator, Alert, Text, TouchableOpacity, View } from "react-native";
+import { Alert, Text, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import {
@@ -10,6 +10,7 @@ import {
   IconMapping,
   IconSymbol,
   InfiniteList,
+  LoadingScreen,
   ProductionCardCompact,
   SegmentedControl,
 } from "@/components";
@@ -74,9 +75,18 @@ type CattleDetailAction =
   | { type: "SET_TAB"; payload: Tab }
   | { type: "SET_BUTTON_ADD"; payload: string | undefined }
   | { type: "SET_DELETE_DIALOG"; payload: boolean }
-  | { type: "APPEND_MILK_RECORDS"; payload: { records: MilkProductionRecord[]; hasMore: boolean } }
-  | { type: "APPEND_VACCINES"; payload: { records: VaccinationRecordWithDetails[]; hasMore: boolean } }
-  | { type: "APPEND_DISEASES"; payload: { records: Disease[]; hasMore: boolean } }
+  | {
+      type: "APPEND_MILK_RECORDS";
+      payload: { records: MilkProductionRecord[]; hasMore: boolean };
+    }
+  | {
+      type: "APPEND_VACCINES";
+      payload: { records: VaccinationRecordWithDetails[]; hasMore: boolean };
+    }
+  | {
+      type: "APPEND_DISEASES";
+      payload: { records: Disease[]; hasMore: boolean };
+    }
   | { type: "RESET_PAGINATION"; payload: Tab };
 
 const initialPaginationState: PaginationState = {
@@ -434,13 +444,7 @@ export default function CattleDetailScreen() {
     </TouchableOpacity>
   ));
 
-  if (loading) {
-    return (
-      <ScreenContainer className="items-center justify-center">
-        <ActivityIndicator size="large" color={colors.primary} />
-      </ScreenContainer>
-    );
-  }
+  if (loading) return <LoadingScreen />;
 
   if (!cattle) {
     return (
@@ -631,7 +635,9 @@ export default function CattleDetailScreen() {
                     onEdit={() =>
                       navigation.navigate(
                         "VaccineCad" as never,
-                        { id: (item as VaccinationRecordWithDetails).id } as never,
+                        {
+                          id: (item as VaccinationRecordWithDetails).id,
+                        } as never,
                       )
                     }
                     onDelete={() => handleDeleteVaccine((item as VaccinationRecordWithDetails).id)}
