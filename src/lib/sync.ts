@@ -5,8 +5,8 @@ import firestore, { FirebaseFirestoreTypes } from "@react-native-firebase/firest
 import { STORAGE_KEYS } from "@/constants/const";
 import { SyncBase } from "@/types";
 
-import { getAllItemsIncludingDeleted, syncStorage } from "./storage";
 import { logger } from "./logger";
+import { getAllItemsIncludingDeleted, syncStorage } from "./storage";
 
 type SyncCollection = keyof typeof STORAGE_KEYS;
 
