@@ -1,6 +1,6 @@
 import { RouteProp, useFocusEffect, useRoute } from "@react-navigation/native";
 import * as Haptics from "expo-haptics";
-import React, { useState } from "react";
+import { useCallback, useReducer } from "react";
 import { ActivityIndicator, Alert, Text, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -41,50 +41,185 @@ import {
 
 type Tab = "info" | "vaccines" | "pregnancy" | "diseases" | "production";
 
+interface PaginationState {
+  offset: number;
+  hasMore: boolean;
+  loading: boolean;
+}
+
+interface CattleDetailState {
+  loading: boolean;
+  cattle: Cattle | null;
+  vaccines: VaccinationRecordWithDetails[];
+  pregnancies: Pregnancy[];
+  diseases: Disease[];
+  milkRecords: MilkProductionRecord[];
+  activeTab: Tab;
+  buttonAdd: string | undefined;
+  showDeleteDialog: boolean;
+  pagination: {
+    production: PaginationState;
+    vaccines: PaginationState;
+    diseases: PaginationState;
+  };
+}
+
+type CattleDetailAction =
+  | { type: "SET_LOADING"; payload: boolean }
+  | { type: "SET_CATTLE"; payload: Cattle | null }
+  | { type: "SET_VACCINES"; payload: VaccinationRecordWithDetails[] }
+  | { type: "SET_PREGNANCIES"; payload: Pregnancy[] }
+  | { type: "SET_DISEASES"; payload: Disease[] }
+  | { type: "SET_MILK_RECORDS"; payload: MilkProductionRecord[] }
+  | { type: "SET_TAB"; payload: Tab }
+  | { type: "SET_BUTTON_ADD"; payload: string | undefined }
+  | { type: "SET_DELETE_DIALOG"; payload: boolean }
+  | { type: "APPEND_MILK_RECORDS"; payload: { records: MilkProductionRecord[]; hasMore: boolean } }
+  | { type: "APPEND_VACCINES"; payload: { records: VaccinationRecordWithDetails[]; hasMore: boolean } }
+  | { type: "APPEND_DISEASES"; payload: { records: Disease[]; hasMore: boolean } }
+  | { type: "RESET_PAGINATION"; payload: Tab };
+
+const initialPaginationState: PaginationState = {
+  offset: 5,
+  hasMore: true,
+  loading: false,
+};
+
+const initialState: CattleDetailState = {
+  loading: true,
+  cattle: null,
+  vaccines: [],
+  pregnancies: [],
+  diseases: [],
+  milkRecords: [],
+  activeTab: "info",
+  buttonAdd: undefined,
+  showDeleteDialog: false,
+  pagination: {
+    production: { ...initialPaginationState },
+    vaccines: { ...initialPaginationState },
+    diseases: { ...initialPaginationState },
+  },
+};
+
+function cattleDetailReducer(state: CattleDetailState, action: CattleDetailAction): CattleDetailState {
+  switch (action.type) {
+    case "SET_LOADING":
+      return { ...state, loading: action.payload };
+    case "SET_CATTLE":
+      return { ...state, cattle: action.payload };
+    case "SET_VACCINES":
+      return { ...state, vaccines: action.payload };
+    case "SET_PREGNANCIES":
+      return { ...state, pregnancies: action.payload };
+    case "SET_DISEASES":
+      return { ...state, diseases: action.payload };
+    case "SET_MILK_RECORDS":
+      return { ...state, milkRecords: action.payload };
+    case "SET_TAB": {
+      const tab = action.payload;
+      let buttonAdd: string | undefined;
+      switch (tab) {
+        case "vaccines":
+          buttonAdd = "Vacina";
+          break;
+        case "production":
+          buttonAdd = "Produção";
+          break;
+        case "pregnancy":
+          buttonAdd = "Gestação";
+          break;
+        case "diseases":
+          buttonAdd = "Doença";
+          break;
+        default:
+          buttonAdd = undefined;
+      }
+      return { ...state, activeTab: tab, buttonAdd };
+    }
+    case "SET_BUTTON_ADD":
+      return { ...state, buttonAdd: action.payload };
+    case "SET_DELETE_DIALOG":
+      return { ...state, showDeleteDialog: action.payload };
+    case "APPEND_MILK_RECORDS":
+      return {
+        ...state,
+        milkRecords: [...state.milkRecords, ...action.payload.records],
+        pagination: {
+          ...state.pagination,
+          production: {
+            offset: state.pagination.production.offset + action.payload.records.length,
+            hasMore: action.payload.hasMore,
+            loading: false,
+          },
+        },
+      };
+    case "APPEND_VACCINES":
+      return {
+        ...state,
+        vaccines: [...state.vaccines, ...action.payload.records],
+        pagination: {
+          ...state.pagination,
+          vaccines: {
+            offset: state.pagination.vaccines.offset + action.payload.records.length,
+            hasMore: action.payload.hasMore,
+            loading: false,
+          },
+        },
+      };
+    case "APPEND_DISEASES":
+      return {
+        ...state,
+        diseases: [...state.diseases, ...action.payload.records],
+        pagination: {
+          ...state.pagination,
+          diseases: {
+            offset: state.pagination.diseases.offset + action.payload.records.length,
+            hasMore: action.payload.hasMore,
+            loading: false,
+          },
+        },
+      };
+    case "RESET_PAGINATION": {
+      const tab = action.payload;
+      const newPagination = { ...state.pagination };
+      if (tab === "production") newPagination.production = { ...initialPaginationState };
+      if (tab === "vaccines") newPagination.vaccines = { ...initialPaginationState };
+      if (tab === "diseases") newPagination.diseases = { ...initialPaginationState };
+      return { ...state, pagination: newPagination };
+    }
+    default:
+      return state;
+  }
+}
+
+const LIMIT = 5;
+
 export default function CattleDetailScreen() {
   const navigation = useNavigation();
   const route = useRoute<RouteProp<RootStackParamList, "CattleDetail">>();
   const colors = useColors();
   const insets = useSafeAreaInsets();
   const { id } = route.params;
-  const [loading, setLoading] = useState(true);
-  const [cattle, setCattle] = useState<Cattle | null>(null);
-  const [vaccines, setVaccines] = useState<VaccinationRecordWithDetails[]>([]);
-  const [pregnancies, setPregnancies] = useState<Pregnancy[]>([]);
-  const [diseases, setDiseases] = useState<Disease[]>([]);
-  const [milkRecords, setMilkRecords] = useState<MilkProductionRecord[]>([]);
-  const [activeTab, setActiveTab] = useState<Tab>("info");
-  const [buttonAdd, setbuttonAdd] = useState<string | undefined>(undefined);
-  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
-  // Pagination
-  const [productionOffset, setProductionOffset] = useState(0);
-  const [hasMoreProduction, setHasMoreProduction] = useState(true);
-  const [isLoadingMoreProduction, setIsLoadingMoreProduction] = useState(false);
+  const [state, dispatch] = useReducer(cattleDetailReducer, initialState);
 
-  const [vaccineOffset, setVaccineOffset] = useState(0);
-  const [hasMoreVaccines, setHasMoreVaccines] = useState(true);
-  const [isLoadingMoreVaccines, setIsLoadingMoreVaccines] = useState(false);
+  const {
+    loading,
+    cattle,
+    vaccines,
+    pregnancies,
+    diseases,
+    milkRecords,
+    activeTab,
+    buttonAdd,
+    showDeleteDialog,
+    pagination,
+  } = state;
 
-  const [diseaseOffset, setDiseaseOffset] = useState(0);
-  const [hasMoreDiseases, setHasMoreDiseases] = useState(true);
-  const [isLoadingMoreDiseases, setIsLoadingMoreDiseases] = useState(false);
-
-  const LIMIT = 5;
-
-  useScreenHeader("Detalhes do Animal", undefined, () => (
-    <TouchableOpacity
-      onPress={() => navigation.navigate("CattleCad", { id })}
-      className="w-10 h-10 items-center justify-center mr-2"
-      style={{ opacity: 1 }}
-    >
-      <IconSymbol name="edit" size={20} color={colors.primary} />
-    </TouchableOpacity>
-  ));
-
-  const loadData = React.useCallback(async () => {
+  const loadData = useCallback(async () => {
     try {
-      setLoading(true);
+      dispatch({ type: "SET_LOADING", payload: true });
       const results = await Promise.all([
         cattleStorage.getById(id),
         vaccinationRecordStorage.getByCattleId(id, LIMIT, 0),
@@ -93,35 +228,20 @@ export default function CattleDetailScreen() {
         milkProductionStorage.getByCattleId(id, LIMIT, 0),
       ]);
 
-      const cattleData = results[0];
-      const vaccinesData = results[1];
-      const pregnanciesData = results[2];
-      const diseasesData = results[3];
-      const milkRecordsData = results[4];
-
-      setCattle(cattleData);
-      setVaccines(vaccinesData);
-      setPregnancies(pregnanciesData);
-      setDiseases(diseasesData);
-      setMilkRecords(milkRecordsData);
-
-      setProductionOffset(LIMIT);
-      setHasMoreProduction(milkRecordsData.length === LIMIT);
-
-      setVaccineOffset(LIMIT);
-      setHasMoreVaccines(vaccinesData.length === LIMIT);
-
-      setDiseaseOffset(LIMIT);
-      setHasMoreDiseases(diseasesData.length === LIMIT);
+      dispatch({ type: "SET_CATTLE", payload: results[0] });
+      dispatch({ type: "SET_VACCINES", payload: results[1] });
+      dispatch({ type: "SET_PREGNANCIES", payload: results[2] });
+      dispatch({ type: "SET_DISEASES", payload: results[3] });
+      dispatch({ type: "SET_MILK_RECORDS", payload: results[4] });
     } catch (error) {
       logger.error("CattleDetail/loadData", error);
     } finally {
-      setLoading(false);
+      dispatch({ type: "SET_LOADING", payload: false });
     }
   }, [id]);
 
   useFocusEffect(
-    React.useCallback(() => {
+    useCallback(() => {
       if (id) {
         loadData();
       }
@@ -132,43 +252,49 @@ export default function CattleDetailScreen() {
     if (loading) return;
 
     if (activeTab === "production") {
-      if (isLoadingMoreProduction || !hasMoreProduction) return;
+      if (pagination.production.loading || !pagination.production.hasMore) return;
       try {
-        setIsLoadingMoreProduction(true);
-        const data = await milkProductionStorage.getByCattleId(id, LIMIT, productionOffset);
-        setMilkRecords((prev) => [...prev, ...data]);
-        setProductionOffset((prev) => prev + LIMIT);
-        setHasMoreProduction(data.length === LIMIT);
+        dispatch({
+          type: "RESET_PAGINATION",
+          payload: "production",
+        });
+        const data = await milkProductionStorage.getByCattleId(id, LIMIT, pagination.production.offset);
+        dispatch({
+          type: "APPEND_MILK_RECORDS",
+          payload: { records: data, hasMore: data.length === LIMIT },
+        });
       } catch (error) {
         logger.error("CattleDetail/loadMoreMilkRecords", error);
-      } finally {
-        setIsLoadingMoreProduction(false);
       }
     } else if (activeTab === "vaccines") {
-      if (isLoadingMoreVaccines || !hasMoreVaccines) return;
+      if (pagination.vaccines.loading || !pagination.vaccines.hasMore) return;
       try {
-        setIsLoadingMoreVaccines(true);
-        const data = await vaccinationRecordStorage.getByCattleId(id, LIMIT, vaccineOffset);
-        setVaccines((prev) => [...prev, ...data]);
-        setVaccineOffset((prev) => prev + LIMIT);
-        setHasMoreVaccines(data.length === LIMIT);
+        dispatch({
+          type: "RESET_PAGINATION",
+          payload: "vaccines",
+        });
+        const data = await vaccinationRecordStorage.getByCattleId(id, LIMIT, pagination.vaccines.offset);
+        dispatch({
+          type: "APPEND_VACCINES",
+          payload: { records: data, hasMore: data.length === LIMIT },
+        });
       } catch (error) {
         logger.error("CattleDetail/loadMoreVaccines", error);
-      } finally {
-        setIsLoadingMoreVaccines(false);
       }
     } else if (activeTab === "diseases") {
-      if (isLoadingMoreDiseases || !hasMoreDiseases) return;
+      if (pagination.diseases.loading || !pagination.diseases.hasMore) return;
       try {
-        setIsLoadingMoreDiseases(true);
-        const data = await diseaseStorage.getByCattleId(id, LIMIT, diseaseOffset);
-        setDiseases((prev) => [...prev, ...data]);
-        setDiseaseOffset((prev) => prev + LIMIT);
-        setHasMoreDiseases(data.length === LIMIT);
+        dispatch({
+          type: "RESET_PAGINATION",
+          payload: "diseases",
+        });
+        const data = await diseaseStorage.getByCattleId(id, LIMIT, pagination.diseases.offset);
+        dispatch({
+          type: "APPEND_DISEASES",
+          payload: { records: data, hasMore: data.length === LIMIT },
+        });
       } catch (error) {
         logger.error("CattleDetail/loadMoreDiseases", error);
-      } finally {
-        setIsLoadingMoreDiseases(false);
       }
     }
   };
@@ -182,7 +308,7 @@ export default function CattleDetailScreen() {
       Alert.alert("Erro", "Não foi possível excluir o animal");
       logger.error("CattleDetail/delete", error);
     } finally {
-      setShowDeleteDialog(false);
+      dispatch({ type: "SET_DELETE_DIALOG", payload: false });
     }
   };
 
@@ -241,7 +367,6 @@ export default function CattleDetailScreen() {
   };
 
   const getStatusBadge = (): CattleResult[] => {
-    // Check for disease in treatment
     const inDeath = diseases.find((d) => d.result === "death");
     if (inDeath) {
       return ["death" as CattleResult];
@@ -255,7 +380,6 @@ export default function CattleDetailScreen() {
       result.push(isOverdue ? "overdue_pregnancy" : "pregnancy");
     }
 
-    // Check for disease in treatment
     const inTreatment = diseases.find((d) => d.result === "in_treatment");
     if (inTreatment) {
       result.push("in_treatment");
@@ -263,7 +387,6 @@ export default function CattleDetailScreen() {
       result.push("healthy");
     }
 
-    // Check for pending vaccines
     const today = new Date();
     const thirtyDaysFromNow = new Date(today.getTime() + 30 * 24 * 60 * 60 * 1000);
     const hasPendingVaccine = vaccines.some((v) => {
@@ -278,24 +401,8 @@ export default function CattleDetailScreen() {
     return result;
   };
 
-  const selecionarTab = async (tab: Tab) => {
-    switch (tab) {
-      case "vaccines":
-        setbuttonAdd("Vacina");
-        break;
-      case "production":
-        setbuttonAdd("Produção");
-        break;
-      case "pregnancy":
-        setbuttonAdd("Gestação");
-        break;
-      case "diseases":
-        setbuttonAdd("Doença");
-        break;
-      default:
-        setbuttonAdd(undefined);
-    }
-    setActiveTab(tab as Tab);
+  const selecionarTab = (tab: Tab) => {
+    dispatch({ type: "SET_TAB", payload: tab });
   };
 
   const pressButtonAdd = () => {
@@ -316,6 +423,16 @@ export default function CattleDetailScreen() {
         break;
     }
   };
+
+  useScreenHeader("Detalhes do Animal", undefined, () => (
+    <TouchableOpacity
+      onPress={() => navigation.navigate("CattleCad", { id })}
+      className="w-10 h-10 items-center justify-center mr-2"
+      style={{ opacity: 1 }}
+    >
+      <IconSymbol name="edit" size={20} color={colors.primary} />
+    </TouchableOpacity>
+  ));
 
   if (loading) {
     return (
@@ -340,11 +457,7 @@ export default function CattleDetailScreen() {
     );
   }
 
-  // No statusBadge here, it's used in renderHeader
-
   const renderHeader = () => {
-    if (!cattle) return null;
-
     return (
       <View className="p-6 gap-4">
         <ConfirmDialog
@@ -354,7 +467,7 @@ export default function CattleDetailScreen() {
           confirmText="Excluir"
           confirmStyle="destructive"
           onConfirm={handleDelete}
-          onCancel={() => setShowDeleteDialog(false)}
+          onCancel={() => dispatch({ type: "SET_DELETE_DIALOG", payload: false })}
         />
         <View className="items-center gap-3">
           <View className="items-center">
@@ -363,7 +476,6 @@ export default function CattleDetailScreen() {
           </View>
         </View>
 
-        {/* Status Badge */}
         <View
           className="flex-row gap-3 p-4 rounded-2xl justify-center items-center"
           style={{
@@ -391,7 +503,6 @@ export default function CattleDetailScreen() {
           })}
         </View>
 
-        {/* Tabs */}
         <SegmentedControl
           options={[
             { label: "Info", value: "info" },
@@ -413,7 +524,7 @@ export default function CattleDetailScreen() {
         <CardEdit
           title="Informações do Animal"
           handleEdit={() => navigation.navigate("CattleCad" as never, { id } as never)}
-          handleDelete={() => setShowDeleteDialog(true)}
+          handleDelete={() => dispatch({ type: "SET_DELETE_DIALOG", payload: true })}
           small
         >
           <View className="gap-3">
@@ -461,23 +572,16 @@ export default function CattleDetailScreen() {
     }
   };
 
-  const isLoadingMore =
-    activeTab === "production"
-      ? isLoadingMoreProduction
-      : activeTab === "vaccines"
-        ? isLoadingMoreVaccines
-        : activeTab === "diseases"
-          ? isLoadingMoreDiseases
-          : false;
+  const getCurrentPagination = () => {
+    if (activeTab === "production") return pagination.production;
+    if (activeTab === "vaccines") return pagination.vaccines;
+    if (activeTab === "diseases") return pagination.diseases;
+    return { offset: 0, hasMore: false, loading: false };
+  };
 
-  const hasMore =
-    activeTab === "production"
-      ? hasMoreProduction
-      : activeTab === "vaccines"
-        ? hasMoreVaccines
-        : activeTab === "diseases"
-          ? hasMoreDiseases
-          : false;
+  const currentPagination = getCurrentPagination();
+  const isLoadingMore = currentPagination.loading;
+  const hasMore = currentPagination.hasMore;
 
   const getEmptyMessage = () => {
     switch (activeTab) {
@@ -493,6 +597,7 @@ export default function CattleDetailScreen() {
         return "";
     }
   };
+
   const getEmptyIcon = (): IconMapping | undefined => {
     switch (activeTab) {
       case "production":
@@ -508,23 +613,28 @@ export default function CattleDetailScreen() {
 
   return (
     <ScreenContainer className="p-0">
-      <InfiniteList<any>
+      <InfiniteList<unknown>
         data={getTabData()}
         renderItem={({ item }) => {
           switch (activeTab) {
             case "production":
               return (
                 <View className="px-6 mb-3">
-                  <ProductionCardCompact milkProduction={item} />
+                  <ProductionCardCompact milkProduction={item as MilkProductionRecord} />
                 </View>
               );
             case "vaccines":
               return (
                 <View className="px-6 mb-3">
                   <VaccineItem
-                    vaccine={item}
-                    onEdit={() => navigation.navigate("VaccineCad" as never, { id: item.id } as never)}
-                    onDelete={() => handleDeleteVaccine(item.id)}
+                    vaccine={item as VaccinationRecordWithDetails}
+                    onEdit={() =>
+                      navigation.navigate(
+                        "VaccineCad" as never,
+                        { id: (item as VaccinationRecordWithDetails).id } as never,
+                      )
+                    }
+                    onDelete={() => handleDeleteVaccine((item as VaccinationRecordWithDetails).id)}
                   />
                 </View>
               );
@@ -532,9 +642,9 @@ export default function CattleDetailScreen() {
               return (
                 <View className="px-6 mb-3">
                   <DiseaseRecord
-                    disease={item}
-                    onEdit={() => navigation.navigate("DiseasesCad" as never, { id: item.id } as never)}
-                    onDelete={() => handleDeleteDisease(item.id)}
+                    disease={item as Disease}
+                    onEdit={() => navigation.navigate("DiseasesCad" as never, { id: (item as Disease).id } as never)}
+                    onDelete={() => handleDeleteDisease((item as Disease).id)}
                   />
                 </View>
               );
@@ -542,13 +652,17 @@ export default function CattleDetailScreen() {
               return (
                 <View className="px-6 mb-3">
                   <PregnancyTimeline
-                    pregnancy={item}
-                    onEdit={() => navigation.navigate("PregnancyEdit" as never, { id: item.id } as never)}
-                    onDelete={() => handleDeletePregnancy(item.id)}
-                    onCompleteBirth={() => navigation.navigate("PregnancyEdit" as never, { id: item.id } as never)}
+                    pregnancy={item as Pregnancy}
+                    onEdit={() =>
+                      navigation.navigate("PregnancyEdit" as never, { id: (item as Pregnancy).id } as never)
+                    }
+                    onDelete={() => handleDeletePregnancy((item as Pregnancy).id)}
+                    onCompleteBirth={() =>
+                      navigation.navigate("PregnancyEdit" as never, { id: (item as Pregnancy).id } as never)
+                    }
                     onCreateCalf={
-                      item.result === "success" && !item.calfId
-                        ? () => navigation.navigate("PregnancyEdit" as never, { id: item.id } as never)
+                      (item as Pregnancy).result === "success" && !(item as Pregnancy).calfId
+                        ? () => navigation.navigate("PregnancyEdit" as never, { id: (item as Pregnancy).id } as never)
                         : undefined
                     }
                   />
@@ -562,7 +676,7 @@ export default function CattleDetailScreen() {
         }}
         keyExtractor={(item, index) => {
           if (activeTab === "info") return "info-tab";
-          return item.id || `item-${index}`;
+          return (item as { id?: string }).id || `item-${index}`;
         }}
         onLoadMore={loadMore}
         isLoadingMore={isLoadingMore}
