@@ -10,6 +10,7 @@ import { IconSymbol } from "@/components/ui/icon-symbol";
 import { STATUS_CATTLE } from "@/constants/const";
 import { useColors } from "@/hooks/use-colors";
 import useNavigation from "@/hooks/use-navigation";
+import { logger } from "@/lib/logger";
 import { cattleStorage, diseaseStorage, pregnancyStorage, vaccinationRecordStorage } from "@/lib/storage";
 import { Cattle } from "@/types";
 
@@ -101,7 +102,7 @@ export default function HomeScreen() {
       const sorted = [...cattle].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
       setRecentCattle(sorted.slice(0, 3));
     } catch (error) {
-      console.error("Error loading data:", error);
+      logger.error("Home/loadData", error);
     } finally {
       setLoading(false);
     }

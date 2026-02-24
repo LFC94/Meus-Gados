@@ -9,6 +9,7 @@ import { ScreenContainer } from "@/components/screen-container";
 import { CustomDatePicker } from "@/components/ui/date-picker";
 import { useNavigation, useScreenHeader } from "@/hooks";
 import { useColors } from "@/hooks/use-colors";
+import { logger } from "@/lib/logger";
 import { cattleStorage, pregnancyStorage } from "@/lib/storage";
 import { Cattle, PregnancyResult, RootStackParamList } from "@/types";
 
@@ -59,7 +60,7 @@ export default function EditPregnancyScreen() {
         setCattle(cattleData);
       }
     } catch (error) {
-      console.error("Error loading pregnancy:", error);
+      logger.error("PregnancyEdit/loadPregnancy", error);
       Alert.alert("Erro", "Não foi possível carregar os dados da gestação");
     } finally {
       setLoading(false);
@@ -103,7 +104,7 @@ export default function EditPregnancyScreen() {
         },
       ]);
     } catch (error) {
-      console.error("Error updating pregnancy:", error);
+      logger.error("PregnancyEdit/save", error);
       Alert.alert("Erro", "Não foi possível atualizar a gestação");
     } finally {
       setSaving(false);
@@ -156,7 +157,7 @@ export default function EditPregnancyScreen() {
                 },
               ]);
             } catch (error) {
-              console.error("Error creating calf:", error);
+              logger.error("PregnancyEdit/createCalf", error);
               Alert.alert("Erro", "Não foi possível cadastrar o bezerro");
             } finally {
               setCreatingCalf(false);

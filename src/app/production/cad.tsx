@@ -6,6 +6,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { FormInput, FormSelect, ScreenContainer } from "@/components";
 import { CustomDatePicker } from "@/components/ui/date-picker";
 import { useColors, useFormScreen, useScreenHeader } from "@/hooks";
+import { logger } from "@/lib/logger";
 import { cattleStorage, milkProductionStorage } from "@/lib/storage";
 import { Cattle, MilkProductionPeriod, ProductionFormData, RootStackParamList } from "@/types";
 
@@ -34,7 +35,7 @@ export default function MilkProductionCadScreen() {
       const data = await cattleStorage.getAll();
       setCattle(data);
     } catch (error) {
-      console.error("Erro ao carregar animais:", error);
+      logger.error("MilkProductionCad/loadCattle", error);
     } finally {
       setLoadingCattle(false);
     }

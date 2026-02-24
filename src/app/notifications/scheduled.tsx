@@ -7,6 +7,7 @@ import { IconSymbol } from "@/components";
 import { ScreenContainer } from "@/components/screen-container";
 import { useColors, useScreenHeader } from "@/hooks";
 import { formatDate } from "@/lib/helpers";
+import { logger } from "@/lib/logger";
 import {
   cancelNotification,
   getScheduledNotifications,
@@ -36,7 +37,7 @@ export default function ScheduledNotificationsScreen() {
       const data = await getScheduledNotifications();
       setNotifications(data);
     } catch (error) {
-      console.error("Error loading notifications:", error);
+      logger.error("ScheduledNotifications/loadNotifications", error);
     } finally {
       setLoading(false);
     }

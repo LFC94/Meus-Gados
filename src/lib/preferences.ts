@@ -2,6 +2,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import { STORAGE_KEYS } from "@/constants/const";
 
+import { logger } from "./logger";
+
 export type Unit = "kg" | "arrobas";
 export type Language = "pt" | "en";
 export type Theme = "dark" | "light" | "system";
@@ -31,7 +33,7 @@ export const preferencesStorage = {
       }
       return DEFAULT_PREFERENCES;
     } catch (error) {
-      console.error("Error getting preferences:", error);
+      logger.error("preferences/get", error);
       return DEFAULT_PREFERENCES;
     }
   },
@@ -42,7 +44,7 @@ export const preferencesStorage = {
       const updated = { ...current, ...preferences };
       await AsyncStorage.setItem(PREFERENCES_KEY, JSON.stringify(updated));
     } catch (error) {
-      console.error("Error updating preferences:", error);
+      logger.error("preferences/update", error);
       throw error;
     }
   },
@@ -68,7 +70,7 @@ export const preferencesStorage = {
     try {
       await AsyncStorage.removeItem(PREFERENCES_KEY);
     } catch (error) {
-      console.error("Error resetting preferences:", error);
+      logger.error("preferences/reset", error);
       throw error;
     }
   },

@@ -2,6 +2,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import { STORAGE_KEYS } from "@/constants/const";
 
+import { logger } from "../logger";
 import { preferencesStorage } from "../preferences";
 import { setItems } from "./base";
 import { cattleStorage } from "./cattle";
@@ -22,22 +23,29 @@ export const clearAllData = async (): Promise<void> => {
       STORAGE_KEYS.PREFERENCES,
     ]);
   } catch (error) {
-    console.error("Error clearing all data:", error);
+    logger.error("storage/clearAllData", error);
     throw error;
   }
 };
 
 export const exportAllData = async (): Promise<string> => {
-  const [cattle, vaccineCatalog, vaccinationRecords, pregnancies, diseases, milkProduction, preferences] =
-    await Promise.all([
-      cattleStorage.getAll(),
-      vaccineCatalogStorage.getAllIncludingInactive(),
-      vaccinationRecordStorage.getAll(),
-      pregnancyStorage.getAll(),
-      diseaseStorage.getAll(),
-      milkProductionStorage.getAll(),
-      preferencesStorage.getPreferences(),
-    ]);
+  const [
+    cattle,
+    vaccineCatalog,
+    vaccinationRecords,
+    pregnancies,
+    diseases,
+    milkProduction,
+    preferences,
+  ] = await Promise.all([
+    cattleStorage.getAll(),
+    vaccineCatalogStorage.getAllIncludingInactive(),
+    vaccinationRecordStorage.getAll(),
+    pregnancyStorage.getAll(),
+    diseaseStorage.getAll(),
+    milkProductionStorage.getAll(),
+    preferencesStorage.getPreferences(),
+  ]);
 
   return JSON.stringify(
     {
@@ -69,7 +77,7 @@ export const importAllData = async (jsonData: string): Promise<void> => {
       setItems(STORAGE_KEYS.PREFERENCES, data.preferences || []),
     ]);
   } catch (error) {
-    console.error("Error importing data:", error);
+    logger.error("storage/importAllData", error);
     throw error;
   }
 };

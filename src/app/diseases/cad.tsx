@@ -6,6 +6,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { CustomDatePicker, FormInput, FormSelect, ScreenContainer } from "@/components";
 import { DISEASE_RESULT_LABELS } from "@/constants/const";
 import { useColors, useFormScreen, useNavigation, useScreenHeader } from "@/hooks";
+import { logger } from "@/lib/logger";
 import { cattleStorage, diseaseStorage } from "@/lib/storage";
 import { Cattle, DiseaseFormData, DiseaseResult, RootStackParamList } from "@/types";
 
@@ -38,7 +39,7 @@ export default function DiseaseCadScreen() {
       const data = await cattleStorage.getAll();
       setCattle(data);
     } catch (error) {
-      console.error("Error loading cattle:", error);
+      logger.error("DiseasesCad/loadCattle", error);
     } finally {
       setLoadingCattle(false);
     }

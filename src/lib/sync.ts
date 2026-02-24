@@ -6,6 +6,7 @@ import { STORAGE_KEYS } from "@/constants/const";
 import { SyncBase } from "@/types";
 
 import { getAllItemsIncludingDeleted, syncStorage } from "./storage";
+import { logger } from "./logger";
 
 type SyncCollection = keyof typeof STORAGE_KEYS;
 
@@ -40,7 +41,7 @@ export const syncService = {
       await syncStorage.setLastSync(currentSyncTime);
       return { success: true };
     } catch (error: any) {
-      console.error("Sync Error:", error);
+      logger.error("sync/syncAll", error);
       return { success: false, error: error.message };
     }
   },
@@ -63,7 +64,7 @@ export const syncService = {
         );
       }
     } catch (error) {
-      console.error("Error syncing user info:", error);
+      logger.error("sync/syncUserInfo", error);
     }
   },
 
@@ -90,7 +91,7 @@ export const syncService = {
         cloudSnapshot = await collectionRef.get();
       }
     } catch (error: any) {
-      console.error(`Error fetching cloud data for ${collectionKey}:`, error);
+      logger.error(`sync/syncCollection/${collectionKey}`, error);
       // Fallback: try without filter if filter fails
       cloudSnapshot = await collectionRef.get();
     }

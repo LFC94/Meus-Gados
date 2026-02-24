@@ -6,6 +6,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { CustomDatePicker, FormSelect, ScreenContainer } from "@/components";
 import { useColors, useFormScreen, useNavigation, useScreenHeader } from "@/hooks";
 import { calculateExpectedBirthDateAsDate } from "@/lib/helpers";
+import { logger } from "@/lib/logger";
 import { schedulePregnancyNotification } from "@/lib/notifications";
 import { cattleStorage, pregnancyStorage } from "@/lib/storage";
 import { Cattle, PregnancyFormData, RootStackParamList } from "@/types";
@@ -34,7 +35,7 @@ export default function AddPregnancyScreen() {
       const data = await cattleStorage.getAll();
       setCattle(data);
     } catch (error) {
-      console.error("Error loading cattle:", error);
+      logger.error("PregnancyAdd/loadCattle", error);
     } finally {
       setLoadingCattle(false);
     }

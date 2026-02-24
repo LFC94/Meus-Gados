@@ -11,6 +11,7 @@ import { useNavigation } from "@/hooks";
 import { useColors } from "@/hooks/use-colors";
 import useScreenHeader from "@/hooks/use-screen-header";
 import { formatDate } from "@/lib/helpers";
+import { logger } from "@/lib/logger";
 import { vaccineCatalogStorage } from "@/lib/storage";
 import { VaccineWithRecords } from "@/types";
 
@@ -40,7 +41,7 @@ export default function VaccineCatalogScreen() {
       const data = await vaccineCatalogStorage.getWithRecordCount();
       setVaccines(data);
     } catch (error) {
-      console.error("Error loading vaccine catalog:", error);
+      logger.error("VaccineCatalog/loadVaccines", error);
     } finally {
       setLoading(false);
     }
@@ -52,7 +53,7 @@ export default function VaccineCatalogScreen() {
       const data = await vaccineCatalogStorage.getWithRecordCount();
       setVaccines(data);
     } catch (error) {
-      console.error("Error refreshing vaccine catalog:", error);
+      logger.error("VaccineCatalog/handleRefresh", error);
     } finally {
       setRefreshing(false);
     }
@@ -68,7 +69,7 @@ export default function VaccineCatalogScreen() {
 
       loadVaccines();
     } catch (error) {
-      console.error("Error deleting vaccine:", error);
+      logger.error("VaccineCatalog/delete", error);
     } finally {
       setVaccineToDelete(null);
     }

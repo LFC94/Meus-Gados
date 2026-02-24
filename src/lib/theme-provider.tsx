@@ -4,6 +4,7 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState } 
 import { Appearance, useColorScheme as useSystemColorScheme, View } from "react-native";
 
 import { type ColorScheme, SchemeColors } from "@/constants/theme";
+import { logger } from "@/lib/logger";
 import { preferencesStorage, type Theme } from "@/lib/preferences";
 
 type ThemeContextValue = {
@@ -28,7 +29,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
         const theme = await preferencesStorage.getTheme();
         setThemePreference(theme);
       } catch (error) {
-        console.error("Error loading theme preference:", error);
+        logger.error("ThemeProvider/loadThemePreference", error);
       } finally {
         setIsLoading(false);
       }
@@ -78,7 +79,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     try {
       await preferencesStorage.updateTheme(newTheme);
     } catch (error) {
-      console.error("Error saving theme preference:", error);
+      logger.error("ThemeProvider/saveTheme", error);
     }
   }, []);
 

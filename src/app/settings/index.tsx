@@ -13,6 +13,7 @@ import { ScreenContainer } from "@/components/screen-container";
 import { STATUS_CATTLE } from "@/constants/const";
 import { useAuth, useColors, useScreenHeader } from "@/hooks";
 import { type BackupData, backupService } from "@/lib/backup";
+import { logger } from "@/lib/logger";
 import {
   getNotificationSettings,
   NotificationSettings,
@@ -76,7 +77,7 @@ export default function SettingsScreen() {
         backupList.sort((a, b) => new Date(b.backup.timestamp).getTime() - new Date(a.backup.timestamp).getTime()),
       );
     } catch (error) {
-      console.error("Error loading settings:", error);
+      logger.error("Settings/loadSettings", error);
     } finally {
       setLoading(false);
     }
@@ -89,7 +90,7 @@ export default function SettingsScreen() {
       const hasPermission = await requestNotificationPermission();
       setPermissionGranted(hasPermission);
     } catch (error) {
-      console.error("Error loading notif settings:", error);
+      logger.error("Settings/loadNotificationSettings", error);
     }
   };
 
@@ -102,7 +103,7 @@ export default function SettingsScreen() {
       notificationAsync(NotificationFeedbackType.Success);
       Alert.alert("Sucesso", "Configurações de notificações salvas!");
     } catch (error) {
-      console.error("Error saving notif settings:", error);
+      logger.error("Settings/saveNotificationSettings", error);
       Alert.alert("Erro", "Não foi possível salvar as notificações");
     } finally {
       setNotifSaving(false);
@@ -115,7 +116,7 @@ export default function SettingsScreen() {
       await signInWithGoogle();
       await syncData();
     } catch (error: any) {
-      console.error("Google Sign-In Error:", error);
+      logger.error("Settings/googleSignIn", error);
       Alert.alert("Erro de Autenticação", "Não foi possível realizar o login.");
     } finally {
       setAuthLoading(false);
@@ -137,7 +138,7 @@ export default function SettingsScreen() {
       setTheme(newTheme);
       impactAsync(ImpactFeedbackStyle.Light);
     } catch (error) {
-      console.error("Error setting theme:", error);
+      logger.error("Settings/changeTheme", error);
       Alert.alert("Erro", "Não foi possível atualizar o tema");
     }
   };
@@ -154,7 +155,7 @@ export default function SettingsScreen() {
       Alert.alert("Sucesso", "Backup criado com sucesso!");
       loadSettings();
     } catch (error) {
-      console.error("Error creating backup:", error);
+      logger.error("Settings/createBackup", error);
       Alert.alert("Erro", "Não foi possível criar o backup");
     }
   };
@@ -178,7 +179,7 @@ export default function SettingsScreen() {
         Alert.alert("Sucesso", "Backup exportado para o arquivo de documentos");
       }
     } catch (error) {
-      console.error("Error exporting backup:", error);
+      logger.error("Settings/exportBackup", error);
       Alert.alert("Erro", "Não foi possível exportar o backup");
     }
   };
@@ -198,7 +199,7 @@ export default function SettingsScreen() {
               Alert.alert("Sucesso", "Backup restaurado com sucesso!");
               loadSettings();
             } catch (error) {
-              console.error("Error restoring backup:", error);
+              logger.error("Settings/restoreBackup", error);
               Alert.alert("Erro", "Não foi possível restaurar o backup");
             }
           },
@@ -219,7 +220,7 @@ export default function SettingsScreen() {
             loadSettings();
             Alert.alert("Sucesso", "Backup deletado com sucesso!");
           } catch (error) {
-            console.error("Error deleting backup:", error);
+            logger.error("Settings/deleteBackup", error);
             Alert.alert("Erro", "Não foi possível deletar o backup");
           }
         },

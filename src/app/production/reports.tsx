@@ -7,6 +7,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { ScreenContainer } from "@/components/screen-container";
 import { useColors } from "@/hooks/use-colors";
 import useScreenHeader from "@/hooks/use-screen-header";
+import { logger } from "@/lib/logger";
 import { generateProductionReport, ProductionReportData } from "@/lib/production-reports";
 import { cattleStorage, milkProductionStorage } from "@/lib/storage";
 
@@ -32,7 +33,7 @@ export default function ProductionReportsScreen() {
       const reportData = generateProductionReport(records, cattle);
       setData(reportData);
     } catch (error) {
-      console.error("Error loading report data:", error);
+      logger.error("ProductionReports/loadData", error);
     } finally {
       setLoading(false);
     }

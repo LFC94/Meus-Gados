@@ -2,6 +2,8 @@ import * as Updates from "expo-updates";
 import { useEffect } from "react";
 import { Alert } from "react-native";
 
+import { logger } from "@/lib/logger";
+
 export function useUpdates() {
   async function onFetchUpdateAsync() {
     try {
@@ -24,7 +26,7 @@ export function useUpdates() {
         );
       }
     } catch (error) {
-      console.error(`Error fetching latest Expo update: ${error}`);
+      logger.error("useUpdates/fetchUpdate", error);
     }
   }
 

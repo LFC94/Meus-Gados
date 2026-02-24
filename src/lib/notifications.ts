@@ -8,6 +8,7 @@ import * as Notifications from "expo-notifications";
 import { Pregnancy, VaccinationRecordWithDetails } from "@/types";
 
 import { daysUntil, formatDate } from "./helpers";
+import { logger } from "./logger";
 
 // Configurar comportamento das notificações
 Notifications.setNotificationHandler({
@@ -59,7 +60,7 @@ export async function requestNotificationPermission(): Promise<boolean> {
     const { status } = await Notifications.requestPermissionsAsync();
     return status === "granted";
   } catch (error) {
-    console.error("Error requesting notification permission:", error);
+    logger.error("notifications/requestPermission", error);
     return false;
   }
 }
@@ -72,7 +73,7 @@ export async function getNotificationSettings(): Promise<NotificationSettings> {
     const settings = await AsyncStorage.getItem(NOTIFICATION_SETTINGS_KEY);
     return settings ? JSON.parse(settings) : DEFAULT_SETTINGS;
   } catch (error) {
-    console.error("Error getting notification settings:", error);
+    logger.error("notifications/getSettings", error);
     return DEFAULT_SETTINGS;
   }
 }
@@ -86,7 +87,7 @@ export async function saveNotificationSettings(settings: Partial<NotificationSet
     const updated = { ...current, ...settings };
     await AsyncStorage.setItem(NOTIFICATION_SETTINGS_KEY, JSON.stringify(updated));
   } catch (error) {
-    console.error("Error saving notification settings:", error);
+    logger.error("notifications/saveSettings", error);
     throw error;
   }
 }
@@ -156,7 +157,7 @@ export async function scheduleVaccineNotification(
 
     return notificationId;
   } catch (error) {
-    console.error("Error scheduling vaccine notification:", error);
+    logger.error("notifications/scheduleVaccine", error);
     return null;
   }
 }
@@ -226,7 +227,7 @@ export async function schedulePregnancyNotification(
 
     return notificationId;
   } catch (error) {
-    console.error("Error scheduling pregnancy notification:", error);
+    logger.error("notifications/schedulePregnancy", error);
     return null;
   }
 }
@@ -238,7 +239,7 @@ export async function cancelNotification(notificationId: string): Promise<void> 
   try {
     await Notifications.cancelScheduledNotificationAsync(notificationId);
   } catch (error) {
-    console.error("Error canceling notification:", error);
+    logger.error("notifications/cancel", error);
   }
 }
 
@@ -249,7 +250,7 @@ export async function cancelAllNotifications(): Promise<void> {
   try {
     await Notifications.cancelAllScheduledNotificationsAsync();
   } catch (error) {
-    console.error("Error canceling all notifications:", error);
+    logger.error("notifications/cancelAll", error);
   }
 }
 
@@ -266,7 +267,7 @@ async function saveScheduledNotification(notification: ScheduledNotification): P
     filtered.push(notification);
     await AsyncStorage.setItem(SCHEDULED_NOTIFICATIONS_KEY, JSON.stringify(filtered));
   } catch (error) {
-    console.error("Error saving scheduled notification:", error);
+    logger.error("notifications/saveScheduled", error);
   }
 }
 
@@ -278,7 +279,7 @@ export async function getScheduledNotifications(): Promise<ScheduledNotification
     const scheduled = await AsyncStorage.getItem(SCHEDULED_NOTIFICATIONS_KEY);
     return scheduled ? JSON.parse(scheduled) : [];
   } catch (error) {
-    console.error("Error getting scheduled notifications:", error);
+    logger.error("notifications/getScheduled", error);
     return [];
   }
 }
@@ -292,7 +293,7 @@ export async function removeScheduledNotification(id: string, type: "vaccine" | 
     const filtered = scheduled.filter((n) => !(n.id === id && n.type === type));
     await AsyncStorage.setItem(SCHEDULED_NOTIFICATIONS_KEY, JSON.stringify(filtered));
   } catch (error) {
-    console.error("Error removing scheduled notification:", error);
+    logger.error("notifications/remove", error);
   }
 }
 
@@ -311,7 +312,7 @@ export async function cleanupOldNotifications(): Promise<void> {
 
     await AsyncStorage.setItem(SCHEDULED_NOTIFICATIONS_KEY, JSON.stringify(filtered));
   } catch (error) {
-    console.error("Error cleaning up old notifications:", error);
+    logger.error("notifications/cleanup", error);
   }
 }
 
@@ -338,7 +339,7 @@ export async function rescheduleAllNotifications(
       await schedulePregnancyNotification(pregnancy);
     }
   } catch (error) {
-    console.error("Error rescheduling notifications:", error);
+    logger.error("notifications/reschedule", error);
     throw error;
   }
 }

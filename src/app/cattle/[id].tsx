@@ -21,6 +21,7 @@ import { VaccineItem } from "@/components/vaccine-item";
 import { STATUS_CATTLE } from "@/constants/const";
 import { useColors, useNavigation, useScreenHeader } from "@/hooks";
 import { formatDate, formatWeight } from "@/lib/helpers";
+import { logger } from "@/lib/logger";
 import {
   cattleStorage,
   diseaseStorage,
@@ -113,7 +114,7 @@ export default function CattleDetailScreen() {
       setDiseaseOffset(LIMIT);
       setHasMoreDiseases(diseasesData.length === LIMIT);
     } catch (error) {
-      console.error("Error loading cattle data:", error);
+      logger.error("CattleDetail/loadData", error);
     } finally {
       setLoading(false);
     }
@@ -139,7 +140,7 @@ export default function CattleDetailScreen() {
         setProductionOffset((prev) => prev + LIMIT);
         setHasMoreProduction(data.length === LIMIT);
       } catch (error) {
-        console.error("Error loading more milk records:", error);
+        logger.error("CattleDetail/loadMoreMilkRecords", error);
       } finally {
         setIsLoadingMoreProduction(false);
       }
@@ -152,7 +153,7 @@ export default function CattleDetailScreen() {
         setVaccineOffset((prev) => prev + LIMIT);
         setHasMoreVaccines(data.length === LIMIT);
       } catch (error) {
-        console.error("Error loading more vaccines:", error);
+        logger.error("CattleDetail/loadMoreVaccines", error);
       } finally {
         setIsLoadingMoreVaccines(false);
       }
@@ -165,7 +166,7 @@ export default function CattleDetailScreen() {
         setDiseaseOffset((prev) => prev + LIMIT);
         setHasMoreDiseases(data.length === LIMIT);
       } catch (error) {
-        console.error("Error loading more diseases:", error);
+        logger.error("CattleDetail/loadMoreDiseases", error);
       } finally {
         setIsLoadingMoreDiseases(false);
       }
@@ -179,7 +180,7 @@ export default function CattleDetailScreen() {
       Alert.alert("Sucesso", "Animal excluído com sucesso", [{ text: "OK", onPress: () => navigation.goBack() }]);
     } catch (error) {
       Alert.alert("Erro", "Não foi possível excluir o animal");
-      console.error("Não foi possível excluir o animal", error);
+      logger.error("CattleDetail/delete", error);
     } finally {
       setShowDeleteDialog(false);
     }

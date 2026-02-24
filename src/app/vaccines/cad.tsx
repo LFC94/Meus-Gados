@@ -7,6 +7,7 @@ import { FormInput, FormSelect, ScreenContainer } from "@/components";
 import { CustomDatePicker } from "@/components/ui/date-picker";
 import { useColors, useFormScreen, useNavigation, useScreenHeader } from "@/hooks";
 import { addDaysToDate } from "@/lib/helpers";
+import { logger } from "@/lib/logger";
 import { scheduleVaccineNotification } from "@/lib/notifications";
 import { cattleStorage, vaccinationRecordStorage, vaccineCatalogStorage } from "@/lib/storage";
 import { Cattle, RootStackParamList, VaccineFormData, VaccineModel } from "@/types";
@@ -40,7 +41,7 @@ export default function VaccineCadScreen() {
       const data = await cattleStorage.getAll();
       setCattle(data);
     } catch (error) {
-      console.error("Erro ao carregar animais:", error);
+      logger.error("VaccineCad/loadCattle", error);
     } finally {
       setLoadingCattle(false);
     }
@@ -52,7 +53,7 @@ export default function VaccineCadScreen() {
       const vaccines = await vaccineCatalogStorage.getAll();
       setVaccineCatalog(vaccines);
     } catch (error) {
-      console.error("Erro ao carregar catálogo de vacinas:", error);
+      logger.error("VaccineCad/loadVaccineCatalog", error);
     } finally {
       setLoadingCatalog(false);
     }

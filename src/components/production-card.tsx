@@ -3,6 +3,7 @@ import { Alert, Text, View } from "react-native";
 import { PERIOD_LABELS } from "@/constants/const";
 import { useColors, useNavigation } from "@/hooks";
 import { formatDate } from "@/lib/helpers";
+import { logger } from "@/lib/logger";
 import { milkProductionStorage } from "@/lib/storage";
 import { Cattle, MilkProductionRecord } from "@/types";
 
@@ -29,7 +30,7 @@ export function ProductionCard({ milkProduction }: ProductionCardProps) {
           try {
             await milkProductionStorage.delete(milkProduction.id);
           } catch (error) {
-            console.error("Erro ao excluir registro:", error);
+            logger.error("ProductionCard/delete", error);
             Alert.alert("Erro", "Não foi possível excluir o registro");
           }
         },
@@ -91,7 +92,7 @@ export function ProductionCardCompact({ milkProduction }: ProductionCardCompactP
           try {
             await milkProductionStorage.delete(milkProduction.id);
           } catch (error) {
-            console.error("Erro ao excluir registro:", error);
+            logger.error("ProductionCardCompact/delete", error);
             Alert.alert("Erro", "Não foi possível excluir o registro");
           }
         },

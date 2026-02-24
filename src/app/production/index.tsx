@@ -8,6 +8,7 @@ import { ScreenContainer } from "@/components/screen-container";
 import { useNavigation } from "@/hooks";
 import { useColors } from "@/hooks/use-colors";
 import useScreenHeader from "@/hooks/use-screen-header";
+import { logger } from "@/lib/logger";
 import { milkProductionStorage } from "@/lib/storage";
 import { Cattle, MilkProductionRecord } from "@/types";
 
@@ -40,7 +41,7 @@ export default function MilkProductionListScreen() {
       setOffset(LIMIT);
       setHasMore(data.length === LIMIT);
     } catch (error) {
-      console.error("Error loading milk production:", error);
+      logger.error("MilkProductionList/loadData", error);
     } finally {
       setLoading(false);
     }
@@ -56,7 +57,7 @@ export default function MilkProductionListScreen() {
       setOffset((prev) => prev + LIMIT);
       setHasMore(data.length === LIMIT);
     } catch (error) {
-      console.error("Error loading more milk production:", error);
+      logger.error("MilkProductionList/loadMoreData", error);
     } finally {
       setIsLoadingMore(false);
     }
@@ -70,7 +71,7 @@ export default function MilkProductionListScreen() {
       setOffset(LIMIT);
       setHasMore(data.length === LIMIT);
     } catch (error) {
-      console.error("Error refreshing milk production:", error);
+      logger.error("MilkProductionList/handleRefresh", error);
     } finally {
       setRefreshing(false);
     }

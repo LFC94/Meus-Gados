@@ -3,6 +3,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { STORAGE_KEYS } from "@/constants/const";
 import { Cattle, Disease, MilkProductionRecord, Pregnancy, VaccinationRecord, VaccineModel } from "@/types";
 
+import { logger } from "./logger";
 import { AppPreferences, preferencesStorage } from "./preferences";
 import {
   cattleStorage,
@@ -55,7 +56,7 @@ export const backupService = {
 
       return backup;
     } catch (error) {
-      console.error("Error creating backup:", error);
+      logger.error("backup/create", error);
       throw error;
     }
   },
@@ -66,7 +67,7 @@ export const backupService = {
       await AsyncStorage.setItem(backupId, JSON.stringify(backup));
       return backupId;
     } catch (error) {
-      console.error("Error saving backup:", error);
+      logger.error("backup/save", error);
       throw error;
     }
   },
@@ -75,7 +76,7 @@ export const backupService = {
     try {
       return JSON.stringify(backup, null, 2);
     } catch (error) {
-      console.error("Error exporting backup:", error);
+      logger.error("backup/export", error);
       throw error;
     }
   },
@@ -100,7 +101,7 @@ export const backupService = {
 
       return backups.filter((b) => b !== null) as { id: string; backup: BackupData }[];
     } catch (error) {
-      console.error("Error getting backup list:", error);
+      logger.error("backup/list", error);
       throw error;
     }
   },
@@ -134,7 +135,7 @@ export const backupService = {
 
       await Promise.all(addPromises);
     } catch (error) {
-      console.error("Error restoring backup:", error);
+      logger.error("backup/restore", error);
       throw error;
     }
   },
@@ -143,7 +144,7 @@ export const backupService = {
     try {
       await AsyncStorage.removeItem(backupId);
     } catch (error) {
-      console.error("Error deleting backup:", error);
+      logger.error("backup/delete", error);
       throw error;
     }
   },
@@ -166,7 +167,7 @@ export const backupService = {
 
       return backup;
     } catch (error) {
-      console.error("Error importing backup:", error);
+      logger.error("backup/import", error);
       throw error;
     }
   },

@@ -1,6 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import { SyncBase } from "@/types";
+import { logger } from "../logger";
 
 export type StorageListener = () => void;
 const listeners: StorageListener[] = [];
@@ -17,23 +18,27 @@ export const notifyStorageChanges = () => {
   listeners.forEach((listener) => listener());
 };
 
-export async function getItems<T extends { isDeleted?: boolean }>(key: string): Promise<T[]> {
+export async function getItems<T extends { isDeleted?: boolean }>(
+  key: string,
+): Promise<T[]> {
   try {
     const data = await AsyncStorage.getItem(key);
     const items: T[] = data ? JSON.parse(data) : [];
     return items.filter((item) => !item.isDeleted);
   } catch (error) {
-    console.error(`Error getting items from ${key}:`, error);
+    logger.error(`storage/getItems/${key}`, error);
     return [];
   }
 }
 
-export async function getAllItemsIncludingDeleted<T>(key: string): Promise<T[]> {
+export async function getAllItemsIncludingDeleted<T>(
+  key: string,
+): Promise<T[]> {
   try {
     const data = await AsyncStorage.getItem(key);
     return data ? JSON.parse(data) : [];
   } catch (error) {
-    console.error(`Error getting all items from ${key}:`, error);
+    logger.error(`storage/getAllItemsIncludingDeleted/${key}`, error);
     return [];
   }
 }
@@ -42,12 +47,15 @@ export async function setItems<T>(key: string, items: T[]): Promise<void> {
   try {
     await AsyncStorage.setItem(key, JSON.stringify(items));
   } catch (error) {
-    console.error(`Error setting items to ${key}:`, error);
+    logger.error(`storage/setItems/${key}`, error);
     throw error;
   }
 }
 
-export async function addItem<T extends SyncBase>(key: string, item: T): Promise<T> {
+export async function addItem<T extends SyncBase>(
+  key: string,
+  item: T,
+): Promise<T> {
   const items = await getAllItemsIncludingDeleted<T>(key);
   const newItem = {
     ...item,
@@ -61,7 +69,11 @@ export async function addItem<T extends SyncBase>(key: string, item: T): Promise
   return newItem;
 }
 
-export async function updateItem<T extends SyncBase>(key: string, id: string, updates: Partial<T>): Promise<T | null> {
+export async function updateItem<T extends SyncBase>(
+  key: string,
+  id: string,
+  updates: Partial<T>,
+): Promise<T | null> {
   const items = await getAllItemsIncludingDeleted<T>(key);
   const index = items.findIndex((item) => item.id === id);
 
@@ -80,10 +92,9 @@ export async function updateItem<T extends SyncBase>(key: string, id: string, up
   return items[index];
 }
 
-export async function deleteItem<T extends { id: string; isDeleted?: boolean; updatedAt: string }>(
-  key: string,
-  id: string,
-): Promise<boolean> {
+export async function deleteItem<
+  T extends { id: string; isDeleted?: boolean; updatedAt: string },
+>(key: string, id: string): Promise<boolean> {
   const items = await getAllItemsIncludingDeleted<T>(key);
   const index = items.findIndex((item) => item.id === id);
 
@@ -102,7 +113,10 @@ export async function deleteItem<T extends { id: string; isDeleted?: boolean; up
   return true;
 }
 
-export async function getItemById<T extends SyncBase>(key: string, id: string): Promise<T | null> {
+export async function getItemById<T extends SyncBase>(
+  key: string,
+  id: string,
+): Promise<T | null> {
   const items = await getItems<T>(key);
   return items.find((item) => item.id === id) || null;
 }

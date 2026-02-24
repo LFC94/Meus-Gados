@@ -19,6 +19,7 @@ import { useColors } from "@/hooks/use-colors";
 import useNavigation from "@/hooks/use-navigation";
 import useScreenHeader from "@/hooks/use-screen-header";
 import { calculateAge } from "@/lib/helpers";
+import { logger } from "@/lib/logger";
 import { cattleStorage, diseaseStorage, pregnancyStorage, vaccinationRecordStorage } from "@/lib/storage";
 import { Cattle, CattleResult, Disease, Pregnancy, RootStackParamList, VaccinationRecord } from "@/types";
 
@@ -117,7 +118,7 @@ export default function CattleListScreen() {
       setDiseases(diseasesData);
       setVaccines(vaccinesData);
     } catch (error) {
-      console.error("Error loading cattle:", error);
+      logger.error("CattleList/loadData", error);
     } finally {
       setLoading(false);
     }

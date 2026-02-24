@@ -1,6 +1,8 @@
 import * as Haptics from "expo-haptics";
 import { useCallback, useEffect, useState } from "react";
-import { Alert } from "react-native";
+
+import { alerts } from "@/lib/alerts";
+import { logger } from "@/lib/logger";
 
 import useNavigation from "./use-navigation";
 
@@ -51,8 +53,8 @@ export function useFormScreen<T>(options: UseFormScreenOptions<T>): UseFormScree
         setData(result);
       }
     } catch (error) {
-      console.error("Error loading data:", error);
-      Alert.alert("Erro", "Não foi possível carregar os dados");
+      logger.error("useFormScreen/load", error);
+      alerts.error("Não foi possível carregar os dados");
     } finally {
       setLoading(false);
     }
@@ -70,7 +72,7 @@ export function useFormScreen<T>(options: UseFormScreenOptions<T>): UseFormScree
     if (validate) {
       const error = validate(data);
       if (error) {
-        Alert.alert("Erro", error);
+        alerts.error(error);
         return false;
       }
     }
@@ -86,18 +88,13 @@ export function useFormScreen<T>(options: UseFormScreenOptions<T>): UseFormScree
       if (onSuccess) {
         onSuccess();
       } else {
-        Alert.alert("Sucesso", successMessage, [
-          {
-            text: "OK",
-            onPress: () => navigation.goBack(),
-          },
-        ]);
+        alerts.success(successMessage, () => navigation.goBack());
       }
 
       return true;
     } catch (error) {
-      console.error("Error saving data:", error);
-      Alert.alert("Erro", "Não foi possível salvar o registro");
+      logger.error("useFormScreen/save", error);
+      alerts.error("Não foi possível salvar o registro");
       return false;
     } finally {
       setSaving(false);

@@ -7,6 +7,7 @@ import { ScreenContainer } from "@/components/screen-container";
 import { useNavigation } from "@/hooks";
 import { useColors } from "@/hooks/use-colors";
 import { daysUntil, formatDate, getVaccineStatus, getVaccineStatusColor } from "@/lib/helpers";
+import { logger } from "@/lib/logger";
 import { vaccinationRecordStorage } from "@/lib/storage";
 import { Cattle, VaccinationRecordWithDetails } from "@/types";
 
@@ -29,7 +30,7 @@ export default function PendingVaccinesScreen() {
       const data = await vaccinationRecordStorage.getPending();
       setPendingVaccines(data);
     } catch (error) {
-      console.error("Error loading pending vaccines:", error);
+      logger.error("VaccinePending/loadPendingVaccines", error);
     } finally {
       setLoading(false);
     }
@@ -41,7 +42,7 @@ export default function PendingVaccinesScreen() {
       const data = await vaccinationRecordStorage.getPending();
       setPendingVaccines(data);
     } catch (error) {
-      console.error("Error refreshing pending vaccines:", error);
+      logger.error("VaccinePending/handleRefresh", error);
     } finally {
       setRefreshing(false);
     }

@@ -8,6 +8,7 @@ import { FormInput } from "@/components";
 import { ScreenContainer } from "@/components/screen-container";
 import { COMMON_VACCINES } from "@/constants/const";
 import { useColors, useNavigation, useScreenHeader } from "@/hooks";
+import { logger } from "@/lib/logger";
 import { vaccineCatalogStorage } from "@/lib/storage";
 import { RootStackParamList } from "@/types";
 
@@ -52,7 +53,7 @@ export default function VaccineCatalogCadScreen() {
         });
       }
     } catch (error) {
-      console.error("Error loading vaccine:", error);
+      logger.error("VaccineCatalogCad/loadVaccine", error);
       Alert.alert("Erro", "Não foi possível carregar os dados da vaccine");
     } finally {
       setLoading(false);
@@ -95,7 +96,7 @@ export default function VaccineCatalogCadScreen() {
         { text: "OK", onPress: () => navigation.goBack() },
       ]);
     } catch (error) {
-      console.error("Error updating vaccine:", error);
+      logger.error("VaccineCatalogCad/save", error);
       Alert.alert("Erro", "Não foi possível atualizar a vaccine");
     } finally {
       setSaving(false);
