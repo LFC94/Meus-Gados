@@ -1,0 +1,31 @@
+name: Test Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Versão para release"
+        required: true
+        default: "1.0.0"
+
+jobs:
+  test-release:
+    runs-on: ubuntu-latest
+    permissions: write-all
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Criar Tag
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git tag "build-v${{ github.event.inputs.version }}"
+          git push origin "build-v${{ github.event.inputs.version }}"
+
+      - name: Criar Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: build-v${{ github.event.inputs.version }}
+          name: Build v${{ github.event.inputs.version }}
+          body: "Test release"
