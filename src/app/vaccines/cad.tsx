@@ -208,7 +208,7 @@ export default function VaccineCadScreen() {
               <View className="px-4 py-2">
                 <Text className="text-muted text-center text-sm">
                   Nenhuma vacina no catálogo.{" "}
-                  <Text className="text-primary" onPress={() => navigation.navigate("VaccineCatalog" as never)}>
+                  <Text className="text-primary" onPress={() => navigation.navigate("VaccineCatalog")}>
                     Adicionar
                   </Text>
                 </Text>

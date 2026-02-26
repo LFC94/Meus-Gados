@@ -1,12 +1,20 @@
+import { CompositeNavigationProp } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
 import { TouchableOpacity } from "react-native";
 
 import { IconSymbol } from "@/components/ui/icon-symbol";
 import { useColors } from "@/hooks/use-colors";
+import { RootStackParamList } from "@/types";
+
+type ScreenOptionsNavigationProp = CompositeNavigationProp<
+  StackNavigationProp<RootStackParamList>,
+  StackNavigationProp<RootStackParamList>
+>;
 
 export default function useScreenOptions() {
   const colors = useColors();
 
-  return ({ navigation }: any) => ({
+  return ({ navigation }: { navigation: ScreenOptionsNavigationProp }) => ({
     headerShown: false,
     gestureEnabled: true,
     headerStyle: {

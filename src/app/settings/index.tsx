@@ -115,7 +115,7 @@ export default function SettingsScreen() {
     try {
       await signInWithGoogle();
       await syncData();
-    } catch (error: any) {
+    } catch (error) {
       logger.error("Settings/googleSignIn", error);
       Alert.alert("Erro de Autenticação", "Não foi possível realizar o login.");
     } finally {

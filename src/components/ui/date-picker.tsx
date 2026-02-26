@@ -37,7 +37,7 @@ export function CustomDatePicker({
     return `${day}/${month}/${year}`;
   };
 
-  const handleDateChange = (event: any, selectedDate?: Date) => {
+  const handleDateChange = (_event: unknown, selectedDate?: Date) => {
     if (Platform.OS === "android") {
       setShowPicker(false);
       if (selectedDate) {

@@ -418,16 +418,16 @@ export default function CattleDetailScreen() {
   const pressButtonAdd = () => {
     switch (activeTab) {
       case "vaccines":
-        navigation.navigate("VaccineCad" as never, { cattleId: id } as never);
+        navigation.navigate("VaccineCad", { cattleId: id });
         break;
       case "production":
-        navigation.navigate("MilkProductionCad" as never, { cattleId: id } as never);
+        navigation.navigate("MilkProductionCad", { cattleId: id });
         break;
       case "pregnancy":
-        navigation.navigate("PregnancyAdd" as never, { cattleId: id } as never);
+        navigation.navigate("PregnancyAdd", { cattleId: id });
         break;
       case "diseases":
-        navigation.navigate("DiseasesCad" as never, { cattleId: id } as never);
+        navigation.navigate("DiseasesCad", { cattleId: id });
         break;
       default:
         break;
@@ -527,7 +527,7 @@ export default function CattleDetailScreen() {
       <View className="px-6 gap-3">
         <CardEdit
           title="Informações do Animal"
-          handleEdit={() => navigation.navigate("CattleCad" as never, { id } as never)}
+          handleEdit={() => navigation.navigate("CattleCad", { id })}
           handleDelete={() => dispatch({ type: "SET_DELETE_DIALOG", payload: true })}
           small
         >
@@ -633,12 +633,9 @@ export default function CattleDetailScreen() {
                   <VaccineItem
                     vaccine={item as VaccinationRecordWithDetails}
                     onEdit={() =>
-                      navigation.navigate(
-                        "VaccineCad" as never,
-                        {
-                          id: (item as VaccinationRecordWithDetails).id,
-                        } as never,
-                      )
+                      navigation.navigate("VaccineCad", {
+                        id: (item as VaccinationRecordWithDetails).id,
+                      })
                     }
                     onDelete={() => handleDeleteVaccine((item as VaccinationRecordWithDetails).id)}
                   />
@@ -649,7 +646,7 @@ export default function CattleDetailScreen() {
                 <View className="px-6 mb-3">
                   <DiseaseRecord
                     disease={item as Disease}
-                    onEdit={() => navigation.navigate("DiseasesCad" as never, { id: (item as Disease).id } as never)}
+                    onEdit={() => navigation.navigate("DiseasesCad", { id: (item as Disease).id })}
                     onDelete={() => handleDeleteDisease((item as Disease).id)}
                   />
                 </View>
@@ -659,16 +656,12 @@ export default function CattleDetailScreen() {
                 <View className="px-6 mb-3">
                   <PregnancyTimeline
                     pregnancy={item as Pregnancy}
-                    onEdit={() =>
-                      navigation.navigate("PregnancyEdit" as never, { id: (item as Pregnancy).id } as never)
-                    }
+                    onEdit={() => navigation.navigate("PregnancyEdit", { id: (item as Pregnancy).id })}
                     onDelete={() => handleDeletePregnancy((item as Pregnancy).id)}
-                    onCompleteBirth={() =>
-                      navigation.navigate("PregnancyEdit" as never, { id: (item as Pregnancy).id } as never)
-                    }
+                    onCompleteBirth={() => navigation.navigate("PregnancyEdit", { id: (item as Pregnancy).id })}
                     onCreateCalf={
                       (item as Pregnancy).result === "success" && !(item as Pregnancy).calfId
-                        ? () => navigation.navigate("PregnancyEdit" as never, { id: (item as Pregnancy).id } as never)
+                        ? () => navigation.navigate("PregnancyEdit", { id: (item as Pregnancy).id })
                         : undefined
                     }
                   />

@@ -1,5 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import auth from "@react-native-firebase/auth";
+import auth, { FirebaseAuthTypes } from "@react-native-firebase/auth";
 import firestore, { FirebaseFirestoreTypes } from "@react-native-firebase/firestore";
 
 import { STORAGE_KEYS } from "@/constants/const";
@@ -40,21 +40,21 @@ export const syncService = {
 
       await syncStorage.setLastSync(currentSyncTime);
       return { success: true };
-    } catch (error: any) {
+    } catch (error) {
       logger.error("sync/syncAll", error);
-      return { success: false, error: error.message };
+      return { success: false, error: (error as Error).message };
     }
   },
 
   /**
    * Syncs user information to Firestore
    */
-  async syncUserInfo(userId: string, user: any) {
+  async syncUserInfo(userId: string, user: FirebaseAuthTypes.User | null) {
     try {
       const userDocRef = firestore().collection("users").doc(userId);
       const docSnapshot = await userDocRef.get();
 
-      if (!docSnapshot.data()?.nome) {
+      if (!docSnapshot.data()?.nome && user) {
         await userDocRef.set(
           {
             nome: user.displayName,
@@ -90,7 +90,7 @@ export const syncService = {
       } else {
         cloudSnapshot = await collectionRef.get();
       }
-    } catch (error: any) {
+    } catch (error) {
       logger.error(`sync/syncCollection/${collectionKey}`, error);
       // Fallback: try without filter if filter fails
       cloudSnapshot = await collectionRef.get();

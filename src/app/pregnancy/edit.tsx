@@ -10,7 +10,7 @@ import { CustomDatePicker } from "@/components/ui/date-picker";
 import { useNavigation, useScreenHeader } from "@/hooks";
 import { logger } from "@/lib/logger";
 import { cattleStorage, pregnancyStorage } from "@/lib/storage";
-import { Cattle, PregnancyResult, RootStackParamList } from "@/types";
+import { Cattle, Pregnancy, PregnancyResult, RootStackParamList } from "@/types";
 
 export default function EditPregnancyScreen() {
   const navigation = useNavigation();
@@ -21,7 +21,7 @@ export default function EditPregnancyScreen() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [creatingCalf, setCreatingCalf] = useState(false);
-  const [pregnancy, setPregnancy] = useState<any>(null);
+  const [pregnancy, setPregnancy] = useState<Pregnancy | null>(null);
   const [cattle, setCattle] = useState<Cattle | null>(null);
   const [formData, setFormData] = useState<{
     coverageDate: Date | null;
@@ -147,7 +147,7 @@ export default function EditPregnancyScreen() {
               Alert.alert("Sucesso", `Bezerro cadastrado com sucesso! Número: ${calfNumber}`, [
                 {
                   text: "Ver Bezerro",
-                  onPress: () => navigation.navigate("CattleDetail" as never, { id: calf.id } as never),
+                  onPress: () => navigation.navigate("CattleDetail", { id: calf.id }),
                 },
                 {
                   text: "OK",

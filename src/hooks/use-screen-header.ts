@@ -1,10 +1,10 @@
-import { useEffect } from "react";
+import { ReactNode, useEffect } from "react";
 
 import { ScreenHeader } from "@/components/screen-header";
 
 import useNavigation from "./use-navigation";
 
-export default function useScreenHeader(title: string, subtitle?: string, right?: any) {
+export default function useScreenHeader(title: string, subtitle?: string, right?: () => ReactNode) {
   const navigation = useNavigation();
 
   useEffect(() => {

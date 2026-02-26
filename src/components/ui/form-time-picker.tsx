@@ -46,10 +46,14 @@ export function FormTimePicker({
   }
 
   function formatTime(date: Date): string {
-    return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", hour12: false });
+    return date.toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false,
+    });
   }
 
-  const handleDateChange = (event: any, selectedDate?: Date) => {
+  const handleDateChange = (_event: unknown, selectedDate?: Date) => {
     setShowPicker(false);
     if (selectedDate) {
       onChange(selectedDate);

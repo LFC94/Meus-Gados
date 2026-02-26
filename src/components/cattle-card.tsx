@@ -27,7 +27,7 @@ export function CattleCard({ cattle, showStatus = true, status, onPress }: Cattl
     if (onPress) {
       onPress();
     } else {
-      router.push(`/cattle/${cattle.id}` as any);
+      router.push({ pathname: "/cattle/[id]", params: { id: cattle.id } });
     }
   };
 
@@ -96,7 +96,7 @@ export function CattleCardCompact({ cattle, onPress }: CattleCardCompactProps) {
     if (onPress) {
       onPress();
     } else {
-      router.push(`/cattle/${cattle.id}` as any);
+      router.push({ pathname: "/cattle/[id]", params: { id: cattle.id } });
     }
   };
 

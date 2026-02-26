@@ -25,6 +25,8 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+type TimerRef = ReturnType<typeof setTimeout>;
+
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<FirebaseAuthTypes.User | null>(null);
   const [loading, setLoading] = useState(true);
@@ -34,7 +36,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     webClientId: process.env.EXPO_PUBLIC_GOOGLE_CLIENT_ID_WEB,
   });
 
-  function handleAuthStateChanged(user: any) {
+  function handleAuthStateChanged(user: FirebaseAuthTypes.User | null) {
     setUser(user);
     setLoading(false);
   }
@@ -58,7 +60,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (!user) return;
 
-    let timer: any;
+    let timer: TimerRef;
 
     // Trigger sync when local storage changes (debounced)
     const unsubscribe = subscribeToStorageChanges(() => {

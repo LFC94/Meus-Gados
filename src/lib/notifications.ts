@@ -10,7 +10,14 @@ import { Pregnancy, VaccinationRecordWithDetails } from "@/types";
 import { daysUntil, formatDate } from "./helpers";
 import { logger } from "./logger";
 
-// Configurar comportamento das notificações
+type NotificationHandlerResult = {
+  shouldShowAlert: boolean;
+  shouldPlaySound: boolean;
+  shouldSetBadge: boolean;
+  shouldShowBanner: boolean;
+  shouldShowList: boolean;
+};
+
 Notifications.setNotificationHandler({
   handleNotification: async () =>
     ({
@@ -19,7 +26,7 @@ Notifications.setNotificationHandler({
       shouldSetBadge: true,
       shouldShowBanner: true,
       shouldShowList: true,
-    }) as any,
+    }) as NotificationHandlerResult,
 });
 
 const NOTIFICATION_SETTINGS_KEY = "@meus_gados:notification_settings";
@@ -136,9 +143,9 @@ export async function scheduleVaccineNotification(
         },
       },
       trigger: {
-        type: "date",
+        type: Notifications.SchedulableTriggerInputTypes.DATE,
         date: notificationDate,
-      } as any,
+      },
     });
 
     // Salvar notificação agendada
@@ -206,9 +213,9 @@ export async function schedulePregnancyNotification(
         },
       },
       trigger: {
-        type: "date",
+        type: Notifications.SchedulableTriggerInputTypes.DATE,
         date: notificationDate,
-      } as any,
+      },
     });
 
     // Salvar notificação agendada

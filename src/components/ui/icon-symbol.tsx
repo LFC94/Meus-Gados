@@ -15,13 +15,19 @@ export type IconSymbolProps = {
   library?: "material" | "community";
 };
 
+type MaterialIconsName = ComponentProps<typeof MaterialIcons>["name"];
+type MaterialCommunityIconsName = ComponentProps<typeof MaterialCommunityIcons>["name"];
+
+function isMaterialIcon(name: IconMapping): name is MaterialIconsName {
+  return (MaterialIcons as { glyphMap?: Record<string, unknown> }).glyphMap?.[name] !== undefined;
+}
+
 /**
  * An icon component that uses Material Icons or Material Community Icons.
  */
 export function IconSymbol({ name, size = 24, color, style, library = "material" }: IconSymbolProps) {
-  const isMaterial = name in (MaterialIcons as any).glyphMap;
-  if (library === "community" || !isMaterial) {
-    return <MaterialCommunityIcons color={color} size={size} name={name as any} style={style} />;
+  if (library === "community" || !isMaterialIcon(name)) {
+    return <MaterialCommunityIcons color={color} size={size} name={name as MaterialCommunityIconsName} style={style} />;
   }
-  return <MaterialIcons color={color} size={size} name={name as any} style={style} />;
+  return <MaterialIcons color={color} size={size} name={name} style={style} />;
 }
