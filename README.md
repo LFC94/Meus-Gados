@@ -3,8 +3,8 @@
 <div align="center">
 
 ![Meus Gados](https://img.shields.io/badge/Meus%20Gados-Gerenciamento%20de%20Rebanho-blue?style=for-the-badge&logo=github)
-![React Native](https://img.shields.io/badge/React%20Native-0.81-blue?style=for-the-badge&logo=react)
-![Expo](https://img.shields.io/badge/Expo-54.0-black?style=for-the-badge&logo=expo)
+![React Native](https://img.shields.io/badge/React%20Native-0.83-blue?style=for-the-badge&logo=react)
+![Expo](https://img.shields.io/badge/Expo-55.0-black?style=for-the-badge&logo=expo)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.9-blue?style=for-the-badge&logo=typescript)
 ![NativeWind](https://img.shields.io/badge/NativeWind-4.2-blue?style=for-the-badge&logo=tailwindcss)
 
@@ -66,12 +66,20 @@ O aplicativo foi construído utilizando as melhores práticas de desenvolvimento
 - **Sincronização Automática**: Os dados são sincronizados ao abrir o app e alguns segundos após qualquer modificação local.
 - **Soft Delete**: Itens deletados localmente são marcados para posterior sincronização com a nuvem, garantindo consistência total.
 
+## ⚠️ Firebase e Expo Go
+
+Este projeto utiliza **@react-native-firebase** para autenticação e banco de dados. Esse módulo requer código nativo e **NÃO funciona no Expo Go padrão**.
+
+Consulte a seção [Instalação](#instalação) para ver os comandos necessários.
+
+> **Erro típico**: `Native module RNFBAppModule not found` - indica que você está tentando rodar no Expo Go.
+
 ## 🚀 Instalação
 
 ### Pré-requisitos
 
 - Node.js 18.x ou superior
-- npm ou pnpm
+- npm
 - Expo CLI (opcional, mas recomendado)
 - Emulador Android/iOS ou dispositivo físico
 
@@ -87,33 +95,20 @@ cd meus-gados
 1. **Instale as dependências**
 
 ```bash
-# Usando pnpm (recomendado)
-pnpm install
-
-# Ou usando npm
 npm install
-
-# Ou usando yarn
-yarn install
 ```
 
-1. **Inicie o servidor de desenvolvimento**
+1. **Gere código nativo**
 
 ```bash
-# Usando pnpm
-pnpm dev
-
-# Ou usando npm
-npm run dev
-
-# Ou usando expo
-npx expo start
+npx expo prebuild --platform android
 ```
 
-1. **Execute no emulador ou dispositivo**
+1. **Compile e execute**
 
-- Pressione `a` para Android ou `i` para iOS
-- Ou escaneie o QR code com o aplicativo Expo Go no dispositivo físico
+```bash
+npx expo run:android
+```
 
 ```bash
 # Gerar build de desenvolvimento (Android)
@@ -161,16 +156,8 @@ O projeto utiliza as seguintes tecnologias e bibliotecas:
 O projeto utiliza variáveis de ambiente para configurações sensíveis. Crie um arquivo `.env` na raiz do projeto:
 
 ```env
-# Notificações (Opcional para desenvolvimento local)
-EXPO_NOTIFICATIONS_ANDROID_ICON=ic_notification
-EXPO_NOTIFICATIONS_ANDROID_COLOR=#2563EB
-
-# Expo Application Services (Obrigatório para Build)
-# Encontrado no dashboard do EAS
-EXPO_PUBLIC_EAS_PROJECT_ID=seu_project_id
-
-# Google Web Client ID (Para Firebase Auth)
-EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID=seu_client_id.apps.googleusercontent.com
+# Google Authentication (Obrigatório para Firebase Auth)
+EXPO_PUBLIC_GOOGLE_CLIENT_ID_WEB=seu_client_id.apps.googleusercontent.com
 ```
 
 ### Temas
@@ -180,14 +167,8 @@ O aplicativo suporta temas claros e escuros automaticamente baseados nas configu
 ## 🧪 Testes
 
 ```bash
-# Executar testes unitários
-pnpm test
-
-# Executar testes com cobertura
-pnpm test:coverage
-
 # Verificar tipos TypeScript
-pnpm type-check
+npm run check
 ```
 
 ### Scripts de Build (EAS)
@@ -202,7 +183,7 @@ eas login
 npm run build:dev      # APK de Desenvolvimento
 npm run build:preview  # APK de Preview (Teste)
 npm run build:prod     # AAB de Produção (Loja)
-npm run build:local    # APK de Produção Local (Assinado com chave do Expo)
+npm run build:local    # APK Local (baseado no perfil preview)
 ```
 
 **Nota para Build Local:**
@@ -225,9 +206,8 @@ Contribuições são sempre bem-vindas! Para contribuir:
 ### Diretrizes de Contribuição
 
 - Siga os padrões de código existentes
-- Adicione testes para novas funcionalidades
 - Atualize a documentação quando necessário
-- Make sure all tests pass before submitting
+- Certifique-se de que todos os testes passam antes de submeter
 
 ## 📄 Licença
 
