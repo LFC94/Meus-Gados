@@ -189,8 +189,6 @@ npm run build:local    # APK Local (baseado no perfil preview)
 **Nota para Build Local:**
 Para rodar `npm run build:local`, certifique-se de ter baixado suas credenciais do Expo (`npx eas-cli credentials`) e salvo o arquivo `release.keystore` em `android/app` e `credentials.json` na raiz (para popular `android/keystore.properties`).
 
-```
-
 Para iOS, utilize os comandos `eas build --platform ios` com o perfil desejado (`--profile production`).
 
 ## 🤝 Contribuição
@@ -233,4 +231,3 @@ Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para ma
 ⭐ Se este projeto foi útil para você, considere dar uma estrela!
 
 </div>
-```

@@ -34,7 +34,6 @@ const config: ExpoConfig = {
   icon: "./src/assets/images/favicon.png",
   scheme: env.scheme,
   userInterfaceStyle: "automatic",
-  newArchEnabled: true,
   updates: {
     url: "https://u.expo.dev/fe4dc638-7548-439f-b5f2-11bce15ac37f",
   },
@@ -61,7 +60,6 @@ const config: ExpoConfig = {
       backgroundImage: "./src/assets/images/android-icon-background.png",
       monochromeImage: "./src/assets/images/android-icon-monochrome.png",
     },
-    edgeToEdgeEnabled: true,
     predictiveBackGestureEnabled: false,
     package: env.androidPackage,
     googleServicesFile: process.env.GOOGLE_SERVICES_JSON || "./google-services.json",
