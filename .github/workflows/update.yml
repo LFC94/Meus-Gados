@@ -15,9 +15,6 @@ on:
           - development
           - preview
           - production
-      branch:
-        description: "Branch (opcional, vazio = atual)"
-        required: false
 
 jobs:
   update:
@@ -47,7 +44,33 @@ jobs:
           eas update --channel ${{ github.event.inputs.channel }} --message "${{ github.event.inputs.message }}" --non-interactive
 
       - name: 📋 Display Version
+        id: display_version
         run: |
           VERSION=$(npx tsx -e "import config from './app.config.ts'; console.log(config.version);")
           echo "📦 Build Version: $VERSION"
           echo "::notice title=Build Version::$VERSION"
+          echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: 🏷️ Create Tag
+        run: |
+          VERSION=${{ steps.display_version.outputs.VERSION }}
+          TAG_NAME="update-${{ github.event.inputs.channel }}-v${VERSION}"
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git tag $TAG_NAME
+          git push origin $TAG_NAME
+
+      - name: 📦 Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: update-${{ github.event.inputs.channel }}-${{ steps.display_version.outputs.VERSION }}
+          name: Update ${{ github.event.inputs.channel }} v${{ steps.display_version.outputs.VERSION }}
+          body: |
+            **Canal:** ${{ github.event.inputs.channel }}
+            **Mensagem:** ${{ github.event.inputs.message }}
+            **Versão:** ${{ steps.display_version.outputs.VERSION }}
+            **Data:** ${{ github.run_at }}
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
