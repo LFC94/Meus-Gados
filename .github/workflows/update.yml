@@ -40,6 +40,17 @@ jobs:
       - name: 📦 Install dependencies
         run: npm ci
 
+      - name: 🧪 Run Tests
+        run: npm test
+
+      - name: 📊 Test Coverage
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-coverage-update
+          path: coverage/
+          retention-days: 7
+
       - name: 🚀 Publish Update
         run: |
           eas update --channel ${{ github.event.inputs.channel }} --message "${{ github.event.inputs.message }}" --non-interactive

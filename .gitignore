@@ -53,6 +53,9 @@ app-example
 logs
 *.log
 
+# Test coverage
+coverage/
+
 # OS
 Thumbs.db
 

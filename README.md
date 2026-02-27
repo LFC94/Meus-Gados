@@ -3,10 +3,12 @@
 <div align="center">
 
 ![Meus Gados](https://img.shields.io/badge/Meus%20Gados-Gerenciamento%20de%20Rebanho-blue?style=for-the-badge&logo=github)
-![React Native](https://img.shields.io/badge/React%20Native-0.83-blue?style=for-the-badge&logo=react)
+![React Native](https://img.shields.io/badge/React%20Native-0.82-blue?style=for-the-badge&logo=react)
 ![Expo](https://img.shields.io/badge/Expo-55.0-black?style=for-the-badge&logo=expo)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.9-blue?style=for-the-badge&logo=typescript)
 ![NativeWind](https://img.shields.io/badge/NativeWind-4.2-blue?style=for-the-badge&logo=tailwindcss)
+![Tests](https://img.shields.io/badge/Tests-65%20passed-green)
+![Coverage](https://img.shields.io/badge/Coverage-77%25-yellow)
 
 **Aplicativo móvel para gerenciamento completo do seu rebanho de bovinos**
 
@@ -166,9 +168,47 @@ O aplicativo suporta temas claros e escuros automaticamente baseados nas configu
 
 ## 🧪 Testes
 
+O projeto possui testes unitários configurados com Jest e Testing Library.
+
+### Executando Testes
+
+```bash
+# Rodar todos os testes
+npm test
+
+# Rodar testes em modo watch
+npm run test:watch
+
+# Gerar relatório de coverage
+npm run test:coverage
+```
+
+### Cobertura de Testes
+
+O projeto possui testes para as principais funções utilitárias:
+
+| Módulo            | Cobertura |
+| ----------------- | --------- |
+| `helpers.ts`      | ~90%      |
+| `storage/base.ts` | ~88%      |
+
+### CI/CD
+
+Os workflows do GitHub Actions executam testes automaticamente:
+
+- **build.yml**: Executa testes, typecheck e lint antes do build
+- **update.yml**: Executa testes antes de publicar updates
+
+Os artefatos de coverage são disponibilizados para download após cada execução.
+
+### Verificação de Tipos
+
 ```bash
 # Verificar tipos TypeScript
 npm run check
+
+# Verificar lint
+npm run lint
 ```
 
 ### Scripts de Build (EAS)
