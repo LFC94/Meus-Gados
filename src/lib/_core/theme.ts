@@ -2,7 +2,7 @@ import { Platform } from "react-native";
 
 import { themeColors } from "@/theme.config";
 
-export type ColorScheme = "light" | "dark";
+export type ColorScheme = "light" | "dark" | "unspecified";
 
 export const ThemeColors = themeColors;
 
@@ -15,6 +15,7 @@ function buildSchemePalette(colors: ThemeColorTokens): SchemePalette {
   const palette: SchemePalette = {
     light: {} as SchemePalette["light"],
     dark: {} as SchemePalette["dark"],
+    unspecified: {} as SchemePalette["light"],
   };
 
   (Object.keys(colors) as ThemeColorName[]).forEach((name) => {
@@ -55,6 +56,7 @@ function buildRuntimePalette(scheme: ColorScheme): RuntimePalette {
 export const Colors = {
   light: buildRuntimePalette("light"),
   dark: buildRuntimePalette("dark"),
+  unspecified: buildRuntimePalette("light"),
 } satisfies Record<ColorScheme, RuntimePalette>;
 
 export type ThemeColorPalette = (typeof Colors)[ColorScheme];

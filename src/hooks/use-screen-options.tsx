@@ -1,4 +1,3 @@
-import { CompositeNavigationProp } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { TouchableOpacity } from "react-native";
 
@@ -6,15 +5,14 @@ import { IconSymbol } from "@/components/ui/icon-symbol";
 import { useColors } from "@/hooks/use-colors";
 import { RootStackParamList } from "@/types";
 
-type ScreenOptionsNavigationProp = CompositeNavigationProp<
-  StackNavigationProp<RootStackParamList>,
-  StackNavigationProp<RootStackParamList>
->;
+type ScreenOptionsProps = {
+  navigation: StackNavigationProp<RootStackParamList> | undefined;
+};
 
 export default function useScreenOptions() {
   const colors = useColors();
 
-  return ({ navigation }: { navigation: ScreenOptionsNavigationProp }) => ({
+  return ({ navigation }: ScreenOptionsProps) => ({
     headerShown: false,
     gestureEnabled: true,
     headerStyle: {
@@ -22,6 +20,7 @@ export default function useScreenOptions() {
     },
     headerTintColor: colors.foreground,
     headerLeft: () => {
+      if (!navigation?.goBack) return null;
       return (
         <TouchableOpacity
           onPress={() => navigation.goBack()}

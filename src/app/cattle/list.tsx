@@ -1,15 +1,15 @@
 import { RouteProp, useFocusEffect, useRoute } from "@react-navigation/native";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { LayoutAnimation, RefreshControl, ScrollView, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { ButtonAdd, CattleCard, FormSelect, IconSymbol, LoadingScreen } from "@/components/";
 import { ScreenContainer } from "@/components/screen-container";
 import { STATUS_CATTLE } from "@/constants/const";
+import { useCattleFilter } from "@/hooks/use-cattle-filter";
 import { useColors } from "@/hooks/use-colors";
 import useNavigation from "@/hooks/use-navigation";
 import useScreenHeader from "@/hooks/use-screen-header";
-import { calculateAge } from "@/lib/helpers";
 import { logger } from "@/lib/logger";
 import { cattleStorage, diseaseStorage, pregnancyStorage, vaccinationRecordStorage } from "@/lib/storage";
 import { Cattle, CattleResult, Disease, Pregnancy, RootStackParamList, VaccinationRecord } from "@/types";
@@ -18,84 +18,45 @@ export default function CattleListScreen() {
   const route = useRoute<RouteProp<RootStackParamList, "CattleList">>();
   const navigation = useNavigation();
   const colors = useColors();
+  const insets = useSafeAreaInsets();
+
   const [loading, setLoading] = useState(true);
   const [refreshing] = useState(false);
   const [cattle, setCattle] = useState<Cattle[]>([]);
-  const [filteredCattle, setFilteredCattle] = useState<Cattle[]>([]);
-  const [searchQuery, setSearchQuery] = useState("");
   const [pregnancies, setPregnancies] = useState<Pregnancy[]>([]);
   const [diseases, setDiseases] = useState<Disease[]>([]);
   const [vaccines, setVaccines] = useState<VaccinationRecord[]>([]);
-
-  // Filters State
   const [showFilters, setShowFilters] = useState(false);
-  const [statusFilter, setStatusFilter] = useState<CattleResult | "all">(route.params?.status || "all");
-  const [breedFilter, setBreedFilter] = useState<string>("all");
-  const [ageRange, setAgeRange] = useState<{ min: string; max: string }>({
-    min: "",
-    max: "",
-  });
-  const insets = useSafeAreaInsets();
+
+  const {
+    filteredCattle,
+    breeds,
+    statusFilter,
+    breedFilter,
+    ageRange,
+    searchQuery,
+    setSearchQuery,
+    setStatusFilter,
+    setBreedFilter,
+    setAgeRange,
+    clearFilters,
+    getStatus,
+  } = useCattleFilter(cattle, diseases, pregnancies, vaccines, route.params?.status);
+
   useScreenHeader("Meu Rebanho", `${cattle.length} ${cattle.length === 1 ? "animal" : "animais"} cadastrados`);
 
   useEffect(() => {
-    setStatusFilter(route.params?.status || "all");
-    setShowFilters(!!route.params?.status);
-  }, [route.params?.status]);
+    if (route.params?.status) {
+      setStatusFilter(route.params.status);
+      setShowFilters(true);
+    }
+  }, [route.params?.status, setStatusFilter]);
 
   useFocusEffect(
     React.useCallback(() => {
       loadData();
     }, []),
   );
-
-  const getStatus = useCallback(
-    (cattleItem: Cattle): CattleResult[] => {
-      // Check if in treatment for disease
-      const inDeath = diseases.find((d) => d.cattleId === cattleItem.id && d.result === "death");
-      if (inDeath) {
-        return ["death"]; // death - red
-      }
-
-      let result = [] as CattleResult[];
-      // Check if in treatment for disease
-      const inTreatment = diseases.find((d) => d.cattleId === cattleItem.id && d.result === "in_treatment");
-      if (inTreatment) {
-        result.push("in_treatment"); // In treatment - orange
-      } else {
-        result.push("healthy"); // Healthy - green
-      }
-
-      // Check if pregnant (active pregnancy)
-      const activePregnancy = pregnancies.find((p) => p.cattleId === cattleItem.id && p.result === "pending");
-      if (activePregnancy) {
-        const expectedBirthDate = new Date(activePregnancy.expectedBirthDate);
-        if (new Date() > expectedBirthDate) {
-          result.push("overdue_pregnancy"); // Overdue pregnancy - red
-        }
-        result.push("pregnancy");
-      }
-
-      // Check for pending vaccines (within 30 days)
-      const pendingVaccine = vaccines.find((v) => {
-        if (v.cattleId !== cattleItem.id) return false;
-        if (!v.nextDoseDate || v.isNextDoseApplied) return false;
-        const nextDoseDate = new Date(v.nextDoseDate);
-        const thirtyDaysFromNow = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
-        return nextDoseDate <= thirtyDaysFromNow;
-      });
-      if (pendingVaccine) {
-        result.push("pending_vaccine"); // Pending vaccine - yellow
-      }
-      return result;
-    },
-    [diseases, pregnancies, vaccines],
-  );
-
-  const breeds = useMemo(() => {
-    const uniqueBreeds = Array.from(new Set(cattle.map((c) => c.breed))).filter(Boolean);
-    return ["all", ...uniqueBreeds.sort()];
-  }, [cattle]);
 
   const loadData = async () => {
     try {
@@ -118,46 +79,9 @@ export default function CattleListScreen() {
     }
   };
 
-  const filterCattle = useCallback(() => {
-    let filtered = [...cattle];
-
-    // Search query
-    if (searchQuery.trim()) {
-      const query = searchQuery.toLowerCase();
-      filtered = filtered.filter((c) => {
-        const matchesNumber = c.number.toLowerCase().includes(query);
-        const matchesName = c.name?.toLowerCase().includes(query);
-        const matchesBreed = c.breed.toLowerCase().includes(query);
-        return matchesNumber || matchesName || matchesBreed;
-      });
-    }
-
-    // Status filter
-    if (statusFilter !== "all") {
-      filtered = filtered.filter((c) => getStatus(c).includes(statusFilter));
-    }
-
-    // Breed filter
-    if (breedFilter !== "all") {
-      filtered = filtered.filter((c) => c.breed === breedFilter);
-    }
-
-    // Age filter
-    if (ageRange.min || ageRange.max) {
-      filtered = filtered.filter((c) => {
-        const age = calculateAge(c.birthDate);
-        const minMatch = ageRange.min ? age >= parseInt(ageRange.min, 10) : true;
-        const maxMatch = ageRange.max ? age <= parseInt(ageRange.max, 10) : true;
-        return minMatch && maxMatch;
-      });
-    }
-
-    setFilteredCattle(filtered);
-  }, [cattle, searchQuery, statusFilter, breedFilter, ageRange, getStatus]);
-
-  useEffect(() => {
-    filterCattle();
-  }, [filterCattle]);
+  const handleClearFilters = useCallback(() => {
+    clearFilters();
+  }, [clearFilters]);
 
   if (loading) return <LoadingScreen />;
 
@@ -196,17 +120,15 @@ export default function CattleListScreen() {
             {showFilters && (
               <View className="px-2 pt-2 gap-2 border-t border-border">
                 {/* Status Filter */}
-                {
-                  <FormSelect
-                    value={statusFilter}
-                    label="Status"
-                    onValueChange={(value) => setStatusFilter(value as CattleResult)}
-                    options={["all", ...Object.keys(STATUS_CATTLE)].map((status: string) => ({
-                      label: status === "all" ? "Todos" : STATUS_CATTLE[status as CattleResult].text,
-                      value: status,
-                    }))}
-                  />
-                }
+                <FormSelect
+                  value={statusFilter}
+                  label="Status"
+                  onValueChange={(value) => setStatusFilter(value as CattleResult)}
+                  options={["all", ...Object.keys(STATUS_CATTLE)].map((status: string) => ({
+                    label: status === "all" ? "Todos" : STATUS_CATTLE[status as CattleResult].text,
+                    value: status,
+                  }))}
+                />
 
                 {/* Breed Filter */}
                 {breeds.length > 2 && (
@@ -228,7 +150,7 @@ export default function CattleListScreen() {
                     <TextInput
                       placeholder="Mín"
                       value={ageRange.min}
-                      onChangeText={(val) => setAgeRange((prev) => ({ ...prev, min: val }))}
+                      onChangeText={(val) => setAgeRange({ ...ageRange, min: val })}
                       keyboardType="numeric"
                       className="flex-1 bg-surface border border-border rounded-lg px-3 py-2 text-foreground"
                     />
@@ -236,7 +158,7 @@ export default function CattleListScreen() {
                     <TextInput
                       placeholder="Máx"
                       value={ageRange.max}
-                      onChangeText={(val) => setAgeRange((prev) => ({ ...prev, max: val }))}
+                      onChangeText={(val) => setAgeRange({ ...ageRange, max: val })}
                       keyboardType="numeric"
                       className="flex-1 bg-surface border border-border rounded-lg px-3 py-2 text-foreground"
                     />
@@ -247,15 +169,7 @@ export default function CattleListScreen() {
                 </View>
 
                 {/* Clear All Filters */}
-                <TouchableOpacity
-                  onPress={() => {
-                    setStatusFilter("all");
-                    setBreedFilter("all");
-                    setAgeRange({ min: "", max: "" });
-                    setSearchQuery("");
-                  }}
-                  className="mt-2"
-                >
+                <TouchableOpacity onPress={handleClearFilters} className="mt-2">
                   <Text className="text-primary text-center font-medium">Limpar Todos os Filtros</Text>
                 </TouchableOpacity>
               </View>

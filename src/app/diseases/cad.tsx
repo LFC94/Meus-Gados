@@ -15,7 +15,7 @@ const DISEASE_RESULTS: DiseaseResult[] = Object.keys(DISEASE_RESULT_LABELS) as D
 export default function DiseaseCadScreen() {
   const route = useRoute<RouteProp<RootStackParamList, "DiseasesCad">>();
   const navigation = useNavigation();
-  const { id, cattleId } = route.params;
+  const { id, cattleId } = route.params || {};
   const insets = useSafeAreaInsets();
 
   useScreenHeader(id ? "Editar Doença" : "Registrar Doença");

@@ -13,7 +13,7 @@ import { Cattle, MilkProductionPeriod, ProductionFormData, RootStackParamList } 
 export default function MilkProductionCadScreen() {
   const route = useRoute<RouteProp<RootStackParamList, "MilkProductionCad">>();
   const colors = useColors();
-  const { id, cattleId } = route.params;
+  const { id, cattleId } = route.params || {};
   const insets = useSafeAreaInsets();
 
   useScreenHeader(id ? "Editar Produção" : "Registrar Produção");

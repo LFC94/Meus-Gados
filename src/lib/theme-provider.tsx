@@ -53,7 +53,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   }, [themePreference, systemScheme, isLoading]);
 
   const applyScheme = useCallback((scheme: ColorScheme) => {
-    nativewindColorScheme.set(scheme);
+    nativewindColorScheme.set(scheme === "unspecified" ? "system" : scheme);
     Appearance.setColorScheme?.(scheme);
     if (typeof document !== "undefined") {
       const root = document.documentElement;

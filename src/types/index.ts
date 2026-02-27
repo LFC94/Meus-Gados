@@ -19,13 +19,7 @@ export interface Cattle extends SyncBase {
   motherId?: string;
 }
 
-export type CattleResult =
-  | "in_treatment"
-  | "healthy"
-  | "death"
-  | "overdue_pregnancy"
-  | "pregnancy"
-  | "pending_vaccine";
+export type CattleResult = "in_treatment" | "healthy" | "death" | "overdue_pregnancy" | "pregnancy" | "pending_vaccine";
 
 /**
  * Catálogo de Vacinas (Cadastro de Imunizantes)
@@ -65,11 +59,7 @@ export interface Pregnancy extends SyncBase {
   calfId?: string;
 }
 
-export type PregnancyResult =
-  | "pending"
-  | "success"
-  | "complications"
-  | "failed";
+export type PregnancyResult = "pending" | "success" | "complications" | "failed";
 
 export interface Disease extends SyncBase {
   cattleId: string;
@@ -155,9 +145,9 @@ export type RootStackParamList = {
   Home: undefined;
   Drawer: undefined;
   Settings: undefined;
-  CattleList: { status?: CattleResult };
+  CattleList?: { status?: CattleResult };
   CattleDetail: { id: string };
-  CattleCad: { id?: string };
+  CattleCad?: { id?: string };
   VaccinePending: undefined;
   VaccineCad: {
     id?: string;
@@ -166,12 +156,12 @@ export type RootStackParamList = {
     vaccineId?: string;
   };
   VaccineCatalog: undefined;
-  VaccineCatalogCad: { id: string };
-  PregnancyAdd: { cattleId: string };
+  VaccineCatalogCad?: { id?: string };
+  PregnancyAdd?: { cattleId?: string };
   PregnancyEdit: { id: string };
-  DiseasesCad: { id?: string; cattleId?: string };
+  DiseasesCad?: { id?: string; cattleId?: string };
   ScheduledNotifications: undefined;
   MilkProductionList: undefined;
   MilkProductionReports: undefined;
-  MilkProductionCad: { id?: string; cattleId?: string };
+  MilkProductionCad?: { id?: string; cattleId?: string };
 };

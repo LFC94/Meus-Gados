@@ -15,7 +15,7 @@ export default function AddPregnancyScreen() {
   const route = useRoute<RouteProp<RootStackParamList, "PregnancyAdd">>();
   const navigation = useNavigation();
   const colors = useColors();
-  const { cattleId } = route.params;
+  const { cattleId } = route.params || {};
   const insets = useSafeAreaInsets();
 
   useScreenHeader("Registrar Gestação");
