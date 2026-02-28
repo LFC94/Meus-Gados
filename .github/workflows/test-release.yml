@@ -7,6 +7,21 @@ on:
         description: "Versão para release"
         required: true
         default: "1.0.0"
+      run_tests:
+        description: "Executar Testes (Jest)"
+        type: boolean
+        required: true
+        default: true
+      create_tag:
+        description: "Criar Tag no Git"
+        type: boolean
+        required: true
+        default: false
+      create_release:
+        description: "Publicar Release no GitHub"
+        type: boolean
+        required: true
+        default: false
 
 jobs:
   test-release:
@@ -16,7 +31,16 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Instalar Dependências
+        if: ${{ github.event.inputs.run_tests == 'true' }}
+        run: npm ci
+
+      - name: Rodar Testes
+        if: ${{ github.event.inputs.run_tests == 'true' }}
+        run: npm test
+
       - name: Criar Tag
+        if: ${{ github.event.inputs.create_tag == 'true' }}
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
@@ -24,8 +48,9 @@ jobs:
           git push origin "build-v${{ github.event.inputs.version }}"
 
       - name: Criar Release
+        if: ${{ github.event.inputs.create_release == 'true' }}
         uses: softprops/action-gh-release@v2
         with:
           tag_name: build-v${{ github.event.inputs.version }}
           name: Build v${{ github.event.inputs.version }}
-          body: "Test release"
+          body: "Release v${{ github.event.inputs.version }}"
