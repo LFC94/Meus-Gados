@@ -54,17 +54,25 @@ export function formatAge(birthDate: string): string {
 /**
  * Calcula a data prevista de parto (280 dias após cobertura)
  */
-export function calculateExpectedBirthDate(coverageDate: string | Date): string {
-  const coverage = typeof coverageDate === "string" ? new Date(coverageDate) : coverageDate;
-  const expectedBirth = new Date(coverage.getTime() + 280 * 24 * 60 * 60 * 1000);
+export function calculateExpectedBirthDate(
+  coverageDate: string | Date,
+): string {
+  const coverage =
+    typeof coverageDate === "string" ? new Date(coverageDate) : coverageDate;
+  const expectedBirth = new Date(
+    coverage.getTime() + 280 * 24 * 60 * 60 * 1000,
+  );
   return expectedBirth.toISOString();
 }
 
 /**
  * Calcula a data prevista de parto como Date (280 dias após cobertura)
  */
-export function calculateExpectedBirthDateAsDate(coverageDate: string | Date): Date {
-  const coverage = typeof coverageDate === "string" ? new Date(coverageDate) : coverageDate;
+export function calculateExpectedBirthDateAsDate(
+  coverageDate: string | Date,
+): Date {
+  const coverage =
+    typeof coverageDate === "string" ? new Date(coverageDate) : coverageDate;
   return addDaysToDate(coverage, 280);
 }
 
@@ -145,7 +153,10 @@ export function isPastDate(isoDate: string): boolean {
 /**
  * Verifica se uma data está próxima (dentro de X dias)
  */
-export function isDateNear(isoDate: string, daysThreshold: number = 30): boolean {
+export function isDateNear(
+  isoDate: string,
+  daysThreshold: number = 30,
+): boolean {
   const days = daysUntil(isoDate);
   return days >= 0 && days <= daysThreshold;
 }
@@ -170,7 +181,9 @@ export function getVaccineStatus(
 /**
  * Retorna cor para status de vacina
  */
-export function getVaccineStatusColor(status: ReturnType<typeof getVaccineStatus>): keyof ThemeColorPalette {
+export function getVaccineStatusColor(
+  status: ReturnType<typeof getVaccineStatus>,
+): keyof ThemeColorPalette {
   switch (status) {
     case "up_to_date":
       return "success";
@@ -186,7 +199,10 @@ export function getVaccineStatusColor(status: ReturnType<typeof getVaccineStatus
 /**
  * Retorna label para status de vacina
  */
-export function getVaccineStatusLabel(nextDose?: string, isNextDoseApplied?: boolean): string {
+export function getVaccineStatusLabel(
+  nextDose?: string,
+  isNextDoseApplied?: boolean,
+): string {
   const daysUntilNextDose = nextDose ? daysUntil(nextDose) : 0;
   if (isNextDoseApplied) return "Já reaplicada";
 
@@ -206,7 +222,10 @@ export function getVaccineStatusLabel(nextDose?: string, isNextDoseApplied?: boo
 /**
  * Calcula progresso da gestação em porcentagem
  */
-export function calculatePregnancyProgress(coverageDate: string, expectedBirthDate: string): number {
+export function calculatePregnancyProgress(
+  coverageDate: string,
+  expectedBirthDate: string,
+): number {
   const coverage = new Date(coverageDate);
   const expected = new Date(expectedBirthDate);
   const today = new Date();
@@ -227,7 +246,7 @@ export function calculateDaysPregnant(coverageDate: string): number {
   const today = new Date();
 
   const diffTime = today.getTime() - coverage.getTime();
-  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
 
   return Math.max(0, diffDays);
 }
