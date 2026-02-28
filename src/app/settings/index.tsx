@@ -17,12 +17,14 @@ import {
   requestNotificationPermission,
   saveNotificationSettings,
 } from "@/lib/notifications";
+import { seedDatabase } from "@/lib/storage/seed";
 import { useThemeContext } from "@/lib/theme-provider";
 
 export default function SettingsScreen() {
   const { theme, setTheme } = useThemeContext();
   const colors = useColors();
   const { user, signInWithGoogle, signOut, syncData, isSyncing } = useAuth();
+  const [isSeeding, setIsSeeding] = useState(false);
 
   const [loading, setLoading] = useState(true);
 
@@ -131,6 +133,33 @@ export default function SettingsScreen() {
     }
   };
 
+  const handleSeedData = async () => {
+    Alert.alert(
+      "Seed de Dados",
+      "Isso irá apagar todos os dados locais e criar novos dados de teste. Deseja continuar?",
+      [
+        { text: "Cancelar", style: "cancel" },
+        {
+          text: "Sim, Popular",
+          onPress: async () => {
+            try {
+              setIsSeeding(true);
+              await seedDatabase();
+              notificationAsync(NotificationFeedbackType.Success);
+              Alert.alert("Sucesso", "Banco de dados populado com sucesso!");
+              loadSettings();
+            } catch (error) {
+              logger.error("Settings/seedData", error);
+              Alert.alert("Erro", "Falha ao realizar seed de dados");
+            } finally {
+              setIsSeeding(false);
+            }
+          },
+        },
+      ],
+    );
+  };
+
   if (loading) return <LoadingScreen />;
 
   return (
@@ -225,6 +254,24 @@ export default function SettingsScreen() {
                 ))}
               </View>
             </View>
+
+            {/* Dev Only: Seed Data */}
+            {__DEV__ && (
+              <View className="gap-3">
+                <Text className="text-lg font-semibold text-warning">Desenvolvedor</Text>
+                <TouchableOpacity
+                  onPress={handleSeedData}
+                  disabled={isSeeding}
+                  className="bg-warning/10 border border-warning/30 p-4 rounded-2xl flex-row justify-center items-center gap-2"
+                >
+                  {isSeeding ? (
+                    <ActivityIndicator size="small" color="#eab308" />
+                  ) : (
+                    <Text className="text-warning font-bold">🌱 Popular Banco de Dados (Seed)</Text>
+                  )}
+                </TouchableOpacity>
+              </View>
+            )}
 
             {/* 2. Configurações de Notificações */}
             {notifSettings && (
