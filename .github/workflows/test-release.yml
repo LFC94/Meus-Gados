@@ -28,24 +28,23 @@ jobs:
     runs-on: ubuntu-latest
     permissions: write-all
     steps:
-      - name: Checkout
+      - name: 🏗 Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Node
+      - name: 🏗 Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: "npm"
 
-      - name: Instalar Dependências
-        if: ${{ github.event.inputs.run_tests == 'true' }}
-        run: npm ci
+      - name: 📦 Install dependencies
+        run: npm install --no-fund --no-audit
 
-      - name: Rodar Testes
+      - name: 🧪 Run Tests
         if: ${{ github.event.inputs.run_tests == 'true' }}
         run: npm test
 
-      - name: Criar Tag
+      - name: 🏷️ Create Tag
         if: ${{ github.event.inputs.create_tag == 'true' }}
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
@@ -53,7 +52,7 @@ jobs:
           git tag "build-v${{ github.event.inputs.version }}"
           git push origin "build-v${{ github.event.inputs.version }}"
 
-      - name: Criar Release
+      - name: 📋 Create Release
         if: ${{ github.event.inputs.create_release == 'true' }}
         uses: softprops/action-gh-release@v2
         with:
