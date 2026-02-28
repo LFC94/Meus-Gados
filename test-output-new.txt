@@ -1,0 +1,44 @@
+FAIL src/__tests__/helpers.test.ts
+  ÔùÅ Test suite failed to run
+
+    Cannot find module '@react-native-firebase/crashlytics' from 'src/__tests__/setup.ts'
+
+      4 | );
+      5 |
+    > 6 | jest.mock("@react-native-firebase/crashlytics", () => {
+        |      ^
+      7 |   return () => ({
+      8 |     log: jest.fn(),
+      9 |     recordError: jest.fn(),
+
+      at Resolver._throwModNotFoundError (node_modules/jest-resolve/build/resolver.js:427:11)
+      at Object.mock (src/__tests__/setup.ts:6:6)
+
+FAIL src/__tests__/storage/base.test.ts
+  ÔùÅ Test suite failed to run
+
+    Cannot find module '@react-native-firebase/crashlytics' from 'src/__tests__/setup.ts'
+
+      4 | );
+      5 |
+    > 6 | jest.mock("@react-native-firebase/crashlytics", () => {
+        |      ^
+      7 |   return () => ({
+      8 |     log: jest.fn(),
+      9 |     recordError: jest.fn(),
+
+      at Resolver._throwModNotFoundError (node_modules/jest-resolve/build/resolver.js:427:11)
+      at Object.mock (src/__tests__/setup.ts:6:6)
+
+----------|---------|----------|---------|---------|-------------------
+File      | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+----------|---------|----------|---------|---------|-------------------
+All files |       0 |        0 |       0 |       0 |                   
+----------|---------|----------|---------|---------|-------------------
+Jest: Coverage data for src/lib/helpers.ts was not found.
+Jest: Coverage data for src/lib/storage/base.ts was not found.
+Test Suites: 2 failed, 2 total
+Tests:       0 total
+Snapshots:   0 total
+Time:        14.179 s
+Ran all test suites.

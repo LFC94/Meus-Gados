@@ -80,6 +80,7 @@ const config: ExpoConfig = {
   },
 
   plugins: [
+    "@react-native-firebase/crashlytics",
     "@react-native-community/datetimepicker",
     "expo-font",
     "expo-router",

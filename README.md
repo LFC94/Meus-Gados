@@ -7,7 +7,8 @@
 ![Expo](https://img.shields.io/badge/Expo-55.0-black?style=for-the-badge&logo=expo)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.9-blue?style=for-the-badge&logo=typescript)
 ![NativeWind](https://img.shields.io/badge/NativeWind-4.2-blue?style=for-the-badge&logo=tailwindcss)
-![Tests](https://img.shields.io/badge/Tests-65%20passed-green)
+![Crashlytics](https://img.shields.io/badge/Crashlytics-Integrated-orange?style=for-the-badge&logo=firebase)
+![Tests](https://img.shields.io/badge/Tests-64%20passed-green)
 ![Coverage](https://img.shields.io/badge/Coverage-77%25-yellow)
 
 **Aplicativo móvel para gerenciamento completo do seu rebanho de bovinos**
@@ -59,6 +60,11 @@ O aplicativo foi construído utilizando as melhores práticas de desenvolvimento
 - **Configurações Personalizáveis**: Defina quantos dias antes deseja ser notificado
 - **Horário Configurável**: Escolha o horário preferencial para receber notificações
 - **Lista de Agendadas**: Visualize todas as notificações agendadas
+
+### 📊 Monitoramento e Logs
+
+- **Firebase Crashlytics**: Monitoramento robusto em tempo real de erros, exceções não tratadas e travamentos (crashes).
+- **Logger Centralizado**: Sistema utilitário de logs configurado com múltiplos níveis (`debug`, `info`, `warn`, `error`) que ajuda a armazenar e enviar telemetrias do app em produção para o Crashlytics.
 
 ### ☁️ Sincronização e Nuvem
 
@@ -127,20 +133,20 @@ npm run build:prod
 
 O projeto utiliza as seguintes tecnologias e bibliotecas:
 
-| Categoria     | Tecnologia                  |
-| ------------- | --------------------------- |
-| Framework     | React Native                |
-| Platform      | Expo                        |
-| Language      | TypeScript                  |
-| Styling       | NativeWind (Tailwind)       |
-| Navigation    | React Navigation            |
-| Storage       | AsyncStorage                |
-| Icons         | Expo Vector Icons           |
-| Backend       | Firebase (Auth & Firestore) |
-| Google Login  | Google Sign-In SDK          |
-| Notifications | Expo Notifications          |
-| Haptics       | Expo Haptics                |
-| Reanimated    | React Native Reanimated     |
+| Categoria     | Tecnologia                               |
+| ------------- | ---------------------------------------- |
+| Framework     | React Native                             |
+| Platform      | Expo                                     |
+| Language      | TypeScript                               |
+| Styling       | NativeWind (Tailwind)                    |
+| Navigation    | React Navigation                         |
+| Storage       | AsyncStorage                             |
+| Icons         | Expo Vector Icons                        |
+| Backend       | Firebase (Auth, Firestore & Crashlytics) |
+| Google Login  | Google Sign-In SDK                       |
+| Notifications | Expo Notifications                       |
+| Haptics       | Expo Haptics                             |
+| Reanimated    | React Native Reanimated                  |
 
 ### Principais Dependências
 

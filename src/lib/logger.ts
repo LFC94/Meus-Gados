@@ -1,3 +1,5 @@
+import crashlytics from "@react-native-firebase/crashlytics";
+
 type LogLevel = "error" | "warn" | "info" | "debug";
 
 interface LogEntry {
@@ -36,12 +38,29 @@ class Logger {
           console.debug(`[${context}]`, message);
           break;
       }
+    } else {
+      if (level === "error") {
+        let errorToRecord = error;
+        if (!(error instanceof Error)) {
+          errorToRecord = new Error(typeof error === "string" ? error : JSON.stringify(error) || message);
+        }
+        crashlytics().recordError(errorToRecord as Error);
+        crashlytics().log(`[${context}] ERROR: ${message}`);
+      } else {
+        crashlytics().log(`[${context}] ${level.toUpperCase()}: ${message}`);
+      }
     }
 
     this.logs.push(entry);
 
     if (this.logs.length > 100) {
       this.logs.shift();
+    }
+  }
+
+  setUserId(userId: string) {
+    if (!this.isDev) {
+      crashlytics().setUserId(userId);
     }
   }
 

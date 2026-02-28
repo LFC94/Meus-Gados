@@ -1,23 +1,23 @@
 import {
+  addDaysToDate,
   calculateAge,
   calculateAgeInMonths,
-  formatAge,
+  calculateDaysPregnant,
   calculateExpectedBirthDate,
-  addDaysToDate,
+  calculatePregnancyProgress,
   daysUntil,
+  formatAge,
   formatDate,
   formatDateTime,
-  parseDate,
-  isPastDate,
-  isDateNear,
+  formatWeight,
+  generateId,
   getVaccineStatus,
   getVaccineStatusLabel,
-  calculatePregnancyProgress,
-  calculateDaysPregnant,
-  formatWeight,
+  isDateNear,
+  isPastDate,
+  parseDate,
   validateCattleNumber,
   validateWeight,
-  generateId,
 } from "../lib/helpers";
 
 describe("helpers", () => {
@@ -154,9 +154,7 @@ describe("helpers", () => {
 
   describe("formatDateTime", () => {
     it("should format date and time correctly", () => {
-      expect(formatDateTime("2024-01-15T14:30:00.000Z")).toMatch(
-        /\d{2}\/\d{2}\/\d{4} \d{2}:\d{2}/,
-      );
+      expect(formatDateTime("2024-01-15T14:30:00.000Z")).toMatch(/\d{2}\/\d{2}\/\d{4} \d{2}:\d{2}/);
     });
   });
 
@@ -239,9 +237,7 @@ describe("helpers", () => {
     it('should return "Já reaplicada" when applied', () => {
       const futureDate = new Date();
       futureDate.setDate(futureDate.getDate() + 10);
-      expect(getVaccineStatusLabel(futureDate.toISOString(), true)).toBe(
-        "Já reaplicada",
-      );
+      expect(getVaccineStatusLabel(futureDate.toISOString(), true)).toBe("Já reaplicada");
     });
 
     it("should return correct label for up_to_date", () => {
@@ -262,10 +258,7 @@ describe("helpers", () => {
       const expectedBirthDate = new Date();
       expectedBirthDate.setDate(expectedBirthDate.getDate() + 140);
 
-      const progress = calculatePregnancyProgress(
-        coverageDate.toISOString(),
-        expectedBirthDate.toISOString(),
-      );
+      const progress = calculatePregnancyProgress(coverageDate.toISOString(), expectedBirthDate.toISOString());
 
       expect(progress).toBeGreaterThanOrEqual(0);
       expect(progress).toBeLessThanOrEqual(100);
@@ -276,10 +269,7 @@ describe("helpers", () => {
       const expectedBirthDate = new Date();
       expectedBirthDate.setDate(expectedBirthDate.getDate() + 280);
 
-      const progress = calculatePregnancyProgress(
-        coverageDate.toISOString(),
-        expectedBirthDate.toISOString(),
-      );
+      const progress = calculatePregnancyProgress(coverageDate.toISOString(), expectedBirthDate.toISOString());
 
       expect(progress).toBeLessThan(5);
     });

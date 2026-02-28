@@ -1,14 +1,15 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
+
 import {
-  getItems,
-  getAllItemsIncludingDeleted,
-  setItems,
   addItem,
-  updateItem,
   deleteItem,
+  getAllItemsIncludingDeleted,
   getItemById,
-  subscribeToStorageChanges,
+  getItems,
   notifyStorageChanges,
+  setItems,
+  subscribeToStorageChanges,
+  updateItem,
 } from "../../lib/storage/base";
 
 interface TestItem {
@@ -84,9 +85,7 @@ describe("storage/base", () => {
 
   describe("setItems", () => {
     it("should save items to storage", async () => {
-      const items: TestItem[] = [
-        { id: "1", name: "Item 1", createdAt: "", updatedAt: "" },
-      ];
+      const items: TestItem[] = [{ id: "1", name: "Item 1", createdAt: "", updatedAt: "" }];
 
       await setItems(STORAGE_KEY, items);
 

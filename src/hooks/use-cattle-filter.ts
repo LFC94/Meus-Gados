@@ -1,12 +1,7 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
-import {
-  Cattle,
-  CattleResult,
-  Disease,
-  Pregnancy,
-  VaccinationRecord,
-} from "@/types";
+import { useCallback, useMemo, useState } from "react";
+
 import { calculateAge } from "@/lib/helpers";
+import { Cattle, CattleResult, Disease, Pregnancy, VaccinationRecord } from "@/types";
 
 export interface FilterOptions {
   searchQuery: string;
@@ -36,26 +31,20 @@ function calculateStatus(
   pregnancies: Pregnancy[],
   vaccines: VaccinationRecord[],
 ): CattleResult[] {
-  const inDeath = diseases.find(
-    (d) => d.cattleId === cattleItem.id && d.result === "death",
-  );
+  const inDeath = diseases.find((d) => d.cattleId === cattleItem.id && d.result === "death");
   if (inDeath) {
     return ["death"];
   }
 
   let result = [] as CattleResult[];
-  const inTreatment = diseases.find(
-    (d) => d.cattleId === cattleItem.id && d.result === "in_treatment",
-  );
+  const inTreatment = diseases.find((d) => d.cattleId === cattleItem.id && d.result === "in_treatment");
   if (inTreatment) {
     result.push("in_treatment");
   } else {
     result.push("healthy");
   }
 
-  const activePregnancy = pregnancies.find(
-    (p) => p.cattleId === cattleItem.id && p.result === "pending",
-  );
+  const activePregnancy = pregnancies.find((p) => p.cattleId === cattleItem.id && p.result === "pending");
   if (activePregnancy) {
     const expectedBirthDate = new Date(activePregnancy.expectedBirthDate);
     if (new Date() > expectedBirthDate) {
@@ -86,9 +75,7 @@ export function useCattleFilter(
   initialStatus?: CattleResult | "all",
 ): UseCattleFilterReturn {
   const [searchQuery, setSearchQuery] = useState("");
-  const [statusFilter, setStatusFilter] = useState<CattleResult | "all">(
-    initialStatus || "all",
-  );
+  const [statusFilter, setStatusFilter] = useState<CattleResult | "all">(initialStatus || "all");
   const [breedFilter, setBreedFilter] = useState<string>("all");
   const [ageRange, setAgeRange] = useState<{ min: string; max: string }>({
     min: "",
@@ -104,9 +91,7 @@ export function useCattleFilter(
   }, [cattle, diseases, pregnancies, vaccines]);
 
   const breeds = useMemo(() => {
-    const uniqueBreeds = Array.from(new Set(cattle.map((c) => c.breed))).filter(
-      Boolean,
-    );
+    const uniqueBreeds = Array.from(new Set(cattle.map((c) => c.breed))).filter(Boolean);
     return ["all", ...uniqueBreeds.sort()];
   }, [cattle]);
 
@@ -137,12 +122,8 @@ export function useCattleFilter(
     if (ageRange.min || ageRange.max) {
       filtered = filtered.filter((c) => {
         const age = calculateAge(c.birthDate);
-        const minMatch = ageRange.min
-          ? age >= parseInt(ageRange.min, 10)
-          : true;
-        const maxMatch = ageRange.max
-          ? age <= parseInt(ageRange.max, 10)
-          : true;
+        const minMatch = ageRange.min ? age >= parseInt(ageRange.min, 10) : true;
+        const maxMatch = ageRange.max ? age <= parseInt(ageRange.max, 10) : true;
         return minMatch && maxMatch;
       });
     }
