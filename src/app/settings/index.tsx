@@ -1,10 +1,8 @@
 import { GoogleSigninButton } from "@react-native-google-signin/google-signin";
 import { useFocusEffect } from "@react-navigation/native";
 import Constants from "expo-constants";
-import { documentDirectory, writeAsStringAsync } from "expo-file-system/legacy";
 import { impactAsync, ImpactFeedbackStyle, notificationAsync, NotificationFeedbackType } from "expo-haptics";
-import { isAvailableAsync, shareAsync } from "expo-sharing";
-import React, { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { ActivityIndicator, Alert, Image, ScrollView, Switch, Text, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -12,7 +10,6 @@ import { FormInput, FormTimePicker, IconSymbol, LoadingScreen } from "@/componen
 import { ScreenContainer } from "@/components/screen-container";
 import { STATUS_CATTLE } from "@/constants/const";
 import { useAuth, useColors, useScreenHeader } from "@/hooks";
-import { type BackupData, backupService } from "@/lib/backup";
 import { logger } from "@/lib/logger";
 import {
   getNotificationSettings,
@@ -28,7 +25,6 @@ export default function SettingsScreen() {
   const { user, signInWithGoogle, signOut, syncData, isSyncing } = useAuth();
 
   const [loading, setLoading] = useState(true);
-  const [backups, setBackups] = useState<{ id: string; backup: BackupData }[]>([]);
 
   // Notification states
   const [notifSaving, setNotifSaving] = useState(false);
@@ -59,7 +55,7 @@ export default function SettingsScreen() {
   }, [user, isSyncing]);
 
   useFocusEffect(
-    React.useCallback(() => {
+    useCallback(() => {
       loadSettings();
       loadNotificationSettings();
     }, []),
@@ -68,14 +64,6 @@ export default function SettingsScreen() {
   const loadSettings = async () => {
     try {
       setLoading(true);
-      const backupList = await backupService.getBackupList();
-      setBackups(
-        backupList.sort((a, b) => new Date(b.backup.timestamp).getTime() - new Date(a.backup.timestamp).getTime()),
-      );
-
-      setBackups(
-        backupList.sort((a, b) => new Date(b.backup.timestamp).getTime() - new Date(a.backup.timestamp).getTime()),
-      );
     } catch (error) {
       logger.error("Settings/loadSettings", error);
     } finally {
@@ -141,92 +129,6 @@ export default function SettingsScreen() {
       logger.error("Settings/changeTheme", error);
       Alert.alert("Erro", "Não foi possível atualizar o tema");
     }
-  };
-
-  const handleCreateBackup = async () => {
-    try {
-      impactAsync(ImpactFeedbackStyle.Light);
-
-      const backup = await backupService.createBackup();
-      await backupService.saveBackup(backup);
-
-      notificationAsync(NotificationFeedbackType.Success);
-
-      Alert.alert("Sucesso", "Backup criado com sucesso!");
-      loadSettings();
-    } catch (error) {
-      logger.error("Settings/createBackup", error);
-      Alert.alert("Erro", "Não foi possível criar o backup");
-    }
-  };
-
-  const handleExportBackup = async () => {
-    try {
-      const backup = await backupService.createBackup();
-      const jsonString = await backupService.exportBackupAsJSON(backup);
-
-      const fileName = `meus-gados-backup-${new Date().toISOString().split("T")[0]}.json`;
-      const fileUri = `${documentDirectory}${fileName}`;
-
-      await writeAsStringAsync(fileUri, jsonString);
-
-      if (await isAvailableAsync()) {
-        await shareAsync(fileUri, {
-          mimeType: "application/json",
-          dialogTitle: "Compartilhar Backup",
-        });
-      } else {
-        Alert.alert("Sucesso", "Backup exportado para o arquivo de documentos");
-      }
-    } catch (error) {
-      logger.error("Settings/exportBackup", error);
-      Alert.alert("Erro", "Não foi possível exportar o backup");
-    }
-  };
-
-  const handleRestoreBackup = (backup: BackupData) => {
-    Alert.alert(
-      "Restaurar Backup",
-      `Deseja restaurar o backup de ${new Date(backup.timestamp).toLocaleDateString("pt-BR")}? Todos os dados atuais serão substituídos.`,
-      [
-        { text: "Cancelar", onPress: () => {} },
-        {
-          text: "Restaurar",
-          onPress: async () => {
-            try {
-              await backupService.restoreBackup(backup);
-              notificationAsync(NotificationFeedbackType.Success);
-              Alert.alert("Sucesso", "Backup restaurado com sucesso!");
-              loadSettings();
-            } catch (error) {
-              logger.error("Settings/restoreBackup", error);
-              Alert.alert("Erro", "Não foi possível restaurar o backup");
-            }
-          },
-          style: "destructive",
-        },
-      ],
-    );
-  };
-
-  const handleDeleteBackup = (backupId: string) => {
-    Alert.alert("Deletar Backup", "Deseja deletar este backup? Esta ação não pode ser desfeita.", [
-      { text: "Cancelar", onPress: () => {} },
-      {
-        text: "Deletar",
-        onPress: async () => {
-          try {
-            await backupService.deleteBackup(backupId);
-            loadSettings();
-            Alert.alert("Sucesso", "Backup deletado com sucesso!");
-          } catch (error) {
-            logger.error("Settings/deleteBackup", error);
-            Alert.alert("Erro", "Não foi possível deletar o backup");
-          }
-        },
-        style: "destructive",
-      },
-    ]);
   };
 
   if (loading) return <LoadingScreen />;
@@ -456,63 +358,6 @@ export default function SettingsScreen() {
                 </View>
               </View>
             )}
-
-            {/* 4. Backup Local */}
-            <View className="gap-3">
-              <Text className="text-lg font-semibold text-foreground">Backup Local</Text>
-              <View className="bg-surface rounded-2xl p-4 border border-border gap-4">
-                <View className="flex-row gap-2">
-                  <TouchableOpacity
-                    onPress={handleCreateBackup}
-                    className="flex-1 bg-border border border-secondary p-4 rounded-xl items-center"
-                  >
-                    <Text className="text-secondary font-bold">Criar Backup</Text>
-                  </TouchableOpacity>
-
-                  <TouchableOpacity
-                    onPress={handleExportBackup}
-                    className="flex-1 bg-border border border-secondary p-4 rounded-xl items-center"
-                  >
-                    <Text className="text-secondary font-bold">Exportar JSON</Text>
-                  </TouchableOpacity>
-                </View>
-
-                {backups.length > 0 && (
-                  <View className="gap-2 mt-2">
-                    <Text className="text-xs font-bold text-muted uppercase">Backups Recentes</Text>
-                    {backups.slice(0, 3).map((item) => (
-                      <View
-                        key={item.id}
-                        className="bg-background p-3 rounded-xl border border-border flex-row items-center gap-3"
-                      >
-                        <View className="flex-1">
-                          <Text className="text-xs font-bold text-foreground">
-                            {new Date(item.backup.timestamp).toLocaleDateString("pt-BR", {
-                              day: "2-digit",
-                              month: "short",
-                              hour: "2-digit",
-                              minute: "2-digit",
-                            })}
-                          </Text>
-                          <Text className="text-[10px] text-muted">
-                            {item.backup.cattle.length} animais cadastrados
-                          </Text>
-                        </View>
-                        <TouchableOpacity
-                          onPress={() => handleRestoreBackup(item.backup)}
-                          className="bg-surface px-3 py-1.5 rounded-lg"
-                        >
-                          <Text className="text-primary text-[10px] font-bold">Restaurar</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity onPress={() => handleDeleteBackup(item.id)} className="p-1.5">
-                          <Text className="text-error text-sm">🗑️</Text>
-                        </TouchableOpacity>
-                      </View>
-                    ))}
-                  </View>
-                )}
-              </View>
-            </View>
 
             {/* 5. Sobre */}
             <View className="items-center mt-4">

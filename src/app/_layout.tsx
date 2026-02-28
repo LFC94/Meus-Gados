@@ -9,8 +9,9 @@ import {
   DrawerItemList,
 } from "@react-navigation/drawer";
 import { createStackNavigator } from "@react-navigation/stack";
+import Constants from "expo-constants";
 import { useEffect, useMemo } from "react";
-import { Image, View } from "react-native";
+import { Image, Text, View } from "react-native";
 import { initialWindowMetrics, SafeAreaProvider, useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { IconSymbol } from "@/components";
@@ -49,12 +50,18 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
   const insets = useSafeAreaInsets();
 
   return (
-    <DrawerContentScrollView {...props} contentContainerStyle={{ paddingTop: 0 }}>
-      <View className="items-center border-b border-border" style={{ paddingTop: insets.top }}>
-        <Image source={require("@/assets/images/icon.png")} style={{ height: 120 }} resizeMode="contain" />
+    <View style={{ flex: 1 }}>
+      <DrawerContentScrollView {...props} contentContainerStyle={{ paddingTop: 0 }}>
+        <View className="items-center border-b border-border" style={{ paddingTop: insets.top }}>
+          <Image source={require("@/assets/images/icon.png")} style={{ height: 120 }} resizeMode="contain" />
+        </View>
+        <DrawerItemList {...props} />
+      </DrawerContentScrollView>
+
+      <View className="p-4 border-t border-border items-center" style={{ paddingBottom: Math.max(insets.bottom, 16) }}>
+        <Text className="text-xs text-muted">Versão {Constants.expoConfig?.version ?? "1.0.0"}</Text>
       </View>
-      <DrawerItemList {...props} />
-    </DrawerContentScrollView>
+    </View>
   );
 }
 
