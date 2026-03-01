@@ -10,14 +10,14 @@ import {
 } from "@react-navigation/drawer";
 import { createStackNavigator } from "@react-navigation/stack";
 import Constants from "expo-constants";
-import { useEffect, useMemo } from "react";
-import { Image, Text, View } from "react-native";
+import { useEffect, useMemo, useRef } from "react";
+import { AppState, Image, Text, View } from "react-native";
 import { initialWindowMetrics, SafeAreaProvider, useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { IconSymbol } from "@/components";
 import { AuthProvider, useColors, useScreenOptions } from "@/hooks/";
 import { useUpdates } from "@/hooks/use-updates";
-import { requestNotificationPermission } from "@/lib/notifications";
+import { requestNotificationPermission, syncNotifications } from "@/lib/notifications";
 import { ThemeProvider } from "@/lib/theme-provider";
 // Screens
 import { RootStackParamList } from "@/types";
@@ -253,9 +253,29 @@ function MainStackNavigator() {
 
 export default function RootLayout() {
   useUpdates();
+  const appState = useRef(AppState.currentState);
 
   useEffect(() => {
-    requestNotificationPermission();
+    const initNotifications = async () => {
+      const hasPermission = await requestNotificationPermission();
+      if (hasPermission) {
+        await syncNotifications();
+      }
+    };
+    initNotifications();
+  }, []);
+
+  useEffect(() => {
+    const subscription = AppState.addEventListener("change", async (nextAppState) => {
+      if (appState.current.match(/inactive|background/) && nextAppState === "active") {
+        await syncNotifications();
+      }
+      appState.current = nextAppState;
+    });
+
+    return () => {
+      subscription.remove();
+    };
   }, []);
 
   const providerInitialMetrics = useMemo(() => {

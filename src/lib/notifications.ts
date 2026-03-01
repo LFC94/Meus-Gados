@@ -9,6 +9,9 @@ import { Pregnancy, VaccinationRecordWithDetails } from "@/types";
 
 import { daysUntil, formatDate } from "./helpers";
 import { logger } from "./logger";
+import { cattleStorage } from "./storage/cattle";
+import { pregnancyStorage } from "./storage/pregnancy";
+import { vaccinationRecordStorage, vaccineCatalogStorage } from "./storage/vaccines";
 
 type NotificationHandlerResult = {
   shouldShowAlert: boolean;
@@ -348,5 +351,67 @@ export async function rescheduleAllNotifications(
   } catch (error) {
     logger.error("notifications/reschedule", error);
     throw error;
+  }
+}
+
+/**
+ * Sincronizar todas as notificações - buscar dados atualizados e reagendar
+ * Deve ser chamado ao iniciar o app e quando houver mudanças nos dados
+ */
+export async function syncNotifications(): Promise<void> {
+  try {
+    const settings = await getNotificationSettings();
+    if (!settings.vaccinesEnabled && !settings.pregnancyEnabled) {
+      await cancelAllNotifications();
+      await AsyncStorage.removeItem(SCHEDULED_NOTIFICATIONS_KEY);
+      return;
+    }
+
+    const allCattle = await cattleStorage.getAll();
+
+    if (settings.pregnancyEnabled) {
+      const allPregnancies = await pregnancyStorage.getAll();
+      const activePregnancies = allPregnancies.filter((p) => p.result === "pending");
+
+      for (const pregnancy of activePregnancies) {
+        const cattle = allCattle.find((c) => c.id === pregnancy.cattleId);
+        if (cattle) {
+          await schedulePregnancyNotification({
+            ...pregnancy,
+            cattleName: cattle.name || cattle.number,
+          });
+        }
+      }
+    }
+
+    if (settings.vaccinesEnabled) {
+      const allVaccinations = await vaccinationRecordStorage.getAll();
+      const allVaccineCatalog = await vaccineCatalogStorage.getAllIncludingInactive();
+
+      for (const vaccine of allVaccinations) {
+        if (vaccine.nextDoseDate) {
+          const cattle = allCattle.find((c) => c.id === vaccine.cattleId);
+          if (cattle) {
+            const vaccineCatalog = allVaccineCatalog.find((v) => v.id === vaccine.vaccineId);
+            if (vaccineCatalog) {
+              await scheduleVaccineNotification({
+                ...vaccine,
+                vaccineName: vaccineCatalog.name || "Vacina Desconhecida",
+                vaccineManufacturer: vaccineCatalog.manufacturer,
+                vaccineDescription: vaccineCatalog.description,
+                daysBetweenDoses: vaccineCatalog.daysBetweenDoses,
+                cattleName: cattle.name || cattle.number,
+              });
+            }
+          }
+        }
+      }
+    }
+
+    await cleanupOldNotifications();
+
+    logger.info("notifications/sync", "Notificações sincronizadas com sucesso");
+  } catch (error) {
+    logger.error("notifications/sync", error);
   }
 }

@@ -16,6 +16,7 @@ import {
   NotificationSettings,
   requestNotificationPermission,
   saveNotificationSettings,
+  syncNotifications,
 } from "@/lib/notifications";
 import { seedDatabase } from "@/lib/storage/seed";
 import { useThemeContext } from "@/lib/theme-provider";
@@ -90,6 +91,7 @@ export default function SettingsScreen() {
       setNotifSaving(true);
       impactAsync(ImpactFeedbackStyle.Light);
       await saveNotificationSettings(notifSettings);
+      await syncNotifications();
       notificationAsync(NotificationFeedbackType.Success);
       Alert.alert("Sucesso", "Configurações de notificações salvas!");
     } catch (error) {
